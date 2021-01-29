@@ -15,9 +15,15 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"path/filepath"
 )
+
+type config struct {
+	openshift map[string][]string
+}
 
 var yamlCmd = &cobra.Command{
 	Use:   "yaml",
@@ -31,6 +37,8 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("yaml called")
 		fmt.Println(args[0])
+		fmt.Println(args[1])
+		yamlConvert(args[0], args[1])
 	},
 }
 
@@ -45,10 +53,23 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	 yamlCmd.Flags().BoolP("input", "i", false, "Path to the input file to covert, must be in Openshift format")
-	 yamlCmd.Flags().BoolP("output", "o", false, "Path to the output file for the results on the conversion")
+	yamlCmd.Flags().BoolP("input", "i", false, "Path to the input file to covert, must be in Openshift format")
+	yamlCmd.Flags().BoolP("output", "o", false, "Path to the output file for the results on the conversion")
 }
 
 func yamlConvert(input string, output string) {
+	filename, _ := filepath.Abs(input)
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	var config config
+
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Value: %#v\n", config.openshift)
 
 }
