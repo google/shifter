@@ -26,7 +26,7 @@ var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "shifter",
-	Short: "Convert Openshift yaml to Kubernetes"
+	Short: "Convert Openshift yaml to Kubernetes",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
