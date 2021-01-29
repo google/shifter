@@ -21,12 +21,11 @@ import (
 var templateCmd = &cobra.Command{
 	Use:   "template",
 	Short: "Convert openshift templates to helm charts",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Convert an openshift template to a helm chart
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Usage: shifter template -i ./input.yaml -o ./output_dir
+Supply the input file with the -i or --input flag
+Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("templates called")
 		fmt.Println(args[0])
