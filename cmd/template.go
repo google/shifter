@@ -46,7 +46,18 @@ Supply the input file with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("templates called")
-		readYaml(args[0])
+		t := readYaml(args[0])
+		var o []map[interface{}]interface{}
+		o = t.Objects
+		//fmt.Println(o)
+		//fmt.Println(t.Parameters)
+		//for k, v := range o {
+		//	fmt.Println(k, v)
+		//}
+		fmt.Println(o[1])
+		for k, v := range o[1] {
+			fmt.Println(k, v)
+		}
 	},
 }
 
@@ -56,7 +67,7 @@ func init() {
 	templateCmd.Flags().BoolP("output", "o", false, "Path to the output file for the results on the conversion")
 }
 
-func readYaml(input string) {
+func readYaml(input string) Template {
 	yamlFile, err := ioutil.ReadFile(input)
 	if err != nil {
 		fmt.Println(err)
@@ -66,8 +77,6 @@ func readYaml(input string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(t)
-	var o []map[interface{}]interface{}
-	o = t.Objects
-	fmt.Println(o)
+
+	return t
 }
