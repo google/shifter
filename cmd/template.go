@@ -18,16 +18,23 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"shifter/generator"
 )
 
 type Template struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
 	Metadata   struct {
-		CreationTimestamp string `yaml:"creationTimestamp"`
-		Name              string `yaml:"name"`
+		CreationTimestamp string                 `yaml:"creationTimestamp"`
+		Name              string                 `yaml:"name"`
+		Annotations       map[string]interface{} //annotations have a unkown structure so we use a generic interface
 	}
-	Objects    []map[interface{}]interface{}
+	Objects []struct {
+		ApiVersion string                 `yaml:"apiVersion"`
+		Kind       string                 `yaml:"kind"`
+		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
+		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+	}
 	Parameters []struct {
 		Name        string `yaml:"name"`
 		Description string `yaml:"description"`
@@ -35,6 +42,12 @@ type Template struct {
 		Value       string `yaml:"value"`
 	}
 }
+
+var (
+	input  string
+	output string
+	kind   string
+)
 
 var templateCmd = &cobra.Command{
 	Use:   "template",
@@ -46,29 +59,33 @@ Supply the input file with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("templates called")
-		t := readYaml(args[0])
-		var o []map[interface{}]interface{}
-		o = t.Objects
+		t := readYaml(input)
+		parseOS(t)
+		//var o []map[interface{}]interface{}
+		//o = t.Objects
 		//fmt.Println(o)
 		//fmt.Println(t.Parameters)
 		//for k, v := range o {
 		//	fmt.Println(k, v)
 		//}
-		fmt.Println(o[1])
+		/*fmt.Println(o[1])
 		for k, v := range o[1] {
 			fmt.Println(k, v)
 		}
+		*/
+		generator.CreateChart(output)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(templateCmd)
-	templateCmd.Flags().BoolP("input", "i", false, "Path to the input file to covert, must be in Openshift format")
-	templateCmd.Flags().BoolP("output", "o", false, "Path to the output file for the results on the conversion")
+	templateCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file to covert, must be in Openshift format")
+	templateCmd.Flags().StringVarP(&output, "output", "o", "", "Path to the output file for the results on the conversion")
+	templateCmd.Flags().StringVarP(&kind, "kind", "k", "helm", "Output kind options are either helm or kpt")
 }
 
-func readYaml(input string) Template {
-	yamlFile, err := ioutil.ReadFile(input)
+func readYaml(file string) Template {
+	yamlFile, err := ioutil.ReadFile(file)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -77,6 +94,11 @@ func readYaml(input string) Template {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	return t
+}
+
+func parseOS(t Template) {
+	fmt.Println(t.Objects)
+	fmt.Println("*******************************************")
+	fmt.Println(t.Parameters)
 }
