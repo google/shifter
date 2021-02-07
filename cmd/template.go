@@ -59,7 +59,7 @@ Usage: shifter template -i ./input.yaml -o ./output_dir
 Supply the input file with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("templates called")
+		fmt.Println("Shifter - Templates")
 		t := readYaml(input)
 		parseOS(t)
 		//var o []map[interface{}]interface{}
@@ -74,15 +74,19 @@ Supply the output using the -o or --output flag, the directory will be created w
 			fmt.Println(k, v)
 		}
 		*/
-		generator.CreateChart(output)
+		switch kind {
+		case "helm":
+			generator.CreateChart(output)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(templateCmd)
 	templateCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file to covert, must be in Openshift format")
-	templateCmd.Flags().StringVarP(&output, "output", "o", "", "Path to the output file for the results on the conversion")
 	templateCmd.Flags().StringVarP(&kind, "kind", "k", "helm", "Output kind options are either helm or kpt")
+	templateCmd.Flags().StringVarP(&output, "output", "o", "", "Path to the output file for the results on the conversion")
+
 }
 
 func readYaml(file string) Template {
@@ -106,8 +110,8 @@ func parseOS(t Template) {
 	for k, v := range t.Objects {
 		switch v.Kind {
 		case "ImageStream":
-		  fmt.Println("XXXXXXXXXXXXXXXXXXX")
-  		}
+			fmt.Println("XXXXXXXXXXXXXXXXXXX")
+		}
 		fmt.Println(k, v.Kind)
 		for g, h := range v.Spec {
 			fmt.Println(g, h)
