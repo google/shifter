@@ -34,6 +34,7 @@ type Template struct {
 		Kind       string                 `yaml:"kind"`
 		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
 		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
 	}
 	Parameters []struct {
 		Name        string `yaml:"name"`
@@ -98,7 +99,18 @@ func readYaml(file string) Template {
 }
 
 func parseOS(t Template) {
-	fmt.Println(t.Objects)
 	fmt.Println("*******************************************")
-	fmt.Println(t.Parameters)
+	fmt.Println(t)
+	fmt.Println("*******************************************")
+
+	for k, v := range t.Objects {
+		switch v.Kind {
+		case "ImageStream":
+		  fmt.Println("XXXXXXXXXXXXXXXXXXX")
+  		}
+		fmt.Println(k, v.Kind)
+		for g, h := range v.Spec {
+			fmt.Println(g, h)
+		}
+	}
 }

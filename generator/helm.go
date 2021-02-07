@@ -1,8 +1,8 @@
 package generator
 
 import (
-		"gopkg.in/yaml.v2"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"os"
 )
 
@@ -12,7 +12,7 @@ type Chart struct {
 	Version     string `yaml:"version"`
 	KubeVersion string `yaml:"kubeVersion"`
 	Description string `yaml:"description"`
-	Type string `yaml:"type"`
+	Type        string `yaml:"type"`
 }
 
 // This needs to be broken out into a module!
@@ -35,17 +35,24 @@ func createFolderStruct(path string) {
 }
 
 func genChart() {
- var c Chart
+	var c Chart
 	c.ApiVersion = "v2"
 	c.Name = "test"
-        c.Version = "1.0.0"
-	
-	cg, err  := yaml.Marshal(&c)
+	c.Version = "1.0.0"
+
+	cg, err := yaml.Marshal(&c)
 	if err != nil {
-	fmt.Println(err)
+		fmt.Println(err)
 	}
 
-fmt.Println(string(cg))
+	fmt.Println(string(cg))
+}
+
+func genTemplate() {
+
+}
+
+func genValues() {
 }
 
 func CreateChart(path string) {
