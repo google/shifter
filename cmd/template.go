@@ -60,6 +60,8 @@ Supply the input file with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Shifter - Templates")
+
+
 		t := readYaml(input)
 		parseOS(t)
 		//var o []map[interface{}]interface{}
@@ -86,7 +88,6 @@ func init() {
 	templateCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file to covert, must be in Openshift format")
 	templateCmd.Flags().StringVarP(&kind, "kind", "k", "helm", "Output kind options are either helm or kpt")
 	templateCmd.Flags().StringVarP(&output, "output", "o", "", "Path to the output file for the results on the conversion")
-
 }
 
 func readYaml(file string) Template {
