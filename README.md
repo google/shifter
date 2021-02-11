@@ -5,13 +5,14 @@ Easily and quickly convert your RedHat Openshift workloads to standard kubernete
 Shifter has extensible methods for inputs and generators.
 
 
+-----------------
+
 ## Inputs
 
 Inputs are readers for your existing Openshift application deployment methods
 
 Currently supported inputs:
 
------------------
 
 * **Yaml**
 
