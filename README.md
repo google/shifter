@@ -34,6 +34,7 @@ Currently supported generators:
   Helm charts support the ability to create reusable charts that take input, this is a good fit from moving from Openshift Templates.
 
 * **Yaml** 
+
   Create a standard yaml file for deployment, good for one off deployments such as inputting from yaml.
 
 If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
