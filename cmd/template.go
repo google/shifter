@@ -108,13 +108,15 @@ func parseOS(t Template) {
 	fmt.Println(t)
 	fmt.Println("*******************************************")
 
-	for k, v := range t.Objects {
-		switch v.Kind {
+	for i, o := range t.Objects {
+		switch o.Kind {
+		case "DeploymentTemplate":
+			fmt.Println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 		case "ImageStream":
 			fmt.Println("XXXXXXXXXXXXXXXXXXX")
 		}
-		fmt.Println(k, v.Kind)
-		for g, h := range v.Spec {
+		fmt.Println(i, o.Kind)
+		for g, h := range o.Spec {
 			fmt.Println(g, h)
 		}
 	}

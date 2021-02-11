@@ -26,13 +26,8 @@ var cfgFile string
 
 var rootCmd = &cobra.Command{
 	Use:   "shifter",
-	Short: "Convert Openshift yaml to Kubernetes",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Move your workloads from Openshift to Kubernetes",
+	Long: `Shifter is a tool to easily migrate OpenShift workloads to Kubernetes.`,
 }
 
 func Execute() {
