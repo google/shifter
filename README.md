@@ -13,10 +13,12 @@ Currently supported inputs:
 
 -----------------
 
-* Yaml
+* ~~Yaml~~
+
   Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShfit specific to standard Kubernetes example: DeploymentConfig to Deployment
 
-* Templates
+* ~~Templates~~
+
   Template converter takes a Openshift template and generates a helm chart that can be deployed against standard kubernetes clusters such as GKE.  This converts certain template types such as DeploymentConfig to Deployment
 
 ----------------
