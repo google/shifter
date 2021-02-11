@@ -13,10 +13,10 @@ Currently supported inputs:
 
 -----------------
 
-#### Yaml
+* Yaml
   Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShfit specific to standard Kubernetes example: DeploymentConfig to Deployment
 
-#### Templates
+* Templates
   Template converter takes a Openshift template and generates a helm chart that can be deployed against standard kubernetes clusters such as GKE.  This converts certain template types such as DeploymentConfig to Deployment
 
 ----------------
@@ -27,10 +27,10 @@ Generators create new code based on your input to be used by standard Kubernetes
 
 Currently supported generators:
 
-#### Helm
+* Helm
   Helm charts support the ability to create reusable charts that take input, this is a good fit from moving from Openshift Templates.
 
-#### Yaml 
+* Yaml 
   Create a standard yaml file for deployment, good for one off deployments such as inputting from yaml.
 
 If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
