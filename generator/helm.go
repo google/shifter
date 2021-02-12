@@ -15,6 +15,22 @@ type Chart struct {
 	Type        string `yaml:"type"`
 }
 
+type kube struct {
+	Parameters []struct {
+		Name        string `yaml:"name"`
+		Description string `yaml:"description"`
+		Required    bool   `yaml:"required"`
+		Value       string `yaml:"value"`
+	}
+	Objects []struct {
+		ApiVersion string                 `yaml:"apiVersion"`
+		Kind       string                 `yaml:"kind"`
+		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
+		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+	}
+}
+
 // This needs to be broken out into a module!
 func createFolderStruct(path string) {
 	var chartsFldr string
@@ -55,7 +71,7 @@ func genTemplate() {
 func genValues() {
 }
 
-func CreateChart(path string) {
+func Generate(path string, input []byte) {
 	createFolderStruct(path)
 
 	chartFile, err := os.Create(path + "/Chart.yaml")
@@ -63,10 +79,17 @@ func CreateChart(path string) {
 		fmt.Println(err)
 	}
 
-	valuesFile, err := os.Create(path + "/Values.yaml")
+	valuesFile, err := os.Create(path + "/values.yaml")
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	var data kube
+	err = yaml.Unmarshal(input, &data)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(data)
 
 	fmt.Println(chartFile)
 	fmt.Println(valuesFile)

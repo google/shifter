@@ -27,7 +27,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "shifter",
 	Short: "Move your workloads from Openshift to Kubernetes",
-	Long: `Shifter is a tool to easily migrate OpenShift workloads to Kubernetes.`,
+	Long:  `Shifter is a tool to easily migrate OpenShift workloads to Kubernetes.`,
 }
 
 func Execute() {
