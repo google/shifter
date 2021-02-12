@@ -1,14 +1,14 @@
 /*
-Copyright 2019 Google LLC
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+copyright 2019 google llc
+licensed under the apache license, version 2.0 (the "license");
+you may not use this file except in compliance with the license.
+you may obtain a copy of the license at
+    http://www.apache.org/licenses/license-2.0
+unless required by applicable law or agreed to in writing, software
+distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied.
+see the license for the specific language governing permissions and
+limitations under the license.
 */
 
 package cmd
@@ -44,6 +44,22 @@ type Template struct {
 	}
 }
 
+type kube struct {
+	Parameters []struct {
+		Name        string `yaml:"name"`
+		Description string `yaml:"description"`
+		Required    bool   `yaml:"required"`
+		Value       string `yaml:"value"`
+	}
+	Objects []struct {
+		ApiVersion string                 `yaml:"apiVersion"`
+		Kind       string                 `yaml:"kind"`
+		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
+		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
+	}
+}
+
 var (
 	input  string
 	output string
@@ -61,24 +77,16 @@ Supply the output using the -o or --output flag, the directory will be created w
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Shifter - Templates")
 
-
 		t := readYaml(input)
-		parseOS(t)
-		//var o []map[interface{}]interface{}
-		//o = t.Objects
-		//fmt.Println(o)
-		//fmt.Println(t.Parameters)
-		//for k, v := range o {
-		//	fmt.Println(k, v)
-		//}
-		/*fmt.Println(o[1])
-		for k, v := range o[1] {
-			fmt.Println(k, v)
+
+		k, err := yaml.Marshal(parseOS(t))
+		if err != nil {
+			fmt.Println(err)
 		}
-		*/
+
 		switch kind {
 		case "helm":
-			generator.CreateChart(output)
+			generator.Generate(output, k)
 		}
 	},
 }
@@ -95,29 +103,33 @@ func readYaml(file string) Template {
 	if err != nil {
 		fmt.Println(err)
 	}
-	t := Template{}
-	err = yaml.Unmarshal(yamlFile, &t)
+	template := Template{}
+	err = yaml.Unmarshal(yamlFile, &template)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return t
+	return template
 }
 
-func parseOS(t Template) {
-	fmt.Println("*******************************************")
-	fmt.Println(t)
-	fmt.Println("*******************************************")
+func parseOS(t Template) kube {
+	var k8s kube
 
-	for i, o := range t.Objects {
+	//iterate over the objects and modify them as needed
+	for _, o := range t.Objects {
 		switch o.Kind {
-		case "DeploymentTemplate":
-			fmt.Println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+		case "DeploymentConfig":
+			o.Kind = "Deployment"
+			o.ApiVersion = "apps/v1"
+			k8s.Objects = append(k8s.Objects, o)
 		case "ImageStream":
-			fmt.Println("XXXXXXXXXXXXXXXXXXX")
-		}
-		fmt.Println(i, o.Kind)
-		for g, h := range o.Spec {
-			fmt.Println(g, h)
+		case "Route":
+		default:
+			k8s.Objects = append(k8s.Objects, o)
 		}
 	}
+
+	for _, y := range t.Parameters {
+		k8s.Parameters = append(k8s.Parameters, y)
+	}
+	return k8s
 }
