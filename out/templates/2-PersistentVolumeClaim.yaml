@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations: null
+  creationTimestamp: null
+  name: nginx-root
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${ROOT_DIRECTORY_SIZE_IN_GB}Gi

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ${APP_NAME}
+  name: ${APP_NAME}
+spec:
+  ports:
+  - name: ${NGINX_DEFAULT_HTTP_PORT}-tcp
+    port: ${NGINX_DEFAULT_HTTP_PORT}
+    protocol: TCP
+  - name: 8443-tcp
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: ${APP_NAME}
+    deploymentconfig: ${APP_NAME}
+  sessionAffinity: None
+  type: ClusterIP

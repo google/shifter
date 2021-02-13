@@ -114,19 +114,18 @@ func readYaml(file string) Template {
 func parseOS(t Template) kube {
 	var k8s kube
 
+	//iterate over the objects and modify them as needed
 	for _, o := range t.Objects {
 		switch o.Kind {
 		case "DeploymentConfig":
 			o.Kind = "Deployment"
+			o.ApiVersion = "apps/v1"
 			k8s.Objects = append(k8s.Objects, o)
 		case "ImageStream":
+		case "Route":
 		default:
 			k8s.Objects = append(k8s.Objects, o)
 		}
-		//fmt.Println(i, o.Kind)
-		//for g, h := range o.Spec {
-		//	fmt.Println(g, h)
-		//}
 	}
 
 	for _, y := range t.Parameters {

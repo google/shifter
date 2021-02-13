@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: ${APP_NAME}
+  name: ${APP_NAME}
+spec:
+  replicas: 1
+  selector:
+    app: ${APP_NAME}
+    deploymentconfig: ${APP_NAME}
+  strategy:
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ${APP_NAME}
+        deploymentconfig: ${APP_NAME}
+    spec:
+      containers:
+      - args: null
+        command:
+        - /usr/libexec/s2i/run
+        image: centos/${NGINX_VERSION}-centos7
+        imagePullPolicy: Always
+        name: ${APP_NAME}
+        ports:
+        - containerPort: ${NGINX_DEFAULT_HTTP_PORT}
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: ${NGINX_DEFAULT_HTTP_PORT}-tcp
+          timeoutSeconds: 20
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/
+          name: volume-s35u4
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/conf.d
+          name: volume-1l43r
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/default.d
+          name: volume-tlwx7
+        - mountPath: /opt/app-root/src
+          name: nginx-root
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: nginx-config
+        name: volume-s35u4
+      - configMap:
+          defaultMode: 420
+          name: nginx-conf.d
+        name: volume-1l43r
+      - configMap:
+          defaultMode: 420
+          name: nginx-default.d
+        name: volume-tlwx7
+      - name: nginx-root
+        persistentVolumeClaim:
+          claimName: nginx-root
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - nginx
+      from:
+        kind: ImageStreamTag
+        name: ${NGINX_VERSION}-centos7:latest
+    type: ImageChange

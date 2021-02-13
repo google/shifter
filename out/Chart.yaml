@@ -1,0 +1,6 @@
+apiVersion: v2
+name: test
+version: 1.0.0
+kubeVersion: ""
+description: ""
+type: ""
