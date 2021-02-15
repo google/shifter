@@ -68,8 +68,8 @@ var (
 
 var templateCmd = &cobra.Command{
 	Use:   "template",
-	Short: "Convert openshift templates to helm charts",
-	Long: `Convert an openshift template to a helm chart
+	Short: "Convert openshift templates to desired format",
+	Long: `Convert an openshift template to a desired format
 
 Usage: shifter template -i ./input.yaml -o ./output_dir
 Supply the input file with the -i or --input flag

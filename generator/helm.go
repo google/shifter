@@ -3,9 +3,10 @@ package generator
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"log"
 	"os"
-"strconv"
-"log"
+	"reflect"
+	"strconv"
 )
 
 type Chart struct {
@@ -24,13 +25,15 @@ type kube struct {
 		Required    bool   `yaml:"required"`
 		Value       string `yaml:"value"`
 	}
-	Objects []struct {
-		ApiVersion string                 `yaml:"apiVersion"`
-		Kind       string                 `yaml:"kind"`
-		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
-		Spec       map[string]interface{} `yaml:"spec,omitempty"` //specs are dependent on the kind so we use a generic interface
-		Data       map[string]interface{} `yaml:"data,omitempty"` //specs are dependent on the kind so we use a generic interface
-	}
+	Objects []object
+}
+
+type object struct {
+	ApiVersion string                 `yaml:"apiVersion"`
+	Kind       string                 `yaml:"kind"`
+	Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
+	Spec       map[string]interface{} `yaml:"spec,omitempty"` //specs are dependent on the kind so we use a generic interface
+	Data       map[string]interface{} `yaml:"data,omitempty"` //specs are dependent on the kind so we use a generic interface
 }
 
 // This needs to be broken out into a module!
@@ -52,6 +55,41 @@ func createFolderStruct(path string) {
 	}
 }
 
+func walk(v interface{}) {
+	fmt.Println(v)
+
+	val := reflect.ValueOf(v)
+	fmt.Println(val)
+	fmt.Println(val.Kind())
+
+	//	if val.Kind() == reflect.Map {
+	//		for _, e := range val.MapKeys() {
+	//			fmt.Println(e)
+	//			walk(e)
+	//		}
+	//	}
+
+	switch val.Kind() {
+	case reflect.Map:
+		for _, e := range val.MapKeys() {
+			fmt.Println(e)
+			walk(e)
+		}
+	default:
+		fmt.Println(val)
+	}
+}
+
+func mod(o object) {
+	for k, v := range o.Spec {
+		fmt.Println(k, v)
+		walk(v)
+		//matched, err := regexp.Match(`\${([^}]+)}`, []byte(v))
+		//fmt.Println(matched, err)
+		fmt.Println("\n")
+	}
+}
+
 func genChart(path string) {
 	var c Chart
 	c.ApiVersion = "v2"
@@ -60,16 +98,16 @@ func genChart(path string) {
 
 	cg, err := yaml.Marshal(&c)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	chartFile, err := os.Create(path + "/Chart.yaml")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	if _, err := chartFile.Write(cg); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	if err := chartFile.Close(); err != nil {
 		log.Fatal(err)
@@ -78,6 +116,7 @@ func genChart(path string) {
 
 func genTemplate(objects kube, path string) {
 	for x, y := range objects.Objects {
+		mod(y)
 		content, err := yaml.Marshal(y)
 		if err != nil {
 			log.Fatal(err)
@@ -96,32 +135,38 @@ func genTemplate(objects kube, path string) {
 	}
 }
 
-func genValues() {
+func genValues(parameters kube, path string) {
+	m := make(map[interface{}]interface{})
+
+	for _, y := range parameters.Parameters {
+		m[y.Name] = y.Value
+	}
+
+	content, err := yaml.Marshal(m)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.Create(path + "/values.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := file.Write(content); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func Generate(path string, input []byte) {
 	createFolderStruct(path)
 
-	valuesFile, err := os.Create(path + "/values.yaml")
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	var data kube
-	err = yaml.Unmarshal(input, &data)
+	err := yaml.Unmarshal(input, &data)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	for k, v := range data.Objects {
-		fmt.Println(k, v)
-		fmt.Println("-------")
-	}
-
-
 
 	genTemplate(data, path)
-
-	fmt.Println(valuesFile)
+	genValues(data, path)
 	genChart(path)
 }
