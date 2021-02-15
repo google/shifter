@@ -16,6 +16,7 @@ type Chart struct {
 	KubeVersion string `yaml:"kubeVersion"`
 	Description string `yaml:"description"`
 	Type        string `yaml:"type"`
+	Icon        string `yaml:"icon"`
 }
 
 type kube struct {

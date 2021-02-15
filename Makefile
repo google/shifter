@@ -19,4 +19,4 @@ build:
 	env GOOS=linux go build -v shifter
 
 apply:
-	kubectl apply -f ./out/templates/ -n test
+	helm install test ./out	
