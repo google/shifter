@@ -19,4 +19,4 @@ build:
 	env GOOS=linux go build -v shifter
 
 apply:
-	helm install test ./out	
+	helm install  ./out -n test --generate-name
