@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"strconv"
 	"regexp"
+	"strconv"
 )
 
 type Chart struct {
@@ -116,13 +116,13 @@ func walk(input interface{}) {
 	*/
 }
 
-func mod(o []byte) []byte  {
+func mod(o []byte) []byte {
 	str1 := string(o)
 
 	var re = regexp.MustCompile(`(?m)\${([^}]*)}`)
 
-    var substitution = "{{.Values.$1}}"
-    str1 = re.ReplaceAllString(str1, substitution)
+	var substitution = "{{.Values.$1}}"
+	str1 = re.ReplaceAllString(str1, substitution)
 	//str1 = strings.Replace(str1, "${", "{{.Values.", -1)
 	//str1 = strings.Replace(str1, "}", "}}", -1)
 	return []byte(str1)
@@ -136,7 +136,7 @@ func genTemplate(objects kube, path string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		//convert the iteration into a string to be used in the filename
 		no := strconv.Itoa(x)
 		file, err := os.Create(path + "/templates/" + no + "-" + y.Kind + ".yaml")
