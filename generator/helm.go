@@ -118,13 +118,9 @@ func walk(input interface{}) {
 
 func mod(o []byte) []byte {
 	str1 := string(o)
-
 	var re = regexp.MustCompile(`(?m)\${([^}]*)}`)
-
 	var substitution = "{{.Values.$1}}"
 	str1 = re.ReplaceAllString(str1, substitution)
-	//str1 = strings.Replace(str1, "${", "{{.Values.", -1)
-	//str1 = strings.Replace(str1, "}", "}}", -1)
 	return []byte(str1)
 }
 
