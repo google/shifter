@@ -121,6 +121,11 @@ func parseOS(t Template) kube {
 			o.Kind = "Deployment"
 			o.ApiVersion = "apps/v1"
 			k8s.Objects = append(k8s.Objects, o)
+			for _, s := range o.Spec {
+				fmt.Println(s)
+				fmt.Println("*****************")
+
+			}
 		case "ImageStream":
 		case "Route":
 		default:

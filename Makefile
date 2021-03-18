@@ -2,7 +2,7 @@
 
 all: test
 
-test: clean templateTest lint apply
+test: templateTest lint apply
 
 lint:
 	helm lint ./out
@@ -10,13 +10,10 @@ lint:
 templateTest:
 	go run . template -i ./_test/os-nginx-template.yaml -o ./out -k helm
 
-clean: 
-	kubectl delete ns test
-	kubectl create ns test
-	rm -rf out
+clean:
 
 build:
 	env GOOS=linux go build -v shifter
 
 apply:
-	helm install test ./out	
+	helm install  ./out -n test --generate-name

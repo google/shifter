@@ -1,3 +1,16 @@
+/*
+copyright 2019 google llc
+licensed under the apache license, version 2.0 (the "license");
+you may not use this file except in compliance with the license.
+you may obtain a copy of the license at
+    http://www.apache.org/licenses/license-2.0
+unless required by applicable law or agreed to in writing, software
+distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied.
+see the license for the specific language governing permissions and
+limitations under the license.
+*/
+
 package generator
 
 import (
@@ -6,6 +19,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
 )
 
@@ -37,7 +51,6 @@ type object struct {
 	Data       map[string]interface{} `yaml:"data,omitempty"` //specs are dependent on the kind so we use a generic interface
 }
 
-// This needs to be broken out into a module!
 func createFolderStruct(path string) {
 	var chartsFldr string
 	var templatesFldr string
@@ -56,38 +69,95 @@ func createFolderStruct(path string) {
 	}
 }
 
-func walk(v interface{}) {
-	fmt.Println(v)
+func walk(input interface{}) {
 
-	val := reflect.ValueOf(v)
-	fmt.Println(val)
-	fmt.Println(val.Kind())
-
-	//	if val.Kind() == reflect.Map {
-	//		for _, e := range val.MapKeys() {
-	//			fmt.Println(e)
-	//			walk(e)
-	//		}
-	//	}
+	va := reflect.ValueOf(&input).Elem()
+	val := va.Elem()
 
 	switch val.Kind() {
 	case reflect.Map:
-		for _, e := range val.MapKeys() {
-			fmt.Println(e)
-			walk(e)
-		}
-	default:
+		fmt.Println("***** MAP *******")
 		fmt.Println(val)
+
+		for i, k := range val.MapKeys() {
+			v := val.MapIndex(k)
+			fmt.Println(i, k, v)
+			fmt.Println("!!!!!!!! CAN SET: ", v.CanSet())
+			walk(v.Interface())
+
+		}
+		fmt.Println("CAN SET: ", val.CanSet())
+	case reflect.String:
+		fmt.Println("***** STRING *******")
+		fmt.Println(val)
+		fmt.Println("CAN SET: ", val.CanSet())
+	default:
+		fmt.Println("**** OTHER: ", val.Kind())
+		fmt.Println(val)
+		fmt.Println("CAN SET: ", val.CanSet())
+
 	}
+
+	/*
+
+		val := reflect.ValueOf(input)
+
+		if val.Kind() == reflect.Map {
+			//fmt.Println("MAP!!!!")
+			for i, k := range val.MapKeys() {
+				v := val.MapIndex(k)
+				fmt.Println(i, k, v)
+				fmt.Println(val.CanSet())
+				walk(v.Interface())
+
+			}
+		} else {
+
+			switch val.Kind() {
+
+			case reflect.String:
+				fmt.Println("*** FOUND STRING ***")
+				fmt.Println(val)
+				fmt.Println(val.CanSet())
+				fmt.Println("********************")
+
+			default:
+				fmt.Println(val.Kind())
+			}
+
+		}
+	*/
 }
 
-func mod(o object) {
-	for k, v := range o.Spec {
-		fmt.Println(k, v)
-		walk(v)
-		//matched, err := regexp.Match(`\${([^}]+)}`, []byte(v))
-		//fmt.Println(matched, err)
-		fmt.Println("\n")
+func mod(o []byte) []byte {
+	str1 := string(o)
+	var re = regexp.MustCompile(`(?m)\${([^}]*)}`)
+	var substitution = "{{.Values.$1}}"
+	str1 = re.ReplaceAllString(str1, substitution)
+	return []byte(str1)
+}
+
+func genTemplate(objects kube, path string) {
+	for x, y := range objects.Objects {
+
+		//get the contents from the object
+		content, err := yaml.Marshal(y)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		//convert the iteration into a string to be used in the filename
+		no := strconv.Itoa(x)
+		file, err := os.Create(path + "/templates/" + no + "-" + y.Kind + ".yaml")
+		if err != nil {
+			log.Fatal(err)
+		}
+		if _, err := file.Write(mod(content)); err != nil {
+			log.Fatal(err)
+		}
+		if err := file.Close(); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
