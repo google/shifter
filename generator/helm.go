@@ -185,27 +185,6 @@ func genChart(path string) {
 	}
 }
 
-func genTemplate(objects kube, path string) {
-	for x, y := range objects.Objects {
-		mod(y)
-		content, err := yaml.Marshal(y)
-		if err != nil {
-			log.Fatal(err)
-		}
-		no := strconv.Itoa(x)
-		file, err := os.Create(path + "/templates/" + no + "-" + y.Kind + ".yaml")
-		if err != nil {
-			log.Fatal(err)
-		}
-		if _, err := file.Write(content); err != nil {
-			log.Fatal(err)
-		}
-		if err := file.Close(); err != nil {
-			log.Fatal(err)
-		}
-	}
-}
-
 func genValues(parameters kube, path string) {
 	m := make(map[interface{}]interface{})
 
