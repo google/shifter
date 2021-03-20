@@ -18,7 +18,10 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"log"
 	"shifter/generator"
+	kyaml "sigs.k8s.io/yaml"
+	"encoding/json"
 )
 
 type Template struct {
@@ -111,6 +114,26 @@ func readYaml(file string) Template {
 	return template
 }
 
+func walk(input []byte) {
+	m := map[string]interface{}{}
+
+	err := json.Unmarshal(input, &m)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+
+	for key, val := range m {
+		switch cval := val.(type) {
+		default:
+			fmt.Println(key, ":", cval)
+		}
+		fmt.Println(key, val)
+		//fmt.Println(val.Type)
+	}
+
+}
+
 func parseOS(t Template) kube {
 	var k8s kube
 
@@ -120,14 +143,23 @@ func parseOS(t Template) kube {
 		case "DeploymentConfig":
 			o.Kind = "Deployment"
 			o.ApiVersion = "apps/v1"
-			k8s.Objects = append(k8s.Objects, o)
-			for _, s := range o.Spec {
-				fmt.Println(s)
-				fmt.Println("*****************")
-
+			y, err := yaml.Marshal(o.Spec)
+			if err != nil {
+				log.Fatal(err)
 			}
+			j, err := kyaml.YAMLToJSON(y)
+			if err != nil {
+				log.Fatal(err)
+			}
+			//fmt.Println(string(j))
+			walk(j)
+	
+			k8s.Objects = append(k8s.Objects, o)
+
 		case "ImageStream":
 		case "Route":
+		case "BuildConfig":
+		case "Build":
 		default:
 			k8s.Objects = append(k8s.Objects, o)
 		}
