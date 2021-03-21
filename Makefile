@@ -2,13 +2,13 @@
 
 all: test
 
-test: templateTest lint apply
+test: templateTest lint
 
 lint:
 	helm lint ./out
 
 templateTest:
-	go run . template -i ./_test/os-nginx-template.yaml -o ./out -k helm
+	go run . convert -t template -i ./_test/os-nginx-template.yaml -o ./out -k helm
 
 clean:
 

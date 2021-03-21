@@ -207,7 +207,7 @@ func genValues(parameters kube, path string) {
 	}
 }
 
-func Generate(path string, input []byte) {
+func Helm(path string, input []byte) {
 	createFolderStruct(path)
 
 	var data kube
