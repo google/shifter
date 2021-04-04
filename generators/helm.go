@@ -15,11 +15,12 @@ package generator
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"log"
 	"os"
-	"reflect"
+	//"reflect"
 	"regexp"
+	lib "shifter/lib"
 	"strconv"
 )
 
@@ -31,24 +32,6 @@ type Chart struct {
 	Description string `yaml:"description"`
 	Type        string `yaml:"type"`
 	Icon        string `yaml:"icon"`
-}
-
-type kube struct {
-	Parameters []struct {
-		Name        string `yaml:"name"`
-		Description string `yaml:"description"`
-		Required    bool   `yaml:"required"`
-		Value       string `yaml:"value"`
-	}
-	Objects []object
-}
-
-type object struct {
-	ApiVersion string                 `yaml:"apiVersion"`
-	Kind       string                 `yaml:"kind"`
-	Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
-	Spec       map[string]interface{} `yaml:"spec,omitempty"` //specs are dependent on the kind so we use a generic interface
-	Data       map[string]interface{} `yaml:"data,omitempty"` //specs are dependent on the kind so we use a generic interface
 }
 
 func createFolderStruct(path string) {
@@ -69,66 +52,6 @@ func createFolderStruct(path string) {
 	}
 }
 
-func walk(input interface{}) {
-
-	va := reflect.ValueOf(&input).Elem()
-	val := va.Elem()
-
-	switch val.Kind() {
-	case reflect.Map:
-		fmt.Println("***** MAP *******")
-		fmt.Println(val)
-
-		for i, k := range val.MapKeys() {
-			v := val.MapIndex(k)
-			fmt.Println(i, k, v)
-			fmt.Println("!!!!!!!! CAN SET: ", v.CanSet())
-			walk(v.Interface())
-
-		}
-		fmt.Println("CAN SET: ", val.CanSet())
-	case reflect.String:
-		fmt.Println("***** STRING *******")
-		fmt.Println(val)
-		fmt.Println("CAN SET: ", val.CanSet())
-	default:
-		fmt.Println("**** OTHER: ", val.Kind())
-		fmt.Println(val)
-		fmt.Println("CAN SET: ", val.CanSet())
-
-	}
-
-	/*
-
-		val := reflect.ValueOf(input)
-
-		if val.Kind() == reflect.Map {
-			//fmt.Println("MAP!!!!")
-			for i, k := range val.MapKeys() {
-				v := val.MapIndex(k)
-				fmt.Println(i, k, v)
-				fmt.Println(val.CanSet())
-				walk(v.Interface())
-
-			}
-		} else {
-
-			switch val.Kind() {
-
-			case reflect.String:
-				fmt.Println("*** FOUND STRING ***")
-				fmt.Println(val)
-				fmt.Println(val.CanSet())
-				fmt.Println("********************")
-
-			default:
-				fmt.Println(val.Kind())
-			}
-
-		}
-	*/
-}
-
 func mod(o []byte) []byte {
 	str1 := string(o)
 	var re = regexp.MustCompile(`(?m)\${([^}]*)}`)
@@ -137,7 +60,7 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-func genTemplate(objects kube, path string) {
+func genTemplate(objects lib.Kube, path string) {
 	for x, y := range objects.Objects {
 
 		//get the contents from the object
@@ -185,8 +108,10 @@ func genChart(path string) {
 	}
 }
 
-func genValues(parameters kube, path string) {
+func genValues(parameters lib.Kube, path string) {
 	m := make(map[interface{}]interface{})
+
+	fmt.Println(parameters)
 
 	for _, y := range parameters.Parameters {
 		m[y.Name] = y.Value
@@ -207,16 +132,10 @@ func genValues(parameters kube, path string) {
 	}
 }
 
-func Helm(path string, input []byte) {
+func Helm(path string, input lib.Kube) {
 	createFolderStruct(path)
 
-	var data kube
-	err := yaml.Unmarshal(input, &data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	genTemplate(data, path)
-	genValues(data, path)
+	genTemplate(input, path)
+	genValues(input, path)
 	genChart(path)
 }

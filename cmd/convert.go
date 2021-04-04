@@ -16,9 +16,9 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 	generators "shifter/generators"
 	inputs "shifter/inputs"
-	"log"
 )
 
 var (
@@ -33,22 +33,28 @@ var convertCmd = &cobra.Command{
 	Short: "Convert Openshift Resources to Kubernetes native formats",
 	Long: `Convert an Openshift Resources to a desired kubernetes native format
 
-Usage: shifter convert -i ./input.yaml -o ./output_dir
+Usage: shifter convert -i ./input.yaml -o ./output_dir -k kind
 Supply the input file with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
 		fmt.Println("Shifter - Convert")
+		fmt.Println("Converting", inputType, input, "to", kind, output)
 
 		switch inputType {
 		case "template":
-			t := inputs.TemplateConvert(input)
+			t := inputs.Template(input)
 			switch kind {
 			case "helm":
 				generators.Helm(output, t)
 			}
 		case "yaml":
-			log.Fatal("Yaml hasn't been implemented yet!")
-		case "openshift":
+			inputs.Yaml(input)
+			switch kind {
+			case "yaml":
+				//generators.Yaml(output, t)
+			}
+		case "cluster":
 			log.Fatal("Openshift resources have not been implemented yet!")
 
 		}

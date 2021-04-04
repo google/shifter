@@ -4,6 +4,11 @@ Easily and quickly convert your RedHat Openshift workloads to standard kubernete
 
 Shifter has extensible methods for inputs and generators.
 
+-----------------
+
+## Processor
+
+Processors are the converts from openshift to kubernetes.
 
 -----------------
 
@@ -20,7 +25,11 @@ Currently supported inputs:
 
 * **Templates**
 
-  Template converter takes a Openshift template and generates a helm chart that can be deployed against standard kubernetes clusters such as GKE.  This converts certain template types such as DeploymentConfig to Deployment
+  Template converter takes a Openshift template, converts it into kubernetes compatible resources and outputs given the format required.
+
+* **Cluster**
+
+  Cluster converter takes the resources deployed to a Openshift Namespace, converts those resources into kubernetes compatible resources and outputs given the format required. 
 
 ----------------
 

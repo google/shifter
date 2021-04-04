@@ -11,20 +11,24 @@ see the license for the specific language governing permissions and
 limitations under the license.
 */
 
-package inputs
+package input
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v2"
+	//"gopkg.in/yaml.v3"
 	"io/ioutil"
-	"log"
-	kyaml "sigs.k8s.io/yaml"
+	//"log"
+	//"shifter/processor"
+	"sigs.k8s.io/yaml"
+	//v1 "github.com/openshift/api/template/v1"
+	lib "shifter/lib"
 )
 
-type Template struct {
+type OSTemplate struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
+	Message    string `yaml:"message,omitempty"`
 	Metadata   struct {
 		CreationTimestamp string                 `yaml:"creationTimestamp"`
 		Name              string                 `yaml:"name"`
@@ -38,35 +42,21 @@ type Template struct {
 		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
 	}
 	Parameters []struct {
-		Name        string `yaml:"name"`
-		Description string `yaml:"description"`
-		Required    bool   `yaml:"required"`
-		Value       string `yaml:"value"`
+		Name string `yaml:"name"`
+		//	DisplayName string `yaml:"displayName,omitempty"`
+		Description string `yaml:"description,omitempty"`
+		Required    bool   `yaml:"required,omitempty"`
+		Value       string `yaml:"value,omitempty"`
+		//	Generate string `yaml:"generate,omitempty"`
 	}
 }
 
-type kube struct {
-	Parameters []struct {
-		Name        string `yaml:"name"`
-		Description string `yaml:"description"`
-		Required    bool   `yaml:"required"`
-		Value       string `yaml:"value"`
-	}
-	Objects []struct {
-		ApiVersion string                 `yaml:"apiVersion"`
-		Kind       string                 `yaml:"kind"`
-		Metadata   map[string]interface{} //metadata has a unkown structure so we use a generic interface
-		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
-		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
-	}
-}
-
-func readYaml(file string) Template {
+func readYaml(file string) OSTemplate {
 	yamlFile, err := ioutil.ReadFile(file)
 	if err != nil {
 		fmt.Println(err)
 	}
-	template := Template{}
+	template := OSTemplate{}
 	err = yaml.Unmarshal(yamlFile, &template)
 	if err != nil {
 		fmt.Println(err)
@@ -74,26 +64,20 @@ func readYaml(file string) Template {
 	return template
 }
 
-func parse(t Template) kube {
-	var k8s kube
+func parse(t OSTemplate) lib.Kube {
+	var k8s lib.Kube
 
 	//iterate over the objects and modify them as needed
 	for _, o := range t.Objects {
 		switch o.Kind {
 		case "DeploymentConfig":
+			//fmt.Println(o)
+
+			//dc, _ := yaml.Marshal(o)
+			//processor.DeploymentConfig(dc)
+
 			o.Kind = "Deployment"
 			o.ApiVersion = "apps/v1"
-			y, err := yaml.Marshal(o.Spec)
-			if err != nil {
-				log.Fatal(err)
-			}
-			j, err := kyaml.YAMLToJSON(y)
-			if err != nil {
-				log.Fatal(err)
-			}
-			//fmt.Println(string(j))
-			walk(j)
-
 			k8s.Objects = append(k8s.Objects, o)
 
 		case "ImageStream":
@@ -111,31 +95,7 @@ func parse(t Template) kube {
 	return k8s
 }
 
-func walk(input []byte) {
-	m := map[string]interface{}{}
-
-	err := json.Unmarshal(input, &m)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for key, val := range m {
-		switch cval := val.(type) {
-		default:
-			fmt.Println(key, ":", cval)
-		}
-		fmt.Println(key, val)
-		//fmt.Println(val.Type)
-	}
-
-}
-
-func TemplateConvert(input  string) []byte {
+func Template(input string) lib.Kube {
 	t := readYaml(input)
-	k, err := yaml.Marshal(parse(t))
-			if err != nil {
-				log.Println(err)
-			}
-
-			return k
+	return parse(t)
 }
