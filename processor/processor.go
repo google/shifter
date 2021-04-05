@@ -56,7 +56,15 @@ func Processor(input []byte, kind interface{}) runtime.Object {
 		return &t
 		break
 
+	case "PersistentVolumeClaim":
+		var pvc apiv1.PersistentVolumeClaim
+		json.Unmarshal(input, &pvc)
+		t := convertPvcToPvc(pvc)
+		return &t
+		break
+
 	}
+
 	return nil
 }
 

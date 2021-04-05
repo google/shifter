@@ -51,8 +51,18 @@ If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 
 ## Usage
 
-### Yaml converter
-```./shifter yaml --input input --output output --generator helm```
+### Flags
+```
+-i --input path to either a input file or directory (if reading multiple files)
+-t --input type e.g. (yaml, template, cluster)
+-o --output path to the output (directory will be created)
+-k --output kind (generator to use) e.g. (yaml, helm)
+```
+
+### Examples:
+
+#### Yaml converter
+```./shifter convert --type yaml --input ./input.yaml  --output ./output --kind yaml```
 
 ### Template converter
-```./shifter template -i input.yaml -o <directory>```
+```./shifter convert --type template --input ./myapp/template.yaml --output ./output --kind helm```

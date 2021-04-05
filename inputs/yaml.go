@@ -35,12 +35,13 @@ func Yaml(path string) []runtime.Object {
 }
 
 func readMultiFilesInDir(filePath string) []runtime.Object {
-
 	objects := make([]runtime.Object, 0)
 
 	fileList := make([]string, 0)
 	e := filepath.Walk(filePath, func(path string, f os.FileInfo, err error) error {
-		fileList = append(fileList, path)
+		if f.IsDir() == false {
+			fileList = append(fileList, path)
+		}
 		return err
 	})
 
@@ -49,7 +50,7 @@ func readMultiFilesInDir(filePath string) []runtime.Object {
 	}
 
 	for _, file := range fileList {
-		fmt.Println(file)
+		//fmt.Println(file)
 		t := readfile(file)
 		objects = append(objects, t)
 	}
@@ -97,13 +98,14 @@ func readMultiDocFile(fileName string) []runtime.Object {
 
 	for {
 		doc := make(map[interface{}]interface{})
-		err := d.Decode(&doc)
-		if err == io.EOF {
-			break
-		}
 
+		err := d.Decode(&doc)
 		if err != nil {
 			fmt.Println(err)
+		}
+
+		if err == io.EOF {
+			break
 		}
 
 		fmt.Println("Converting ", doc["kind"])

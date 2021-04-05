@@ -21,22 +21,25 @@ import (
 	"os"
 	//"log"
 	"bufio"
+	"log"
 	"strconv"
 )
 
 func Yaml(path string, objects []runtime.Object) {
 
+	// Create our output folder
 	createFolder(path)
 
+	// Iterate over our objects to write out
 	for k, v := range objects {
-
 		//fmt.Println(k, v)
-
 		no := strconv.Itoa(k)
 		f, err := os.Create(path + "/" + no + ".yaml")
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		log.Println("Creating file ", f.Name())
 
 		defer f.Close()
 
@@ -48,7 +51,5 @@ func Yaml(path string, objects []runtime.Object) {
 			fmt.Println(err)
 		}
 		w.Flush()
-
 	}
-
 }

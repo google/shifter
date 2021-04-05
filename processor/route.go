@@ -14,6 +14,7 @@ limitations under the license.
 package processor
 
 import (
+	"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,9 +27,12 @@ func convertRouteToIngress(OSRoute osroutev1.Route) v1beta1.Ingress {
 			Kind:       "Ingress",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
+		Spec:       v1beta1.IngressSpec{},
 	}
 
 	//Logic to convert a route to ingress
+
+	fmt.Println(OSRoute.Spec)
 
 	return *ingress
 }
