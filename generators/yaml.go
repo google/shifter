@@ -17,15 +17,38 @@ import (
 	//"encoding/json"
 	"fmt"
 	runtime "k8s.io/apimachinery/pkg/runtime"
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
+	"os"
 	//"log"
+	"bufio"
+	"strconv"
 )
 
 func Yaml(path string, objects []runtime.Object) {
 
+	createFolder(path)
+
 	for k, v := range objects {
 
-		fmt.Println(k, v)
-		serializer(v)
+		//fmt.Println(k, v)
+
+		no := strconv.Itoa(k)
+		f, err := os.Create(path + "/" + no + ".yaml")
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		defer f.Close()
+
+		w := bufio.NewWriter(f)
+
+		e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
+		err = e.Encode(v, w)
+		if err != nil {
+			fmt.Println(err)
+		}
+		w.Flush()
+
 	}
 
 }

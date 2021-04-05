@@ -14,6 +14,7 @@ limitations under the license.
 package generator
 
 import (
+	//"errors"
 	"fmt"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -28,4 +29,10 @@ func serializer(input runtime.Object) {
 		fmt.Println(err)
 	}
 
+}
+
+func createFolder(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.Mkdir(path, 0700)
+	}
 }

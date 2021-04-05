@@ -23,7 +23,9 @@ func Yaml(path string) []runtime.Object {
 
 	switch mode := fi.Mode(); {
 	case mode.IsDir():
-		readMultiFilesInDir(path)
+		t := readMultiFilesInDir(path)
+		return t
+
 	case mode.IsRegular():
 		t := readMultiDocFile(path)
 		return t
@@ -32,7 +34,10 @@ func Yaml(path string) []runtime.Object {
 	return nil
 }
 
-func readMultiFilesInDir(filePath string) {
+func readMultiFilesInDir(filePath string) []runtime.Object {
+
+	objects := make([]runtime.Object, 0)
+
 	fileList := make([]string, 0)
 	e := filepath.Walk(filePath, func(path string, f os.FileInfo, err error) error {
 		fileList = append(fileList, path)
@@ -45,8 +50,39 @@ func readMultiFilesInDir(filePath string) {
 
 	for _, file := range fileList {
 		fmt.Println(file)
+		t := readfile(file)
+		objects = append(objects, t)
+	}
+	return objects
+}
+
+func readfile(fileName string) runtime.Object {
+	f, err := os.Open(fileName)
+	if err != nil {
+		fmt.Println(err)
 	}
 
+	d := yaml.NewDecoder(f)
+	doc := make(map[interface{}]interface{})
+	err = d.Decode(&doc)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Converting ", doc["kind"])
+
+	val, err := yaml.Marshal(doc)
+	if err != nil {
+		fmt.Println(err)
+	}
+	j2, err := gyaml.YAMLToJSON(val)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	t := processor.Processor(j2, doc["kind"])
+
+	return t
 }
 
 func readMultiDocFile(fileName string) []runtime.Object {

@@ -37,7 +37,7 @@ yamlTest: fmt
 	go run . convert -t yaml -i ./_test/yaml/multidoc/os-nginx.yaml -o ./out -k yaml
 
 yamlMultiTest: fmt
-	go run . convert -t yaml -i ./_test/yaml/multifile/ -o ./out -k yaml
+	go run . convert -t yaml -i ./_test/yaml/multifile/ -o ./out/files -k yaml
 
 templateTest:
 	go run . convert -t template -i ./_test/os-nginx-template.yaml -o ./out -k helm
