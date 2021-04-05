@@ -14,18 +14,18 @@ limitations under the license.
 package generator
 
 import (
-	//"encoding/json"
 	"fmt"
 	runtime "k8s.io/apimachinery/pkg/runtime"
-	//"log"
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
+	"os"
 )
 
-func Yaml(path string, objects []runtime.Object) {
+func serializer(input runtime.Object) {
+	e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
 
-	for k, v := range objects {
-
-		fmt.Println(k, v)
-		serializer(v)
+	err := e.Encode(input, os.Stdout)
+	if err != nil {
+		fmt.Println(err)
 	}
 
 }

@@ -49,10 +49,10 @@ Supply the output using the -o or --output flag, the directory will be created w
 				generators.Helm(output, t)
 			}
 		case "yaml":
-			inputs.Yaml(input)
+			t := inputs.Yaml(input)
 			switch kind {
 			case "yaml":
-				//generators.Yaml(output, t)
+				generators.Yaml(output, t)
 			}
 		case "cluster":
 			log.Fatal("Openshift resources have not been implemented yet!")

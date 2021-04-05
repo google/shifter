@@ -5,6 +5,7 @@ import (
 	gyaml "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v3"
 	"io"
+	runtime "k8s.io/apimachinery/pkg/runtime"
 	"os"
 	"path/filepath"
 	"shifter/processor"
@@ -14,7 +15,7 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(path string) string {
+func Yaml(path string) []runtime.Object {
 	fi, err := os.Stat(path)
 	if err != nil {
 		fmt.Println(err)
@@ -24,10 +25,11 @@ func Yaml(path string) string {
 	case mode.IsDir():
 		readMultiFilesInDir(path)
 	case mode.IsRegular():
-		readMultiDocFile(path)
+		t := readMultiDocFile(path)
+		return t
 	}
 
-	return ""
+	return nil
 }
 
 func readMultiFilesInDir(filePath string) {
@@ -47,13 +49,16 @@ func readMultiFilesInDir(filePath string) {
 
 }
 
-func readMultiDocFile(fileName string) {
+func readMultiDocFile(fileName string) []runtime.Object {
 	f, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	d := yaml.NewDecoder(f)
+
+	objects := make([]runtime.Object, 0)
+
 	for {
 		doc := make(map[interface{}]interface{})
 		err := d.Decode(&doc)
@@ -76,6 +81,10 @@ func readMultiDocFile(fileName string) {
 			fmt.Println(err)
 		}
 
-		processor.Processor(j2, doc["kind"])
+		t := processor.Processor(j2, doc["kind"])
+		objects = append(objects, t)
+
+		//fmt.Println(t)
 	}
+	return objects
 }

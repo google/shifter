@@ -23,40 +23,51 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
+	//"bufio"
 )
 
 func int32Ptr(i int32) *int32 { return &i }
 func int64Ptr(i int64) *int64 { return &i }
 
-func Processor(input []byte, kind interface{}) {
+func Processor(input []byte, kind interface{}) runtime.Object {
 	switch kind {
 
 	case "DeploymentConfig":
 		var dc osappsv1.DeploymentConfig
 		json.Unmarshal(input, &dc)
 		t := convertDeploymentConfigToDeployment(dc)
-		serializer(&t)
+		//serializer(&t)
+		return &t
+		break
 
 	case "Route":
 		var route osroutev1.Route
 		json.Unmarshal(input, &route)
 		t := convertRouteToIngress(route)
-		serializer(&t)
+		//serializer(&t)
+		return &t
+		break
 
 	case "Service":
 		var service apiv1.Service
 		json.Unmarshal(input, &service)
 		t := convertServiceToService(service)
-		serializer(&t)
+		//serializer(&t)
+		return &t
+		break
 
 	}
+	return nil
 }
 
 func serializer(input runtime.Object) {
+	//fmt.Println(input)
 	fmt.Println("---")
 	e := kjson.NewYAMLSerializer(kjson.DefaultMetaFactory, nil, nil)
+
 	err := e.Encode(input, os.Stdout)
 	if err != nil {
 		fmt.Println(err)
 	}
+
 }
