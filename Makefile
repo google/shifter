@@ -22,7 +22,7 @@ lint:
 clean:
 
 build: fmt
-	env GOOS=linux go build -v shifter
+	env GOOS=linux go build --ldflags '-linkmode external -extldflags "-static"' -v shifter 
 
 fmt:
 	go fmt ./...

@@ -30,9 +30,21 @@ func convertRouteToIngress(OSRoute osroutev1.Route) v1beta1.Ingress {
 		Spec:       v1beta1.IngressSpec{},
 	}
 
+	//var spec = v1beta1.IngressSpec
+
 	//Logic to convert a route to ingress
 
-	fmt.Println(OSRoute.Spec)
+	// Check if there is a host specified
+	if OSRoute.Spec.Host != "" {
+		fmt.Println(OSRoute.Spec.Host)
+	}
 
+	// Check if there is a path specified
+	if OSRoute.Spec.Path != "" {
+		fmt.Println(OSRoute.Spec.Path)
+	}
+
+	fmt.Println(OSRoute.Spec)
+	fmt.Println(OSRoute.Spec.Host)
 	return *ingress
 }
