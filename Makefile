@@ -16,9 +16,6 @@
 
 test: yamlTest yamlMultiTest yamlDCTest
 
-lint:
-	helm lint ./out
-
 clean:
 
 build: fmt
@@ -32,6 +29,9 @@ apply:
 
 # Tests
 # ---------------
+
+helmlint:
+	helm lint ./out
 
 yamlTest: fmt
 	go run . convert -t yaml -i ./_test/yaml/multidoc/os-nginx.yaml -o ./out -k yaml

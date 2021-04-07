@@ -42,7 +42,7 @@ func Yaml(path string, objects []lib.K8sobject) {
 			fmt.Println(err)
 		}
 
-		log.Println("Creating file ", f.Name())
+		log.Println("Creating file", f.Name())
 
 		defer f.Close()
 

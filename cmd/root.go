@@ -27,7 +27,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "shifter",
 	Short: "Move your workloads from Openshift to Kubernetes",
-	Long:  `
+	Long: `
    _____ __    _ ______           
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/

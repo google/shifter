@@ -5,6 +5,7 @@ import (
 	gyaml "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v3"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"shifter/lib"
@@ -50,7 +51,6 @@ func readMultiFilesInDir(filePath string) []lib.K8sobject {
 	}
 
 	for _, file := range fileList {
-		//fmt.Println(file)
 		t := readfile(file)
 		objects = append(objects, t)
 	}
@@ -70,7 +70,7 @@ func readfile(fileName string) lib.K8sobject {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Converting ", doc["kind"])
+	log.Println("Converting", doc["kind"])
 
 	val, err := yaml.Marshal(doc)
 	if err != nil {
@@ -108,7 +108,7 @@ func readMultiDocFile(fileName string) []lib.K8sobject {
 			break
 		}
 
-		fmt.Println("Converting ", doc["kind"])
+		log.Println("Converting", doc["kind"])
 
 		val, err := yaml.Marshal(doc)
 		if err != nil {
