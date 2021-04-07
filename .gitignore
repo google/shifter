@@ -1,3 +1,6 @@
 shifter
 out/
 *.swp
+shifter-linux-*
+shifter-darwin-*
+shifter-windows-*

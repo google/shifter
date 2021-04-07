@@ -1,0 +1,6 @@
+steps:
+- name: golang
+  env:
+  - 'GOOS=linux'
+  - 'GOARCH=amd64'
+  args: ['make', 'build']

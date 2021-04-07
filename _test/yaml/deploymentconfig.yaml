@@ -1,0 +1,99 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  generation: 2
+  name: myapp
+  namespace: demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentConfig: myapp
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        application: myapp
+        deploymentConfig: myapp
+      name: myapp
+    spec:
+      containers:
+        - env:
+            - name: JGROUPS_PING_PROTOCOL
+              value: dns.DNS_PING
+            - name: OPENSHIFT_DNS_PING_SERVICE_NAME
+              value: myapp-ping
+            - name: OPENSHIFT_DNS_PING_SERVICE_PORT
+              value: "8888"
+            - name: MQ_CLUSTER_PASSWORD
+              value: otytEpAL
+            - name: MQ_QUEUES
+            - name: MQ_TOPICS
+            - name: JGROUPS_CLUSTER_PASSWORD
+              value: auAA7G2w
+            - name: AUTO_DEPLOY_EXPLODED
+              value: "false"
+          image: image-registry.openshift-image-registry.svc:5000/demo/myapp@sha256:5087a466b19dcfcbb391b608f30f9fe3e73ec50a6d8db8d8546c340eececaa86
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/eap/bin/livenessProbe.sh
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: myapp
+          ports:
+            - containerPort: 8778
+              name: jolokia
+              protocol: TCP
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 8888
+              name: ping
+              protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/eap/bin/readinessProbe.sh false
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 1Gi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 75
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - myapp
+        from:
+          kind: ImageStreamTag
+          name: myapp:latest
+          namespace: demo
+        lastTriggeredImage: image-registry.openshift-image-registry.svc:5000/demo/myapp@sha256:5087a466b19dcfcbb391b608f30f9fe3e73ec50a6d8db8d8546c340eececaa86
+      type: ImageChange
+    - type: ConfigChange

@@ -14,6 +14,7 @@ limitations under the license.
 package processor
 
 import (
+	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
@@ -25,7 +26,7 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Deployment",
-			APIVersion: "v1",
+			APIVersion: "apps/v1",
 		},
 		ObjectMeta: OSDeploymentConfig.ObjectMeta,
 		Spec: appsv1.DeploymentSpec{
@@ -56,6 +57,9 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 
 	// Add containers
 	deployment.Spec.Template.Spec.Containers = OSDeploymentConfig.Spec.Template.Spec.Containers
+	for _, containers := range deployment.Spec.Template.Spec.Containers {
+		fmt.Println(containers)
+	}
 
 	// Add security context
 	deployment.Spec.Template.Spec.SecurityContext = OSDeploymentConfig.Spec.Template.Spec.SecurityContext
