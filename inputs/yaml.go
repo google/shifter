@@ -22,6 +22,8 @@ func Yaml(path string) []lib.K8sobject {
 		fmt.Println(err)
 	}
 
+	log.Println("Reading in file", fi.Name())
+
 	switch mode := fi.Mode(); {
 	case mode.IsDir():
 		t := readMultiFilesInDir(path)
@@ -31,6 +33,8 @@ func Yaml(path string) []lib.K8sobject {
 		t := readMultiDocFile(path)
 		return t
 	}
+
+	log.Printf("Done")
 
 	return nil
 }
@@ -51,39 +55,14 @@ func readMultiFilesInDir(filePath string) []lib.K8sobject {
 	}
 
 	for _, file := range fileList {
-		t := readfile(file)
-		objects = append(objects, t)
+		t := readMultiDocFile(file)
+		for _, v := range t {
+			objects = append(objects, v)
+		}
+
+		//objects = append(objects, t)
 	}
 	return objects
-}
-
-func readfile(fileName string) lib.K8sobject {
-	f, err := os.Open(fileName)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	d := yaml.NewDecoder(f)
-	doc := make(map[interface{}]interface{})
-	err = d.Decode(&doc)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	log.Println("Converting", doc["kind"])
-
-	val, err := yaml.Marshal(doc)
-	if err != nil {
-		fmt.Println(err)
-	}
-	j2, err := gyaml.YAMLToJSON(val)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	t := processor.Processor(j2, doc["kind"])
-
-	return t
 }
 
 func readMultiDocFile(fileName string) []lib.K8sobject {

@@ -19,7 +19,7 @@ test: yamlTest yamlMultiTest yamlDCTest
 clean:
 
 build: fmt
-	env GOOS=linux go build --ldflags '-linkmode external -extldflags "-static"' -v shifter 
+	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -v shifter
 
 fmt:
 	go fmt ./...

@@ -55,4 +55,6 @@ func Yaml(path string, objects []lib.K8sobject) {
 		}
 		w.Flush()
 	}
+
+	log.Println("Conversion completed")
 }
