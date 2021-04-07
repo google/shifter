@@ -16,25 +16,28 @@ package generator
 import (
 	//"encoding/json"
 	"fmt"
-	runtime "k8s.io/apimachinery/pkg/runtime"
+	//runtime "k8s.io/apimachinery/pkg/runtime"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
 	//"log"
 	"bufio"
 	"log"
+	"shifter/lib"
 	"strconv"
 )
 
-func Yaml(path string, objects []runtime.Object) {
+func Yaml(path string, objects []lib.K8sobject) {
 
 	// Create our output folder
 	createFolder(path)
 
 	// Iterate over our objects to write out
 	for k, v := range objects {
-		//fmt.Println(k, v)
 		no := strconv.Itoa(k)
-		f, err := os.Create(path + "/" + no + ".yaml")
+
+		kind := fmt.Sprintf("%v", v.Kind)
+
+		f, err := os.Create(path + "/" + no + "-" + kind + ".yaml")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -46,7 +49,7 @@ func Yaml(path string, objects []runtime.Object) {
 		w := bufio.NewWriter(f)
 
 		e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
-		err = e.Encode(v, w)
+		err = e.Encode(v.Object, w)
 		if err != nil {
 			fmt.Println(err)
 		}

@@ -1,5 +1,9 @@
 package lib
 
+import (
+	runtime "k8s.io/apimachinery/pkg/runtime"
+)
+
 type Kube struct {
 	Parameters []struct {
 		Name        string `yaml:"name"`
@@ -14,4 +18,9 @@ type Kube struct {
 		Spec       map[string]interface{} //specs are dependent on the kind so we use a generic interface
 		Data       map[string]interface{} //specs are dependent on the kind so we use a generic interface
 	}
+}
+
+type K8sobject struct {
+	Kind   interface{}
+	Object runtime.Object
 }

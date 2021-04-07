@@ -16,15 +16,16 @@ package generator
 import (
 	//"errors"
 	"fmt"
-	runtime "k8s.io/apimachinery/pkg/runtime"
+	//runtime "k8s.io/apimachinery/pkg/runtime"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
+	"shifter/lib"
 )
 
-func serializer(input runtime.Object) {
+func serializer(input lib.K8sobject) {
 	e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
 
-	err := e.Encode(input, os.Stdout)
+	err := e.Encode(input.Object, os.Stdout)
 	if err != nil {
 		fmt.Println(err)
 	}

@@ -5,9 +5,9 @@ import (
 	gyaml "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v3"
 	"io"
-	runtime "k8s.io/apimachinery/pkg/runtime"
 	"os"
 	"path/filepath"
+	"shifter/lib"
 	"shifter/processor"
 )
 
@@ -15,7 +15,7 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(path string) []runtime.Object {
+func Yaml(path string) []lib.K8sobject {
 	fi, err := os.Stat(path)
 	if err != nil {
 		fmt.Println(err)
@@ -34,8 +34,8 @@ func Yaml(path string) []runtime.Object {
 	return nil
 }
 
-func readMultiFilesInDir(filePath string) []runtime.Object {
-	objects := make([]runtime.Object, 0)
+func readMultiFilesInDir(filePath string) []lib.K8sobject {
+	objects := make([]lib.K8sobject, 0)
 
 	fileList := make([]string, 0)
 	e := filepath.Walk(filePath, func(path string, f os.FileInfo, err error) error {
@@ -57,7 +57,7 @@ func readMultiFilesInDir(filePath string) []runtime.Object {
 	return objects
 }
 
-func readfile(fileName string) runtime.Object {
+func readfile(fileName string) lib.K8sobject {
 	f, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -86,7 +86,7 @@ func readfile(fileName string) runtime.Object {
 	return t
 }
 
-func readMultiDocFile(fileName string) []runtime.Object {
+func readMultiDocFile(fileName string) []lib.K8sobject {
 	f, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -94,7 +94,7 @@ func readMultiDocFile(fileName string) []runtime.Object {
 
 	d := yaml.NewDecoder(f)
 
-	objects := make([]runtime.Object, 0)
+	objects := make([]lib.K8sobject, 0)
 
 	for {
 		doc := make(map[interface{}]interface{})
