@@ -47,9 +47,16 @@ Supply the input file or directory of files with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		fmt.Println("Shifter - Convert")
-		fmt.Println("Converting", inputType, input, "to", kind, output)
+		fmt.Println(`
+   _____ __    _ ______           
+  / ___// /_  (_) __/ /____  _____
+  \__ \/ __ \/ / /_/ __/ _ \/ ___/
+ ___/ / / / / / __/ /_/  __/ /    
+/____/_/ /_/_/_/  \__/\___/_/     
+                                 
+----------------------------------------
+			`)
+		log.Println("Converting", inputType, input, "to", kind, output)
 
 		switch inputType {
 		case "template":
