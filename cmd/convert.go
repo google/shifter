@@ -42,9 +42,10 @@ var convertCmd = &cobra.Command{
 
 Convert OpenShift resources to kubernetes native formats
 
-Usage: shifter convert -i ./input.yaml -o ./output_dir -k kind
-Supply the input file with the -i or --input flag
-Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.`,
+Usage: shifter convert -i ./input.yaml -o ./output_dir -k kind -t kind
+Supply the input file or directory of files with the -i or --input flag
+Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		fmt.Println("Shifter - Convert")
@@ -72,9 +73,9 @@ Supply the output using the -o or --output flag, the directory will be created w
 
 func init() {
 	rootCmd.AddCommand(convertCmd)
-	convertCmd.Flags().StringVarP(&inputType, "type", "t", "", "The input type e.g. template, yaml or openshift")
-	convertCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file to convert, must be in Openshift format")
-	convertCmd.Flags().StringVarP(&kind, "kind", "k", "helm", "Output kind options are either: yaml, helm or kpt")
+	convertCmd.Flags().StringVarP(&inputType, "type", "t", "yaml", "The input type e.g. template, yaml or openshift")
+	convertCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file or directory to convert, (contents must be in OpenShift format)")
+	convertCmd.Flags().StringVarP(&kind, "kind", "k", "yaml", "Output kind options are either: yaml, helm or kpt")
 	convertCmd.Flags().StringVarP(&output, "output", "o", "", "Relative path to the output directory for the results on the conversion")
 	convertCmd.MarkFlagRequired("input")
 	convertCmd.MarkFlagRequired("output")
