@@ -23,9 +23,10 @@ import (
 
 var (
 	inputType string
-	input     string
+	filename  string
 	output    string
-	kind      string
+	generator string
+	genFlag   string
 )
 
 var convertCmd = &cobra.Command{
@@ -56,18 +57,18 @@ Supply the output using the -o or --output flag, the directory will be created w
                                  
 ----------------------------------------
 			`)
-		log.Println("Converting", inputType, input, "to", kind, output)
+		log.Println("Converting", inputType, filename, "to", generator, output)
 
 		switch inputType {
 		case "template":
-			t := inputs.Template(input)
-			switch kind {
+			t := inputs.Template(filename)
+			switch generator {
 			case "helm":
 				generators.Helm(output, t)
 			}
 		case "yaml":
-			t := inputs.Yaml(input)
-			switch kind {
+			t := inputs.Yaml(filename)
+			switch generator {
 			case "yaml":
 				generators.Yaml(output, t)
 			}
@@ -80,10 +81,11 @@ Supply the output using the -o or --output flag, the directory will be created w
 
 func init() {
 	rootCmd.AddCommand(convertCmd)
-	convertCmd.Flags().StringVarP(&inputType, "type", "t", "yaml", "The input type e.g. template, yaml or openshift")
-	convertCmd.Flags().StringVarP(&input, "input", "i", "", "Path to the input file or directory to convert, (contents must be in OpenShift format)")
-	convertCmd.Flags().StringVarP(&kind, "kind", "k", "yaml", "Output kind options are either: yaml, helm or kpt")
-	convertCmd.Flags().StringVarP(&output, "output", "o", "", "Relative path to the output directory for the results on the conversion")
-	convertCmd.MarkFlagRequired("input")
-	convertCmd.MarkFlagRequired("output")
+	convertCmd.Flags().StringVarP(&inputType, "input-format", "i", "yaml", "Input format. One of: yaml|template")
+	convertCmd.Flags().StringVarP(&filename, "filename", "f", "", "Path to the file or directory to convert (contents must be in OpenShift format)")
+	convertCmd.Flags().StringVarP(&generator, "output-format", "t", "", "Output format. One of: yaml|helm")
+	convertCmd.Flags().StringVarP(&output, "output-path", "o", "", "Relative path to the output directory for the results on the conversion")
+	convertCmd.Flags().StringVarP(&genFlag, "genflag", "", "", "Flags passed to the generator")
+	convertCmd.MarkFlagRequired("filename")
+	convertCmd.MarkFlagRequired("output-path")
 }

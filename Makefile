@@ -34,13 +34,13 @@ helmlint:
 	helm lint ./out
 
 yamlTest: fmt
-	go run . convert -t yaml -i ./_test/yaml/multidoc/os-nginx.yaml -o ./out -k yaml
+	go run . convert -t yaml -f ./_test/yaml/multidoc/os-nginx.yaml -o ./out -i yaml
 
 yamlMultiTest: fmt
-	go run . convert -t yaml -i ./_test/yaml/multifile/ -o ./out/files -k yaml
+	go run . convert -t yaml -f ./_test/yaml/multifile/ -o ./out/files -i yaml
 
 yamlDCTest: fmt
-	go run . convert -t yaml -k yaml -i ./_test/yaml/deploymentconfig.yaml -o ./out/dc
+	go run . convert -t yaml -i yaml -f ./_test/yaml/deploymentconfig.yaml -o ./out/dc
 
 templateTest:
-	go run . convert -t template -i ./_test/os-nginx-template.yaml -o ./out/helm -k helm
+	go run . convert -t template -f ./_test/os-nginx-template.yaml -o ./out/helm -k helm

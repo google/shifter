@@ -30,20 +30,16 @@ func convertRouteToIngress(OSRoute osroutev1.Route) v1beta1.Ingress {
 		Spec:       v1beta1.IngressSpec{},
 	}
 
-
 	/*
 
-		Openshift routes can take different forms which need to be handled by different types of 
+		Openshift routes can take different forms which need to be handled by different types of
 		ingress resources.
 
 
 
 
-	
+
 	*/
-
-
-
 
 	//var spec = v1beta1.IngressSpec
 
