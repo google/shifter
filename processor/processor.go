@@ -19,12 +19,10 @@ import (
 	osappsv1 "github.com/openshift/api/apps/v1"
 	osroutev1 "github.com/openshift/api/route/v1"
 	apiv1 "k8s.io/api/core/v1"
-	//yaml "gopkg.in/yaml.v3"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
 	"shifter/lib"
-	//"bufio"
 )
 
 func int32Ptr(i int32) *int32 { return &i }
@@ -93,7 +91,6 @@ func Processor(input []byte, kind interface{}) lib.K8sobject {
 }
 
 func serializer(input runtime.Object) {
-	//fmt.Println(input)
 	fmt.Println("---")
 	e := kjson.NewYAMLSerializer(kjson.DefaultMetaFactory, nil, nil)
 
@@ -101,5 +98,4 @@ func serializer(input runtime.Object) {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }
