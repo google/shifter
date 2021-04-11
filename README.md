@@ -53,16 +53,16 @@ If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 
 ### Flags
 ```
--i --input path to either a input file or directory (if reading multiple files)
--t --input type e.g. (yaml, template, cluster)
--o --output path to the output (directory will be created)
--k --output kind (generator to use) e.g. (yaml, helm)
+-f --filename path to either a input file or directory (if reading multiple files)
+-i --input-format Input format. One of yaml|template (Default: yaml)
+-o --output-path Relative or full path to save the output, if you specify a .yaml or .yml file it will create a multi-document file with all resources, if you specify a directory it will create multiple files per resource type
+-t --output-format Output format (generator to use) One of: yaml|helm
 ```
 
 ### Examples:
 
 #### Yaml converter
-```./shifter convert --type yaml --input ./input.yaml  --output ./output --kind yaml```
+```./shifter convert --input-format yaml --filename ./input.yaml --output-path ./output --output-format yaml```
 
 ### Template converter
 ```./shifter convert --type template --input ./myapp/template.yaml --output ./output --kind helm```
