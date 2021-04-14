@@ -19,6 +19,7 @@ import (
 	"log"
 	generators "shifter/generators"
 	inputs "shifter/inputs"
+	"strings"
 )
 
 var (
@@ -26,7 +27,7 @@ var (
 	filename  string
 	output    string
 	generator string
-	genFlag   string
+	pFlags    []string
 )
 
 var convertCmd = &cobra.Command{
@@ -59,6 +60,8 @@ Supply the output using the -o or --output flag, the directory will be created w
 			`)
 		log.Println("Converting", inputType, filename, "to", generator, output)
 
+		flags := procFlags(pFlags)
+		log.Println("Processor Flags:", flags)
 		switch inputType {
 		case "template":
 			t := inputs.Template(filename)
@@ -67,7 +70,7 @@ Supply the output using the -o or --output flag, the directory will be created w
 				generators.Helm(output, t)
 			}
 		case "yaml":
-			t := inputs.Yaml(filename)
+			t := inputs.Yaml(filename, flags)
 			switch generator {
 			case "yaml":
 				generators.Yaml(output, t)
@@ -85,7 +88,21 @@ func init() {
 	convertCmd.Flags().StringVarP(&filename, "filename", "f", "", "Path to the file or directory to convert (contents must be in OpenShift format)")
 	convertCmd.Flags().StringVarP(&generator, "output-format", "t", "", "Output format. One of: yaml|helm")
 	convertCmd.Flags().StringVarP(&output, "output-path", "o", "", "Relative path to the output directory for the results on the conversion")
-	convertCmd.Flags().StringVarP(&genFlag, "genflag", "", "", "Flags passed to the generator")
+	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "", []string{}, "Flags passed to the processor")
 	convertCmd.MarkFlagRequired("filename")
 	convertCmd.MarkFlagRequired("output-path")
+}
+
+func procFlags(input []string) map[string]string {
+	// Process the inputting processor flags into a map
+	m := make(map[string]string)
+
+	for _, f := range input {
+		flag := strings.Split(f, "=")
+		key := string(flag[0])
+		value := string(flag[1])
+		m[key] = value
+	}
+
+	return m
 }

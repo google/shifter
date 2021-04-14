@@ -14,7 +14,7 @@
 
 
 
-test: yamlTest yamlMultiTest yamlDCTest
+test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest
 
 clean:
 
@@ -38,6 +38,9 @@ yamlTest: fmt
 
 yamlMultiTest: fmt
 	go run . convert -t yaml -f ./_test/yaml/multifile/ -o ./out/files -i yaml
+
+yamlMultiOutputSingleTest: fmt
+	go run . convert -t yaml -f ./_test/yaml/multifile/ -o ./out/files.yaml -i yaml
 
 yamlDCTest: fmt
 	go run . convert -t yaml -i yaml -f ./_test/yaml/deploymentconfig.yaml -o ./out/dc

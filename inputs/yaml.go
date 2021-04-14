@@ -16,7 +16,7 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(path string) []lib.K8sobject {
+func Yaml(path string, flags map[string]string) []lib.K8sobject {
 	fi, err := os.Stat(path)
 	if err != nil {
 		fmt.Println(err)
@@ -26,11 +26,11 @@ func Yaml(path string) []lib.K8sobject {
 
 	switch mode := fi.Mode(); {
 	case mode.IsDir():
-		t := readMultiFilesInDir(path)
+		t := readMultiFilesInDir(path, flags)
 		return t
 
 	case mode.IsRegular():
-		t := readMultiDocFile(path)
+		t := readMultiDocFile(path, flags)
 		return t
 	}
 
@@ -39,7 +39,7 @@ func Yaml(path string) []lib.K8sobject {
 	return nil
 }
 
-func readMultiFilesInDir(filePath string) []lib.K8sobject {
+func readMultiFilesInDir(filePath string, flags map[string]string) []lib.K8sobject {
 	objects := make([]lib.K8sobject, 0)
 
 	fileList := make([]string, 0)
@@ -55,7 +55,7 @@ func readMultiFilesInDir(filePath string) []lib.K8sobject {
 	}
 
 	for _, file := range fileList {
-		t := readMultiDocFile(file)
+		t := readMultiDocFile(file, flags)
 		for _, v := range t {
 			objects = append(objects, v)
 		}
@@ -65,7 +65,7 @@ func readMultiFilesInDir(filePath string) []lib.K8sobject {
 	return objects
 }
 
-func readMultiDocFile(fileName string) []lib.K8sobject {
+func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject {
 	f, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -98,7 +98,7 @@ func readMultiDocFile(fileName string) []lib.K8sobject {
 			fmt.Println(err)
 		}
 
-		t := processor.Processor(j2, doc["kind"])
+		t := processor.Processor(j2, doc["kind"], flags)
 		objects = append(objects, t)
 
 		//fmt.Println(t)

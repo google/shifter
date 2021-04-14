@@ -28,8 +28,9 @@ import (
 func int32Ptr(i int32) *int32 { return &i }
 func int64Ptr(i int64) *int64 { return &i }
 
-func Processor(input []byte, kind interface{}) lib.K8sobject {
+func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8sobject {
 
+	fmt.Println(flags)
 	var k lib.K8sobject
 
 	switch kind {
@@ -37,7 +38,7 @@ func Processor(input []byte, kind interface{}) lib.K8sobject {
 	case "DeploymentConfig":
 		var dc osappsv1.DeploymentConfig
 		json.Unmarshal(input, &dc)
-		t := convertDeploymentConfigToDeployment(dc)
+		t := convertDeploymentConfigToDeployment(dc, flags)
 
 		var k lib.K8sobject
 
@@ -50,7 +51,7 @@ func Processor(input []byte, kind interface{}) lib.K8sobject {
 	case "Route":
 		var route osroutev1.Route
 		json.Unmarshal(input, &route)
-		t := convertRouteToIngress(route)
+		t := convertRouteToIngress(route, flags)
 
 		var k lib.K8sobject
 
@@ -63,7 +64,7 @@ func Processor(input []byte, kind interface{}) lib.K8sobject {
 	case "Service":
 		var service apiv1.Service
 		json.Unmarshal(input, &service)
-		t := convertServiceToService(service)
+		t := convertServiceToService(service, flags)
 
 		var k lib.K8sobject
 
@@ -76,7 +77,7 @@ func Processor(input []byte, kind interface{}) lib.K8sobject {
 	case "PersistentVolumeClaim":
 		var pvc apiv1.PersistentVolumeClaim
 		json.Unmarshal(input, &pvc)
-		t := convertPvcToPvc(pvc)
+		t := convertPvcToPvc(pvc, flags)
 		var k lib.K8sobject
 
 		k.Kind = kind

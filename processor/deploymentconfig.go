@@ -19,9 +19,14 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"strings"
 )
 
-func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig) appsv1.Deployment {
+func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) appsv1.Deployment {
+
+	var flagImageRepo string
+	flagImageRepo = flags["image-repo"]
+
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
@@ -55,14 +60,22 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 	// Add Spec
 	deployment.Spec.Template.Spec = OSDeploymentConfig.Spec.Template.Spec
 
-	// Add containers
-	deployment.Spec.Template.Spec.Containers = OSDeploymentConfig.Spec.Template.Spec.Containers
-	for _, containers := range deployment.Spec.Template.Spec.Containers {
-		fmt.Println(containers)
-	}
-
 	// Add security context
 	deployment.Spec.Template.Spec.SecurityContext = OSDeploymentConfig.Spec.Template.Spec.SecurityContext
+
+	// Add containers
+	deployment.Spec.Template.Spec.Containers = OSDeploymentConfig.Spec.Template.Spec.Containers
+	for i, containers := range deployment.Spec.Template.Spec.Containers {
+		if flagImageRepo != "" {
+			var newImg string
+			newImg = strings.Split(containers.Image, "/")[1]
+			fmt.Println(newImg[1])
+			newImg = flagImageRepo + newImg
+			fmt.Println(newImg)
+			deployment.Spec.Template.Spec.Containers[i].Image = newImg
+
+		}
+	}
 
 	// Return a full kubernetes structure, this needs to be marshalled into a usable yaml
 	return *deployment

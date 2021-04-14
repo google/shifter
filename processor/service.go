@@ -17,7 +17,7 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 )
 
-func convertServiceToService(OSService apiv1.Service) apiv1.Service {
+func convertServiceToService(OSService apiv1.Service, flags map[string]string) apiv1.Service {
 	service := &apiv1.Service{
 		TypeMeta:   OSService.TypeMeta,
 		ObjectMeta: OSService.ObjectMeta,
