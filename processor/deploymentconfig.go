@@ -14,18 +14,17 @@ limitations under the license.
 package processor
 
 import (
-	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"log"
 	"strings"
 )
 
 func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) appsv1.Deployment {
 
-	var flagImageRepo string
-	flagImageRepo = flags["image-repo"]
+	flagImageRepo := flags["image-repo"]
 
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
@@ -67,12 +66,11 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 	deployment.Spec.Template.Spec.Containers = OSDeploymentConfig.Spec.Template.Spec.Containers
 	for i, containers := range deployment.Spec.Template.Spec.Containers {
 		if flagImageRepo != "" {
-			var newImg string
-			newImg = strings.Split(containers.Image, "/")[1]
-			fmt.Println(newImg[1])
-			newImg = flagImageRepo + newImg
-			fmt.Println(newImg)
-			deployment.Spec.Template.Spec.Containers[i].Image = newImg
+			newImg := strings.Split(containers.Image, "/")
+			n := string(newImg[len(newImg)-1])
+			n = flagImageRepo + n
+			log.Println("Changing image source from", containers.Image, "to", n)
+			deployment.Spec.Template.Spec.Containers[i].Image = n
 
 		}
 	}

@@ -29,12 +29,10 @@ func int32Ptr(i int32) *int32 { return &i }
 func int64Ptr(i int64) *int64 { return &i }
 
 func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8sobject {
-
-	fmt.Println(flags)
+	// Use our K8sobject which is a generic json interface for kubernetes objects
 	var k lib.K8sobject
 
 	switch kind {
-
 	case "DeploymentConfig":
 		var dc osappsv1.DeploymentConfig
 		json.Unmarshal(input, &dc)
