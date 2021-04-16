@@ -86,8 +86,8 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 
 		err := d.Decode(&doc)
 		if err != nil {
-			log.Println(err)
-			os.Exit(1)
+			log.Println("*****", err)
+			//os.Exit(1)
 		}
 
 		if err == io.EOF {
@@ -118,8 +118,10 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 }
 
 func hack(fileName string) {
+	fmt.Println("*** HACKING FILE ****")
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
+		fmt.Println("********")
 		fmt.Println(err)
 	}
 
@@ -148,6 +150,7 @@ func hack(fileName string) {
 
 	err = ioutil.WriteFile(fileName, []byte(output), 0644)
 	if err != nil {
+		fmt.Println("*********")
 		fmt.Println(err)
 	}
 
