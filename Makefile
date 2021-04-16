@@ -14,7 +14,7 @@
 
 
 
-test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest
+test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest
 
 clean:
 
@@ -44,6 +44,9 @@ yamlMultiOutputSingleTest: fmt
 
 yamlDCTest: fmt
 	go run . convert -t yaml -i yaml -f ./_test/yaml/deploymentconfig.yaml -o ./out/dc
+
+yamlQNSTest: fmt
+	go run . convert -t yaml -i yaml -f ./_test/yaml/quoted_nested_strings.yaml -o ./out/quoted_nested_strings.yaml
 
 templateTest:
 	go run . convert -t template -f ./_test/os-nginx-template.yaml -o ./out/helm -k helm

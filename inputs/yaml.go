@@ -86,8 +86,7 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 
 		err := d.Decode(&doc)
 		if err != nil {
-			log.Println("*****", err)
-			//os.Exit(1)
+			log.Println(err)
 		}
 
 		if err == io.EOF {
@@ -118,21 +117,17 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 }
 
 func hack(fileName string) {
-	fmt.Println("*** HACKING FILE ****")
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		fmt.Println("********")
 		fmt.Println(err)
 	}
 
 	str1 := string(input)
-
 	lines := strings.Split(str1, "\n")
 
 	for i, line := range lines {
 		found := strings.Contains(line, `\"`)
 		if found == true {
-			//fmt.Println(i, line)
 			if strings.Index(lines[i], `"`) <= 20 {
 				lines[i] = strings.Replace(lines[i], `"`, `'`, 1)
 				lines[i] = strings.TrimSuffix(lines[i], `"`)
@@ -141,8 +136,6 @@ func hack(fileName string) {
 			if strings.HasSuffix(lines[i], `'`) == false {
 				lines[i] = lines[i] + `'`
 			}
-
-			//fmt.Println(i, lines[i])
 		}
 	}
 
@@ -150,8 +143,6 @@ func hack(fileName string) {
 
 	err = ioutil.WriteFile(fileName, []byte(output), 0644)
 	if err != nil {
-		fmt.Println("*********")
 		fmt.Println(err)
 	}
-
 }
