@@ -12,14 +12,17 @@
 
 .PHONY: test lint templateTest clean build apply
 
-
-
 test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest
 
 clean:
 
-build: fmt
-	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -v shifter
+build: shifter_linux_amd64 shifter_darwin_amd64 
+
+shifter_linux_amd64: fmt
+	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -o $@ -v shifter
+
+shifter_darwin_amd64: fmt
+	env GOOS=darwin GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -o $@ -v shifter
 
 fmt:
 	go fmt ./...
