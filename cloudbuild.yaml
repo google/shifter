@@ -1,13 +1,9 @@
 steps:
 - name: golang
-  args: ['make', 'yamlTest']
-- name: golang
-  args: ['make', 'yamlMultiTest']
-- name: golang
-  args: ['make', 'yamlDCTest']
+  args: ['make', 'test']
+  waitFor: ['-']
 - name: golang
   env:
   - 'GOOS=linux'
   - 'GOARCH=amd64'
   args: ['make', 'build']
-  waitFor: ['-']
