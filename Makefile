@@ -16,7 +16,7 @@ test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest
 
 clean:
 
-build: shifter_linux_amd64 shifter_darwin_amd64 
+build: shifter_linux_amd64
 
 shifter_linux_amd64: fmt
 	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -o $@ -v shifter
