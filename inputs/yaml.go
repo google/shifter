@@ -20,26 +20,23 @@ type Spec struct {
 }
 
 func Yaml(path string, flags map[string]string) []lib.K8sobject {
-	fi, err := os.Stat(path)
+	file, err := os.Stat(path)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
 
-	log.Println("Reading in file", fi.Name())
+	log.Println("Reading in file", file.Name())
 
-	switch mode := fi.Mode(); {
+	switch mode := file.Mode(); {
 	case mode.IsDir():
-		t := readMultiFilesInDir(path, flags)
-		return t
+		fileContent := readMultiFilesInDir(path, flags)
+		return fileContent
 
 	case mode.IsRegular():
-		t := readMultiDocFile(path, flags)
-		return t
+		fileContent := readMultiDocFile(path, flags)
+		return fileContent
 	}
-
-	log.Printf("Done")
-
 	return nil
 }
 
@@ -70,7 +67,7 @@ func readMultiFilesInDir(filePath string, flags map[string]string) []lib.K8sobje
 }
 
 func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject {
-	hack(fileName)
+	nestedQuotedStringHack(fileName)
 	f, err := os.Open(fileName)
 	if err != nil {
 		log.Println(err)
@@ -86,15 +83,16 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 
 		err := d.Decode(&doc)
 		if err != nil {
-			log.Println(err)
+			if err != io.EOF {
+				log.Println(err)
+				os.Exit(1)
+			}
 		}
 
 		if err == io.EOF {
 			break
 		}
-		log.Println("Converting", doc["kind"])
-
-		//fmt.Println(doc)
+		log.Println("Converting", doc["kind"], "from", fileName)
 
 		val, err := yaml.Marshal(doc)
 		if err != nil {
@@ -102,21 +100,19 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 			os.Exit(1)
 		}
 
-		j2, err := gyaml.YAMLToJSON(val)
+		jsonBody, err := gyaml.YAMLToJSON(val)
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
 
-		t := processor.Processor(j2, doc["kind"], flags)
-		objects = append(objects, t)
-
-		//fmt.Println(t)
+		processedDocument := processor.Processor(jsonBody, doc["kind"], flags)
+		objects = append(objects, processedDocument)
 	}
 	return objects
 }
 
-func hack(fileName string) {
+func nestedQuotedStringHack(fileName string) {
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -128,12 +124,9 @@ func hack(fileName string) {
 	for i, line := range lines {
 		found := strings.Contains(line, `\"`)
 		if found == true {
-			if strings.Index(lines[i], `"`) <= 20 {
+			if strings.HasSuffix(lines[i], `'`) == false {
 				lines[i] = strings.Replace(lines[i], `"`, `'`, 1)
 				lines[i] = strings.TrimSuffix(lines[i], `"`)
-			}
-
-			if strings.HasSuffix(lines[i], `'`) == false {
 				lines[i] = lines[i] + `'`
 			}
 		}
