@@ -57,7 +57,7 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 		ingressPath.Path = "/"
 	}
 
-	ingressPath.Backend.ServicePort = intstr.FromInt(8080)
+	ingressPath.Backend.ServicePort = intstr.FromString(OSRoute.Spec.To.Name)
 	ingressPath.Backend.ServiceName = OSRoute.Spec.To.Name
 
 	httpIngressRuleValue.Paths = append(httpIngressRuleValue.Paths, ingressPath)
