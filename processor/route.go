@@ -14,7 +14,6 @@ limitations under the license.
 package processor
 
 import (
-	"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,9 +36,11 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	*/
 
 	var (
-		ingressSpec v1beta1.IngressSpec
-		ingressRule v1beta1.IngressRule
-		ingressPath v1beta1.HTTPIngressPath
+		ingressSpec          v1beta1.IngressSpec
+		ingressRule          v1beta1.IngressRule
+		ingressRuleValue     v1beta1.IngressRuleValue
+		httpIngressRuleValue v1beta1.HTTPIngressRuleValue
+		ingressPath          v1beta1.HTTPIngressPath
 	)
 
 	//Logic to convert a route to ingress
@@ -55,21 +56,14 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	} else {
 		ingressPath.Path = "/"
 	}
-	//ingressPath.PathType = v1beta1.PathType("Prefix")
 
-	ingressPath.Backend.ServicePort = intstr.FromString("8080")
-	ingressPath.Backend.ServiceName = "test"
+	ingressPath.Backend.ServicePort = intstr.FromInt(8080)
+	ingressPath.Backend.ServiceName = OSRoute.Spec.To.Name
 
-	var ingressPaths = make([]v1beta1.HTTPIngressPath, 0)
-
-	ingressPaths = append(ingressPaths, ingressPath)
-
-	fmt.Println(ingressPaths)
+	httpIngressRuleValue.Paths = append(httpIngressRuleValue.Paths, ingressPath)
+	ingressRuleValue.HTTP = &httpIngressRuleValue
+	ingressRule.IngressRuleValue = ingressRuleValue
 	ingressSpec.Rules = append(ingressSpec.Rules, ingressRule)
-
-	ingressSpec.Rules[0].IngressRuleValue.HTTP.Paths = ingressPaths
-
-	//ingressRule.IngressRuleValue.HTTP.Paths = append(ingressRule.IngressRuleValue.HTTP.Paths, ingressPath)
 
 	ingress.Spec = ingressSpec
 
