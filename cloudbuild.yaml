@@ -1,7 +1,3 @@
-artifacts:
-  objects:
-    location: gs://shifter-builds
-
 steps:
 - name: golang
   args: ['make', 'test']
@@ -11,3 +7,7 @@ steps:
   - 'GOOS=linux'
   - 'GOARCH=amd64'
   args: ['make', 'build']
+artifacts:
+  objects:
+    location: gs://shifter-builds
+    paths: ['shifter_linux_amd64', 'shifter_darwin_amd64']
