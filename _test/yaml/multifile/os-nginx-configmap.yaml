@@ -9,6 +9,14 @@ metadata:
 ---
 apiVersion: v1
 data:
+  default.conf: ""
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: nginx-default.d
+---
+apiVersion: v1
+data:
   virtualhost.conf: ""
 kind: ConfigMap
 metadata:
@@ -516,7 +524,7 @@ data:
   nginx.conf: |2
     
     worker_processes auto;
-    error_log ${NGINX_ERROR_LOG_PATH};
+    error_log stderr;
     pid /var/opt/rh/rh-nginx112/run/nginx/nginx.pid;
 
     # Load dynamic modules. See /opt/rh/rh-nginx112/root/usr/share/doc/README.dynamic.
@@ -548,8 +556,8 @@ data:
       include /opt/app-root/etc/nginx.d/*.conf;
 
       server {
-          listen       ${NGINX_DEFAULT_HTTP_PORT} default_server;
-          listen       [::]:${NGINX_DEFAULT_HTTP_PORT} default_server;
+          listen       8080 default_server;
+          listen       [::]:8080 default_server;
           server_name  _;
           root         /opt/app-root/src;
 
@@ -654,7 +662,7 @@ data:
         #                  '$status $body_bytes_sent "$http_referer" '
         #                  '"$http_user_agent" "$http_x_forwarded_for"';
 
-        access_log  ${NGINX_ACCESS_LOG_PATH}  main;
+        access_log  "/var/opt/rh/rh-nginx112/log/nginx/access.log" main;
 
         sendfile        on;
         #tcp_nopush     on;

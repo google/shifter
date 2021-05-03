@@ -22,7 +22,7 @@ shifter_linux_amd64: fmt
 	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -o $@ -v shifter
 
 shifter_darwin_amd64: fmt
-	env GOOS=darwin GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static"' -o $@ -v shifter
+	env GOOS=darwin GOARCH=amd64 go build -o $@ -v shifter
 
 fmt:
 	go fmt ./...
