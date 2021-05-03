@@ -14,7 +14,7 @@ limitations under the license.
 package processor
 
 import (
-	//"fmt"
+	"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -55,19 +55,22 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	} else {
 		ingressPath.Path = "/"
 	}
+	//ingressPath.PathType = v1beta1.PathType("Prefix")
 
-	var pathType v1beta1.PathType
-	pathType = "Prefix"
-	ingressPath.PathType = &pathType
+	ingressPath.Backend.ServicePort = intstr.FromString("8080")
+	ingressPath.Backend.ServiceName = "test"
 
-	var backend v1beta1.IngressBackend
-	backend.ServiceName = "test"
-	backend.ServicePort = intstr.FromInt(8080)
-	ingressPath.Backend = backend
+	var ingressPaths = make([]v1beta1.HTTPIngressPath, 0)
 
-	ingressRule.HTTP.Paths = append(ingressRule.HTTP.Paths, ingressPath)
+	ingressPaths = append(ingressPaths, ingressPath)
 
+	fmt.Println(ingressPaths)
 	ingressSpec.Rules = append(ingressSpec.Rules, ingressRule)
+
+	ingressSpec.Rules[0].IngressRuleValue.HTTP.Paths = ingressPaths
+
+	//ingressRule.IngressRuleValue.HTTP.Paths = append(ingressRule.IngressRuleValue.HTTP.Paths, ingressPath)
+
 	ingress.Spec = ingressSpec
 
 	return *ingress
