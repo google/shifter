@@ -37,10 +37,9 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		var dc osappsv1.DeploymentConfig
 		json.Unmarshal(input, &dc)
 		t := convertDeploymentConfigToDeployment(dc, flags)
-
 		var k lib.K8sobject
 
-		k.Kind = kind
+		k.Kind = "Deployment"
 		k.Object = &t
 
 		return k
@@ -50,10 +49,9 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		var route osroutev1.Route
 		json.Unmarshal(input, &route)
 		t := convertRouteToIngress(route, flags)
-
 		var k lib.K8sobject
 
-		k.Kind = kind
+		k.Kind = "Ingress"
 		k.Object = &t
 
 		return k
@@ -63,7 +61,6 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		var service apiv1.Service
 		json.Unmarshal(input, &service)
 		t := convertServiceToService(service, flags)
-
 		var k lib.K8sobject
 
 		k.Kind = kind
@@ -76,6 +73,18 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		var pvc apiv1.PersistentVolumeClaim
 		json.Unmarshal(input, &pvc)
 		t := convertPvcToPvc(pvc, flags)
+		var k lib.K8sobject
+
+		k.Kind = kind
+		k.Object = &t
+
+		return k
+		break
+
+	case "ConfigMap":
+		var cfgMap apiv1.ConfigMap
+		json.Unmarshal(input, &cfgMap)
+		t := convertConfigMapToConfigMap(cfgMap, flags)
 		var k lib.K8sobject
 
 		k.Kind = kind

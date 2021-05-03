@@ -18,15 +18,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func convertServiceToService(OSService apiv1.Service, flags map[string]string) apiv1.Service {
-	service := &apiv1.Service{
+func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]string) apiv1.ConfigMap {
+	cfgMap := &apiv1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Service",
+			Kind:       "ConfigMap",
 			APIVersion: "v1",
 		},
-		ObjectMeta: OSService.ObjectMeta,
-		Spec:       OSService.Spec,
+		ObjectMeta: OSConfigMap.ObjectMeta,
+		Data:       OSConfigMap.Data,
+		BinaryData: OSConfigMap.BinaryData,
 	}
 
-	return *service
+	return *cfgMap
 }

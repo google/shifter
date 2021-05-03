@@ -14,10 +14,11 @@ limitations under the license.
 package processor
 
 import (
-	"fmt"
+	//"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1beta1.Ingress {
@@ -31,31 +32,43 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	}
 
 	/*
-
 		Openshift routes can take different forms which need to be handled by different types of
 		ingress resources.
-
-
-
-
-
 	*/
 
-	//var spec = v1beta1.IngressSpec
+	var (
+		ingressSpec v1beta1.IngressSpec
+		ingressRule v1beta1.IngressRule
+		ingressPath v1beta1.HTTPIngressPath
+	)
 
 	//Logic to convert a route to ingress
 
 	// Check if there is a host specified
 	if OSRoute.Spec.Host != "" {
-		fmt.Println(OSRoute.Spec.Host)
+		ingressRule.Host = OSRoute.Spec.Host
 	}
 
-	// Check if there is a path specified
+	//Build up the paths for the ingress resource
 	if OSRoute.Spec.Path != "" {
-		fmt.Println(OSRoute.Spec.Path)
+		ingressPath.Path = OSRoute.Spec.Path
+	} else {
+		ingressPath.Path = "/"
 	}
 
-	fmt.Println(OSRoute.Spec)
-	fmt.Println(OSRoute.Spec.Host)
+	var pathType v1beta1.PathType
+	pathType = "Prefix"
+	ingressPath.PathType = &pathType
+
+	var backend v1beta1.IngressBackend
+	backend.ServiceName = "test"
+	backend.ServicePort = intstr.FromInt(8080)
+	ingressPath.Backend = backend
+
+	ingressRule.HTTP.Paths = append(ingressRule.HTTP.Paths, ingressPath)
+
+	ingressSpec.Rules = append(ingressSpec.Rules, ingressRule)
+	ingress.Spec = ingressSpec
+
 	return *ingress
 }
