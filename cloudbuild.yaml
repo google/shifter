@@ -10,4 +10,4 @@ steps:
 artifacts:
   objects:
     location: gs://shifter-builds
-    paths: ['shifter_linux_amd64', 'shifter_darwin_amd64']
+    paths: ['shifter_*']
