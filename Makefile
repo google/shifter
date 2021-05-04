@@ -24,6 +24,9 @@ shifter_linux_amd64: fmt
 shifter_darwin_amd64: fmt
 	env GOOS=darwin GOARCH=amd64 go build -o $@ -v shifter
 
+shifter_win_amd64: fmt
+	env GOOS=windows GOARCH=amd64 go build -o $@ -v shifter
+
 fmt:
 	go fmt ./...
 
