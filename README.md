@@ -1,6 +1,6 @@
 # Openshift to Kubernetes converter
 
-Easily and quickly convert your RedHat Openshift workloads to standard kubernetes for clusters such GKE
+Easily and quickly convert your RedHat OpenShift workloads to standard kubernetes for Anthos/GKE 
 
 Shifter has extensible methods for inputs and generators.
 

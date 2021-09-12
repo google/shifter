@@ -14,15 +14,10 @@ limitations under the license.
 package input
 
 import (
-	//"encoding/json"
 	"fmt"
-	//"gopkg.in/yaml.v3"
+	lib "github.com/google/shifter/lib"
 	"io/ioutil"
-	//"log"
-	//"shifter/processor"
 	"sigs.k8s.io/yaml"
-	//v1 "github.com/openshift/api/template/v1"
-	lib "shifter/lib"
 )
 
 type OSTemplate struct {

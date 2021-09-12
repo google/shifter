@@ -3,16 +3,15 @@ package input
 import (
 	"fmt"
 	gyaml "github.com/ghodss/yaml"
+	"github.com/google/shifter/lib"
+	"github.com/google/shifter/processor"
 	yaml "gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"shifter/lib"
-	"shifter/processor"
 	"strings"
-	//"regexp"
 )
 
 type Spec struct {

@@ -15,12 +15,11 @@ package generator
 
 import (
 	"fmt"
+	lib "github.com/google/shifter/lib"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
-	//"reflect"
 	"regexp"
-	lib "shifter/lib"
 	"strconv"
 )
 
