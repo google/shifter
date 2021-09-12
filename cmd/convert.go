@@ -15,10 +15,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"log"
 	"github.com/google/shifter/generators"
 	"github.com/google/shifter/inputs"
+	"github.com/spf13/cobra"
+	"log"
 	"strings"
 )
 
