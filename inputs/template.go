@@ -11,7 +11,7 @@ see the license for the specific language governing permissions and
 limitations under the license.
 */
 
-package input
+package inputs
 
 import (
 	"fmt"

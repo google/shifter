@@ -22,7 +22,7 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
-	"shifter/lib"
+	"github.com/google/shifter/lib"
 )
 
 func int32Ptr(i int32) *int32 { return &i }

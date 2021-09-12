@@ -17,8 +17,8 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
-	generators "shifter/generators"
-	inputs "shifter/inputs"
+	"github.com/google/shifter/generators"
+	"github.com/google/shifter/inputs"
 	"strings"
 )
 
