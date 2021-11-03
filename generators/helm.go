@@ -15,7 +15,7 @@ package generator
 
 import (
 	"fmt"
-	lib "github.com/google/shifter/lib"
+	"shifter/lib"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"

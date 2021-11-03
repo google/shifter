@@ -15,7 +15,7 @@ package input
 
 import (
 	"fmt"
-	lib "github.com/google/shifter/lib"
+	"shifter/lib"
 	"io/ioutil"
 	"sigs.k8s.io/yaml"
 )
