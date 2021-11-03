@@ -3,8 +3,8 @@ package input
 import (
 	"fmt"
 	gyaml "github.com/ghodss/yaml"
-	"github.com/google/shifter/lib"
-	"github.com/google/shifter/processor"
+	"shifter/lib"
+	"shifter/processor"
 	yaml "gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"

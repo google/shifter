@@ -13,7 +13,7 @@ limitations under the License.
 
 package main
 
-import "github.com/google/shifter/cmd"
+import "shifter/cmd"
 
 func main() {
 	cmd.Execute()

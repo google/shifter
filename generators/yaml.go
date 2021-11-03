@@ -16,7 +16,7 @@ package generator
 import (
 	"bufio"
 	"fmt"
-	"github.com/google/shifter/lib"
+	"shifter/lib"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
