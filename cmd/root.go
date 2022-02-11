@@ -15,8 +15,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+	"strings"
+
+	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -70,4 +72,18 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func ProcFlags(input []string) map[string]string {
+	// Process the inputting processor flags into a map
+	m := make(map[string]string)
+
+	for _, f := range input {
+		flag := strings.Split(f, "=")
+		key := string(flag[0])
+		value := string(flag[1])
+		m[key] = value
+	}
+
+	return m
 }
