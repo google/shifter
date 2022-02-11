@@ -18,16 +18,20 @@ import (
 	"path/filepath"
 )
 
-func CreateDir(path string) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, 0700)
+type JSONResponse struct {
+	Value1 string `json:"Filename"`
+	Value2 string `json:"Link"`
+}
+
+func CreateDir(srcPath string) {
+	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
+		os.MkdirAll(srcPath, 0700)
 	}
 }
 
 func GetFilename(path string) string {
 	return filepath.Base(path)
 }
-
 func GetFileLink(uuid string, path string) string {
 	return ("/download/" + uuid + "/" + filepath.Base(path))
 }

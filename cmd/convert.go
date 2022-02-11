@@ -58,6 +58,7 @@ Supply the output using the -o or --output flag, the directory will be created w
 			`)
 		log.Println("Converting", inputType, filename, "to", generator, output)
 		flags := ProcFlags(pFlags)
+		//"yaml ./_test/yaml/multidoc/os-nginx.yaml yaml ./output map[]"
 		ops.Convert(inputType, filename, generator, output, flags)
 	},
 }
