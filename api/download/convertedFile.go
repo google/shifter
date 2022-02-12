@@ -11,14 +11,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package api
+package download
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
-func Download(c *gin.Context) {
-	uuid := c.Param("uuid")
-	filename := c.Param("filename")
-	c.File("./data/output/" + uuid + "/" + filename)
+func convertedFile(ctx *gin.Context) {
+
 }
+
+/*
+
+func (server *Server) convertedFile(ctx *gin.Context) {
+	uuid := ctx.Param("uuid")
+	filename := ctx.Param("filename")
+	ctx.File("./data/output/" + uuid + "/" + filename)
+}
+*/

@@ -11,10 +11,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package api
+package convert
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"path"
@@ -24,7 +23,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func Ep_ConvertYaml2Yaml(c *gin.Context) {
+func Yaml2Yaml(c *gin.Context) {
 
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
@@ -49,14 +48,11 @@ func Ep_ConvertYaml2Yaml(c *gin.Context) {
 	ops.Convert("yaml", srcPath, "yaml", dstPath, make(map[string]string))
 	ops.Archive(dstPath, (dstPath + "/" + uuid + ".zip"))
 
-	// ops.Archive(dstPath)
-
-	// Response
-	c.JSON(http.StatusOK, gin.H{
-		"inputType":      "yaml",
-		"uuid":           string(uuid),
-		"convertedFiles": json.Marshal(`[{"Filename":"Tim"},{"Filename":"Gary"}]`),
-		"uploadedFiles":  files,
-		"message":        "YAML files generated.",
-	})
+	r := Yaml2Yaml_Response{}
+	r.InputType = "yaml"
+	r.UUID = string(uuid)
+	r.ConvertedFiles = ops.GetFiles(uuid, dstPath)
+	r.UploadedFiles = files
+	r.Message = "YAML files generated."
+	c.JSON(http.StatusOK, r)
 }

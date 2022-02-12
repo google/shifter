@@ -24,6 +24,10 @@ var (
 	httpPort string
 )
 
+const (
+	serverAddress = "0.0.0.0:8080"
+)
+
 var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Convert Openshift Resources to Kubernetes native formats via Shifter API",
@@ -52,8 +56,11 @@ Usage: shifter server
 -------------------------------------------------------------------------------------
 			`)
 
-		flags := ProcFlags(pFlags)
-		api.Server(httpPort, flags)
+		//flags := ProcFlags(pFlags)
+		err := api.ServerStart(serverAddress)
+		if err != nil {
+			log.Fatal("Cannot Start HTTP Server:", err)
+		}
 	},
 }
 
