@@ -14,6 +14,10 @@ limitations under the License.
 package api
 
 import (
+<<<<<<< HEAD
+=======
+	"encoding/json"
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 	"log"
 	"net/http"
 	"path"
@@ -23,6 +27,7 @@ import (
 	"github.com/google/uuid"
 )
 
+<<<<<<< HEAD
 // @BasePath /api/v1
 
 // Yaml2Yaml godoc
@@ -35,6 +40,13 @@ import (
 // @Success 200 {json} Response_Convert_Yaml2Yaml
 // @Router /convert/yaml/yaml [post]
 func Yaml2Yaml(ctx *gin.Context) {
+=======
+<<<<<<< HEAD:api/convertYaml2Yaml.go
+func Ep_ConvertYaml2Yaml(c *gin.Context) {
+=======
+func Yaml2Yaml(ctx *gin.Context) {
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play):api/ep_convert_yaml2yaml.go
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
@@ -58,7 +70,10 @@ func Yaml2Yaml(ctx *gin.Context) {
 	// Collect Files from Multipart Form.
 	files := form.File["multiplefiles"]
 	for _, file := range files {
+<<<<<<< HEAD
 		log.Println(file.Filename)
+=======
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 		//Upload files to the specified directory
 		ctx.SaveUploadedFile(file, path.Join(srcPath, file.Filename))
 	}
@@ -81,6 +96,21 @@ func Yaml2Yaml(ctx *gin.Context) {
 	// Run the Archive Operation
 	ops.Archive(dstPath, (dstPath + "/" + uuid + ".zip"))
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD:api/convertYaml2Yaml.go
+	// ops.Archive(dstPath)
+
+	// Response
+	c.JSON(http.StatusOK, gin.H{
+		"inputType":      "yaml",
+		"uuid":           string(uuid),
+		"convertedFiles": json.Marshal(`[{"Filename":"Tim"},{"Filename":"Gary"}]`),
+		"uploadedFiles":  files,
+		"message":        "YAML files generated.",
+	})
+=======
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 	// Construct API Endpoint Response
 	r := Response_Convert_Yaml2Yaml{}
 	r.InputType = "yaml"
@@ -90,4 +120,8 @@ func Yaml2Yaml(ctx *gin.Context) {
 	r.Message = "YAML files generated."
 	// Return JSON API Response
 	ctx.JSON(http.StatusOK, r)
+<<<<<<< HEAD
+=======
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play):api/ep_convert_yaml2yaml.go
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 }

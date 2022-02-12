@@ -22,6 +22,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+<<<<<<< HEAD
 // @BasePath /api/v1
 
 // ConvertedFile godoc
@@ -33,6 +34,8 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /download/:uuid [get]
+=======
+>>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
 func ConvertedFilesArchive(ctx *gin.Context) {
 
 	// Validate URL Params
