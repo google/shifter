@@ -14,10 +14,21 @@ limitations under the License.
 package api
 
 import (
+	"mime/multipart"
+	ops "shifter/ops"
+
 	"github.com/gin-gonic/gin"
 )
 
 // HTTP Server Based on gin-gonic
 type Server struct {
 	router *gin.Engine
+}
+
+type Response_Convert_Yaml2Yaml struct {
+	InputType      string                  `json:"inputType"`
+	UUID           string                  `json:"uuid"`
+	ConvertedFiles []ops.File              `json:"convertedFiles"`
+	UploadedFiles  []*multipart.FileHeader `json:"uploadedFiles"`
+	Message        string                  `json:"message"`
 }
