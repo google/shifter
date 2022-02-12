@@ -20,6 +20,13 @@ import (
 	"path/filepath"
 )
 
+/*
+	TODO
+	- Add Errors Handling to Archive,
+	- Catch Archive Errors,
+	- Return error struct on Errors
+	- Prevent Function from Including .zip archive in the .zip archive (recursive zip error)
+*/
 func Archive(srcPath string, fileName string) error {
 	// 1. Create a ZIP file and zip.Writer
 	f, err := os.Create(fileName)

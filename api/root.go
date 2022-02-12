@@ -14,14 +14,11 @@ limitations under the License.
 package api
 
 import (
-	"shifter/api/download"
-	"shifter/api/convert" 
-
 	"github.com/gin-gonic/gin"
 )
 
 // Instanciate gin-gonic HTTP Server
-func initServer() (*Server, error) {
+func InitServer() (*Server, error) {
 	server := &Server{}
 
 	server.setupRouter()
@@ -38,9 +35,10 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		// Convert V1 API Endpoints
-		v1.POST("/convert/yaml/yaml", convert.Yaml2Yaml)
+		v1.POST("/convert/yaml/yaml", Yaml2Yaml)
 		// Download V1 API Endpoints
-		v1.GET("/download/:uuid/:filename", download.convertedFile)
+		v1.GET("/download/:uuid/:filename", ConvertedFile) // Download Single Converted File
+		v1.GET("/download/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
 	}
 
 	// Setup Server Router for Gin Server Instance.
@@ -48,8 +46,8 @@ func (server *Server) setupRouter() {
 }
 
 // Start gin-gonic HTTP Server on Specific Address
-func (server *Server) ServerStart(address string) error {
-	return server.router.Run(address)
+func (server *Server) Start(serverAddress string, serverPort string) error {
+	return server.router.Run(serverAddress + ":" + serverPort)
 }
 
 // Standard API Error Response

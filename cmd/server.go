@@ -21,11 +21,11 @@ import (
 )
 
 var (
-	httpPort string
+	serverPort string
 )
 
 const (
-	serverAddress = "0.0.0.0:8080"
+	serverAddress = "0.0.0.0"
 )
 
 var serverCmd = &cobra.Command{
@@ -57,7 +57,12 @@ Usage: shifter server
 			`)
 
 		//flags := ProcFlags(pFlags)
-		err := api.ServerStart(serverAddress)
+		//err :=
+		server, err := api.InitServer()
+		if err != nil {
+			log.Fatal("Cannot Create HTTP Server:", err)
+		}
+		server.Start(serverAddress, serverPort)
 		if err != nil {
 			log.Fatal("Cannot Start HTTP Server:", err)
 		}
@@ -66,5 +71,5 @@ Usage: shifter server
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
-	serverCmd.Flags().StringVarP(&httpPort, "port", "p", "8080", "Server Port: Default 8080")
+	serverCmd.Flags().StringVarP(&serverPort, "port", "p", "8080", "Server Port: Default 8080")
 }

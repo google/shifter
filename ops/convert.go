@@ -19,6 +19,12 @@ import (
 	inputs "shifter/inputs"
 )
 
+/*
+	TODO
+	- Add Errors Handling to Convert,
+	- Catch Convert Errors,
+	- Return error struct on Errors
+*/
 func Convert(inputType string, filename string, generator string, output string, flags map[string]string) {
 
 	switch inputType {
