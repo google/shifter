@@ -19,7 +19,6 @@ import (
 	inputs "shifter/inputs"
 )
 
-
 /*
 	TODO
 	- Add Errors Handling to Convert,
