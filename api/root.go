@@ -35,10 +35,17 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		// Convert V1 API Endpoints
-		v1.POST("/convert/yaml/yaml", Yaml2Yaml)
+		c := v1.Group("/convert")
+		{
+			c.POST("/yaml/yaml", Yaml2Yaml)
+		}
+
 		// Download V1 API Endpoints
-		v1.GET("/download/:uuid/:filename", ConvertedFile) // Download Single Converted File
-		v1.GET("/download/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+		d := v1.Group("/download")
+		{
+			d.GET("/:uuid/:filename", ConvertedFile) // Download Single Converted File
+			d.GET("/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+		}
 	}
 
 	// Setup Server Router for Gin Server Instance.

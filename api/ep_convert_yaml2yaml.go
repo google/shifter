@@ -23,6 +23,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// @BasePath /api/v1
+
+// Yaml2Yaml godoc
+// @Summary Openshift Manifest to Kubernetes Manifest.
+// @Schemes
+// @Description Convert Openshift Yaml Manifest files into Kubernetes Manifest files.
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200 {string} Helloworld
+// @Router /convert/yaml/yaml [post]
 func Yaml2Yaml(ctx *gin.Context) {
 
 	// Create API Unique RUN ID
@@ -47,6 +58,7 @@ func Yaml2Yaml(ctx *gin.Context) {
 	// Collect Files from Multipart Form.
 	files := form.File["multiplefiles"]
 	for _, file := range files {
+		log.Println(file.Filename)
 		//Upload files to the specified directory
 		ctx.SaveUploadedFile(file, path.Join(srcPath, file.Filename))
 	}

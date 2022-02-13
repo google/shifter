@@ -14,10 +14,6 @@ limitations under the license.
 package ops
 
 import (
-	"encoding/json"
-	"log"
-
-	//"log"
 	"os"
 	"path/filepath"
 )
@@ -31,15 +27,19 @@ func CreateDir(srcPath string) {
 func GetFilename(path string) string {
 	return filepath.Base(path)
 }
+
 func GetFileLink(uuid string, path string) string {
 	return ("/download/" + uuid + "/" + filepath.Base(path))
 }
 
 func GetFiles(uuid string, srcPath string) []File {
 
+	// Create Splice of File Structs
 	var files []File
 
+	// Walk Upload Directory Directory
 	err := filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		// Add Each File to Splice
 		files = append(files, File{Filename: GetFilename(path), Link: GetFileLink(uuid, path)})
 		return nil
 	})
@@ -47,72 +47,6 @@ func GetFiles(uuid string, srcPath string) []File {
 		panic(err)
 	}
 
-	log.Println(files)
-	j, _ := json.Marshal(files)
-	log.Println(string(j))
+	// Return Splice/Array of Files
 	return files
 }
-
-/*
-
-f, err := json.Marshal(file)
-if err != nil {
-	fmt.Println(err)
-	return err
-}
-fmt.Println(string(f))
-files = append(files, f...)
-return nil
-})
-if err != nil {
-panic(err)
-}
-
-return string(files)
-
-
-
-	a, _ := json.Marshal(map[string]int{"foo": 1, "bar": 2, "baz": 3})
-fmt.Println(string(a)) // {"bar":2,"baz":3,"foo":1}
-
-	type ResponseYaml2Yaml struct {
-		ConvertedFiles []struct {
-			FileName string `json:"FileName"`
-			Link     string `json:"Link"`
-		} `json:"convertedFiles"`
-		InputType     string `json:"inputType"`
-		Message       string `json:"message"`
-		UploadedFiles []struct {
-			Filename string `json:"Filename"`
-			Header   struct {
-				ContentDisposition []string `json:"Content-Disposition"`
-				ContentType        []string `json:"Content-Type"`
-			} `json:"Header"`
-			Size int `json:"Size"`
-		} `json:"uploadedFiles"`
-		UUID string `json:"uuid"`
-	}
-
-	r := ResponseYaml2Yaml{}
-	json.Unmarshal([]byte(body), &u)	// Unmarshal
-
-
-*/
-
-/*var files []string
-
-err := filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
-
-convertedFile := ConvertedFile{Filename: GetFilename(path), Link: GetFileLink(uuid, path)}
-log.Printf("%+v\n", convertedFile)
-byteArray, err := json.Marshal(convertedFile)
-if err != nil {
-	panic(err)
-}
-files = append(files, string(byteArray))
-return nil
-})
-if err != nil {
-panic(err)
-}
-return files*/
