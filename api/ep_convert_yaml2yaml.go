@@ -32,7 +32,7 @@ import (
 // @Tags example
 // @Accept json
 // @Produce json
-// @Success 200 {string} Helloworld
+// @Success 200 {json} Response_Convert_Yaml2Yaml
 // @Router /convert/yaml/yaml [post]
 func Yaml2Yaml(ctx *gin.Context) {
 
