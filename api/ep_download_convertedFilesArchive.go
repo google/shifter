@@ -22,6 +22,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @BasePath /api/v1
+
+// ConvertedFile godoc
+// @Summary Download Collection of Converted Files as Zip Archive.
+// @Schemes
+// @Description Download a collection of Converted Files from the Shifter server by UUID.
+// @Tags example
+// @Accept json
+// @Produce json
+// @Success 200 {blob} Blob
+// @Router /download/:uuid [get]
 func ConvertedFilesArchive(ctx *gin.Context) {
 
 	// Validate URL Params
