@@ -33,6 +33,9 @@ fmt:
 apply:
 	helm install  ./out -n test --generate-name
 
+server:
+	go run . server
+
 # Tests
 # ---------------
 

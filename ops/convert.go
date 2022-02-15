@@ -38,7 +38,7 @@ func Convert(inputType string, filename string, generator string, output string,
 		t := inputs.Yaml(filename, flags)
 		switch generator {
 		case "yaml":
-			generators.Yaml(output, t)
+			generators.Yaml(output, t, "gcs")
 		}
 	case "cluster":
 		log.Fatal("Openshift resources have not been implemented yet!")
