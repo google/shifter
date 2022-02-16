@@ -15,8 +15,9 @@ package generator
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
-	"io"
+	//"io"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
@@ -29,14 +30,17 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 	if destination == "gcs" {
 
 		for _, v := range objects {
-			var i io.Writer
-			w := bufio.NewWriter(i)
+			var b bytes.Buffer
+
+			w := bufio.NewWriter(&b)
 			e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
 			err := e.Encode(v.Object, w)
 			if err != nil {
 				fmt.Println(err)
 			}
-			lib.StreamFileUpload(w, "shifter-tmp", "test")
+			w.Flush()
+			kind := fmt.Sprintf("%v", v.Kind)
+			lib.StreamFileUpload(b, "shifter-tmp", kind)
 		}
 
 	} else {

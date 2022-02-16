@@ -18,14 +18,16 @@ import (
 	"cloud.google.com/go/storage"
 	"context"
 	"fmt"
+	//"log"
+	//"os"
 	"io"
-	"log"
 	"time"
 )
 
 // Steam file upload to Google Cloud Storage
 
-func StreamFileUpload(w io.Writer, bucket, object string) error {
+func StreamFileUpload(b bytes.Buffer, bucket, object string) error {
+
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -33,25 +35,20 @@ func StreamFileUpload(w io.Writer, bucket, object string) error {
 	}
 	defer client.Close()
 
-	r := io.Reader(w)
-
-	b := []byte(r)
-	buf := bytes.NewBuffer(b)
-
 	ctx, cancel := context.WithTimeout(ctx, time.Second*60)
 	defer cancel()
 
 	wc := client.Bucket(bucket).Object(object).NewWriter(ctx)
 	wc.ChunkSize = 0
 
-	if _, err = io.Copy(wc, buf); err != nil {
+	if _, err = io.Copy(wc, &b); err != nil {
 		return fmt.Errorf("io.Copy: %v", err)
 	}
 
 	if err := wc.Close(); err != nil {
 		return fmt.Errorf("Writer.Close: %v", err)
 	}
-	log.Println(w, "%v uploaded to %v.\n", object, bucket)
+	//log.Println(w, "%v uploaded to %v.\n", object, bucket)
 
 	return nil
 }
