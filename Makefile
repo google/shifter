@@ -60,5 +60,3 @@ yamlQNSTest: fmt
 templateTest:
 	go run . convert -t helm -f ./_test/os-nginx-template.yaml -o ./out/helm -i template 
 
-t1:
-	go run . convert -t helm -i template -f ./t1/template.yaml -o ./t1/out

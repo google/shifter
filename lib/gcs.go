@@ -26,7 +26,7 @@ import (
 
 // Steam file upload to Google Cloud Storage
 
-func StreamFileUpload(b bytes.Buffer, bucket, object string) error {
+func GCSStreamFileUpload(b bytes.Buffer, bucket, object string) error {
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)

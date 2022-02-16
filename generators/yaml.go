@@ -40,7 +40,7 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 			}
 			w.Flush()
 			kind := fmt.Sprintf("%v", v.Kind)
-			lib.StreamFileUpload(b, "shifter-tmp", kind)
+			lib.GCSStreamFileUpload(b, "shifter-tmp", kind)
 		}
 
 	} else {
