@@ -40,11 +40,19 @@ func (server *Server) setupRouter() {
 			c.POST("/yaml/yaml", Yaml2Yaml)
 		}
 
+		
 		// Download V1 API Endpoints
 		d := v1.Group("/download")
 		{
 			d.GET("/:uuid/:filename", ConvertedFile) // Download Single Converted File
 			d.GET("/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+		}
+
+		// Status V1 API Endpoints
+		s := v1.Group("/status")
+		{
+			s.GET("/healthz", Healthz) // Operations Health Check
+			s.GET("/settings", Settings) // Server Settings
 		}
 	}
 
