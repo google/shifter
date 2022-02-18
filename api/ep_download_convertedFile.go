@@ -15,7 +15,7 @@ package api
 
 import (
 	"errors"
-	"log"
+	// "log"
 	"net/http"
 	"os"
 
@@ -45,7 +45,7 @@ func ConvertedFile(ctx *gin.Context) {
 		// UUID param required & not found.
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-		log.Fatal(err.Error())
+		//log.Fatal(err.Error())
 		return
 	}
 
@@ -55,7 +55,7 @@ func ConvertedFile(ctx *gin.Context) {
 		// UUID param required & not found.
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-		log.Fatal(err.Error())
+		//log.Fatal(err.Error())
 		return
 	}
 
@@ -74,12 +74,12 @@ func ConvertedFile(ctx *gin.Context) {
 	} else if errors.Is(err, os.ErrNotExist) {
 		// File Does Not Exists, Error
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
-		log.Fatal("Requested Download File Not Found Error:", err)
+		//log.Fatal("Requested Download File Not Found Error:", err)
 		return
 	} else {
 		// File Status Unknown, Error
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
-		log.Fatal("Requested Download File Status Unknown Error:", err)
+		//log.Fatal("Requested Download File Status Unknown Error:", err)
 		return
 	}
 }

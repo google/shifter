@@ -15,7 +15,7 @@ package api
 
 import (
 	"errors"
-	"log"
+	// "log"
 	"net/http"
 	"os"
 
@@ -45,7 +45,7 @@ func ConvertedFilesArchive(ctx *gin.Context) {
 		// UUID param required & not found.
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-		log.Fatal(err.Error())
+		// log.Fatal(err.Error())
 		return
 	}
 
@@ -64,12 +64,12 @@ func ConvertedFilesArchive(ctx *gin.Context) {
 	} else if errors.Is(err, os.ErrNotExist) {
 		// Archive File Does Not Exists, Error
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
-		log.Fatal("Requested Archive File Not Found Error:", err)
+		// log.Error("Requested Archive File Not Found Error:", err)
 		return
 	} else {
 		// Archive File Status Unknown, Error
 		ctx.JSON(http.StatusNotFound, errorResponse(err))
-		log.Fatal("Requested Archive File Status Unknown Error:", err)
+		// log.Fatal("Requested Archive File Status Unknown Error:", err)
 		return
 	}
 }

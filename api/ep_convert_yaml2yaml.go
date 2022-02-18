@@ -63,7 +63,7 @@ func Yaml2Yaml(ctx *gin.Context) {
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		log.Fatal("Multipart Form Error:", err)
+		// log.Fatal("Multipart Form Error:", err)
 		return
 	}
 

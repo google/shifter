@@ -17,8 +17,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-<<<<<<< HEAD
-=======
 // Instanciate gin-gonic HTTP Server
 func InitServer() (*Server, error) {
 	server := &Server{}
@@ -37,10 +35,25 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		// Convert V1 API Endpoints
-		v1.POST("/convert/yaml/yaml", Yaml2Yaml)
+		c := v1.Group("/convert")
+		{
+			c.POST("/yaml/yaml", Yaml2Yaml)
+		}
+
+		
 		// Download V1 API Endpoints
-		v1.GET("/download/:uuid/:filename", ConvertedFile) // Download Single Converted File
-		v1.GET("/download/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+		d := v1.Group("/download")
+		{
+			d.GET("/:uuid/:filename", ConvertedFile) // Download Single Converted File
+			d.GET("/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+		}
+
+		// Status V1 API Endpoints
+		s := v1.Group("/status")
+		{
+			s.GET("/healthz", Healthz) // Operations Health Check
+			s.GET("/settings", Settings) // Server Settings
+		}
 	}
 
 	// Setup Server Router for Gin Server Instance.
@@ -57,18 +70,3 @@ func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
 
-/*
->>>>>>> e0be23d (v0.3 API Endpoints, Basic Error response, GIN Server Structured Correctly, Request Validation and Minor Error Handling, 3 Routes in Play)
-func Server(httpPort string, flags map[string]string) {
-
-	// Production Mode
-	gin.SetMode(gin.ReleaseMode)
-
-	r := gin.Default()
-	v1 := r.Group("/api/v1")
-	{
-		v1.POST("/convert/yaml/yaml", Ep_ConvertYaml2Yaml)
-		v1.GET("/download/:uuid/:filename", Download)
-	}
-	r.Run((":" + httpPort)) // listen and serve on 0.0.0.0:{httpPort} (for windows "localhost:{httpPort}")
-}
