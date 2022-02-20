@@ -9,5 +9,5 @@ steps:
   args: ['make', 'build']
 artifacts:
   objects:
-    location: gs://shifter-builds
+    location: gs://${PROJECT_ID}-builds/${$BRANCH_NAME}
     paths: ['shifter_*']
