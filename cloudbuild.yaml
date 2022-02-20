@@ -1,12 +1,22 @@
 steps:
-- name: golang
+- id: "Go Binary Test"
+  name: golang
   args: ['make', 'test']
   waitFor: ['-']
-- name: golang
+- id: "Go Binary Make"
+  name: golang
   env:
   - 'GOOS=linux'
   - 'GOARCH=amd64'
   args: ['make', 'build']
+- id: "Go Server Docker Image"
+  name: "gcr.io/cloud-builders/docker"
+  entrypoint: "sh"
+  args:
+    - -c
+    - |
+      docker build -t gcr.io/$PROJECT_ID/shifter-server/$BRANCH_NAME/shifter-server:latest .
+      docker push gcr.io/$PROJECT_ID/shifter-server/$BRANCH_NAME/shifter-server:latest
 artifacts:
   objects:
     location: gs://${PROJECT_ID}-builds/shifter-server/$BRANCH_NAME/
