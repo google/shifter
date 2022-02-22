@@ -28,9 +28,8 @@ import (
 
 func Yaml(path string, objects []lib.K8sobject, destination string) {
 	if destination == "gcs" {
-
 		for _, v := range objects {
-			var b bytes.Buffer
+			var buf bytes.Buffer
 
 			w := bufio.NewWriter(&b)
 			e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
@@ -40,7 +39,7 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 			}
 			w.Flush()
 			kind := fmt.Sprintf("%v", v.Kind)
-			lib.GCSStreamFileUpload(b, "shifter-tmp", kind)
+			lib.GCSStreamFileUpload(buf, "shifter-tmp", kind)
 		}
 
 	} else {
