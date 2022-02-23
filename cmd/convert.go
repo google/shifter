@@ -64,10 +64,11 @@ Supply the output using the -o or --output flag, the directory will be created w
 		log.Println("Processor Flags:", flags)
 		switch inputType {
 		case "template":
-			t := inputs.Template(filename)
+			t, p, n := inputs.Template(filename, flags)
 			switch generator {
 			case "helm":
-				generators.Helm(output, t)
+				generators.Helm(output, t, p, n)
+				//fmt.Println(t)
 			}
 		case "yaml":
 			t := inputs.Yaml(filename, flags)
@@ -79,6 +80,7 @@ Supply the output using the -o or --output flag, the directory will be created w
 			log.Fatal("Openshift resources have not been implemented yet!")
 
 		}
+		log.Println("Conversion completed.")
 	},
 }
 

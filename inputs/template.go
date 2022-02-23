@@ -15,8 +15,12 @@ package input
 
 import (
 	"fmt"
+	gyaml "github.com/ghodss/yaml"
 	"io/ioutil"
+	"log"
+	"os"
 	"shifter/lib"
+	"shifter/processor"
 	"sigs.k8s.io/yaml"
 )
 
@@ -46,6 +50,19 @@ type OSTemplate struct {
 	}
 }
 
+type OSTemplateParams struct {
+	Parameters []struct {
+		Name        string `yaml:"name"`
+		Description string `yaml:"description,omitempty"`
+		Required    bool   `yaml:"required,omitempty"`
+		Value       string `yaml:"value,omitempty"`
+	}
+}
+
+func Template(input string, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+	return parse(readYaml(input), flags)
+}
+
 func readYaml(file string) OSTemplate {
 	yamlFile, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -59,38 +76,33 @@ func readYaml(file string) OSTemplate {
 	return template
 }
 
-func parse(t OSTemplate) lib.Kube {
-	var k8s lib.Kube
+func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+	var k8s []lib.K8sobject
+	var params []lib.OSTemplateParams
 
-	//iterate over the objects and modify them as needed
+	tplname := t.Metadata.Name
+
+	//iterate over the objects inside the template
 	for _, o := range t.Objects {
-		switch o.Kind {
-		case "DeploymentConfig":
-			//fmt.Println(o)
+		y, _ := yaml.Marshal(o)
 
-			//dc, _ := yaml.Marshal(o)
-			//processor.DeploymentConfig(dc)
+		jsonBody, err := gyaml.YAMLToJSON(y)
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
 
-			o.Kind = "Deployment"
-			o.ApiVersion = "apps/v1"
-			k8s.Objects = append(k8s.Objects, o)
-
-		case "ImageStream":
-		case "Route":
-		case "BuildConfig":
-		case "Build":
-		default:
-			k8s.Objects = append(k8s.Objects, o)
+		processedDocument := processor.Processor(jsonBody, o.Kind, flags)
+		if processedDocument.Kind != nil {
+			k8s = append(k8s, processedDocument)
 		}
 	}
 
+	// get the parameters from the template and store in a slice array
 	for _, y := range t.Parameters {
-		k8s.Parameters = append(k8s.Parameters, y)
+		params = append(params, y)
 	}
-	return k8s
-}
 
-func Template(input string) lib.Kube {
-	t := readYaml(input)
-	return parse(t)
+	// return the converted resources and parameterized values
+	return k8s, params, tplname
 }

@@ -65,4 +65,4 @@ If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 ```./shifter convert --input-format yaml --filename ./input.yaml --output-path ./output --output-format yaml```
 
 ### Template converter
-```./shifter convert --type template --input ./myapp/template.yaml --output ./output --kind helm```
+```./shifter convert --intput-format template --filename ./myapp/template.yaml --output-path ./output --output-format helm```
