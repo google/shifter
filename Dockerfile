@@ -18,19 +18,13 @@ RUN go build -o /shifter
 ##
 ## Deploy Shifter Server
 ##
-FROM gcr.io/distroless/base-debian10
+FROM debian:11-slim
 
 ARG serverPort=8080
 ENV env_serverPort=$serverPort
 
 
-WORKDIR /
-
-COPY --from=build /shifter /shifter
-
-EXPOSE $env_serverPort
-#$serverPort
-
-USER nonroot:nonroot
-
-CMD ./shifter server 
+WORKDIR /shifter
+COPY --from=build /shifter ./
+EXPOSE 8080
+CMD ["./shifter", "server"]
