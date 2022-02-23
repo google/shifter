@@ -12,7 +12,7 @@
 
 .PHONY: test lint templateTest clean build apply t1
 
-test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest
+test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest templateTest
 
 clean:
 
@@ -55,7 +55,7 @@ yamlQNSTest: fmt
 	go run . convert -t yaml -i yaml -f ./_test/yaml/quoted_nested_strings.yaml -o ./out/quoted_nested_strings.yaml
 
 templateTest:
-	go run . convert -t template -f ./_test/os-nginx-template.yaml -o ./out/helm -k helm
+	go run . convert -t helm -f ./_test/os-nginx-template.yaml -o ./out/helm -i template 
 
 t1:
 	go run . convert -t helm -i template -f ./t1/template.yaml -o ./t1/out
