@@ -15,11 +15,11 @@ package generator
 
 import (
 	"fmt"
-	"shifter/lib"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
 	"regexp"
+	"shifter/lib"
 	"strconv"
 )
 
@@ -31,6 +31,13 @@ type Chart struct {
 	Description string `yaml:"description"`
 	Type        string `yaml:"type"`
 	Icon        string `yaml:"icon"`
+}
+
+func Helm(path string, objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+	createFolderStruct(path)
+	genTemplate(objects, path)
+	genValues(parameters, path)
+	genChart(path, name, "v1.0.0")
 }
 
 func createFolderStruct(path string) {
@@ -59,8 +66,8 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-func genTemplate(objects lib.Kube, path string) {
-	for x, y := range objects.Objects {
+func genTemplate(objects []lib.K8sobject, path string) {
+	for x, y := range objects {
 
 		//get the contents from the object
 		content, err := yaml.Marshal(y)
@@ -70,7 +77,8 @@ func genTemplate(objects lib.Kube, path string) {
 
 		//convert the iteration into a string to be used in the filename
 		no := strconv.Itoa(x)
-		file, err := os.Create(path + "/templates/" + no + "-" + y.Kind + ".yaml")
+		kind := fmt.Sprintf("%v", y.Kind)
+		file, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -83,11 +91,11 @@ func genTemplate(objects lib.Kube, path string) {
 	}
 }
 
-func genChart(path string) {
+func genChart(path string, name string, version string) {
 	var c Chart
 	c.ApiVersion = "v2"
-	c.Name = "test"
-	c.Version = "1.0.0"
+	c.Name = name
+	c.Version = version
 
 	cg, err := yaml.Marshal(&c)
 	if err != nil {
@@ -107,12 +115,10 @@ func genChart(path string) {
 	}
 }
 
-func genValues(parameters lib.Kube, path string) {
+func genValues(parameters []lib.OSTemplateParams, path string) {
 	m := make(map[interface{}]interface{})
 
-	fmt.Println(parameters)
-
-	for _, y := range parameters.Parameters {
+	for _, y := range parameters {
 		m[y.Name] = y.Value
 	}
 
@@ -129,12 +135,4 @@ func genValues(parameters lib.Kube, path string) {
 	if _, err := file.Write(content); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func Helm(path string, input lib.Kube) {
-	createFolderStruct(path)
-
-	genTemplate(input, path)
-	genValues(input, path)
-	genChart(path)
 }

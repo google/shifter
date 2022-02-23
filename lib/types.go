@@ -20,7 +20,15 @@ type Kube struct {
 	}
 }
 
+type OSTemplateParams struct {
+	Name        string `yaml:"name"`
+	Description string `yaml:"description,omitempty"`
+	Required    bool   `yaml:"required,omitempty"`
+	Value       string `yaml:"value,omitempty"`
+}
+
 type K8sobject struct {
+	// type of converted Openshift Resource to Kubernetes Resource
 	Kind   interface{}
 	Object runtime.Object
 }

@@ -3,14 +3,14 @@ package input
 import (
 	"fmt"
 	gyaml "github.com/ghodss/yaml"
-	"shifter/lib"
-	"shifter/processor"
 	yaml "gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"shifter/lib"
+	"shifter/processor"
 	"strings"
 )
 

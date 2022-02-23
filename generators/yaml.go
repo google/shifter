@@ -16,11 +16,11 @@ package generator
 import (
 	"bufio"
 	"fmt"
-	"shifter/lib"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
 	"path/filepath"
+	"shifter/lib"
 	"strconv"
 )
 
