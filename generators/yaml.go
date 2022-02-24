@@ -31,7 +31,7 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 		for _, v := range objects {
 			var buf bytes.Buffer
 
-			w := bufio.NewWriter(&b)
+			w := bufio.NewWriter(&buf)
 			e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
 			err := e.Encode(v.Object, w)
 			if err != nil {

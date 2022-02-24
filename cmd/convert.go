@@ -57,29 +57,7 @@ Supply the output using the -o or --output flag, the directory will be created w
 ----------------------------------------
 			`)
 		log.Println("Converting", inputType, filename, "to", generator, output)
-
-		flags := procFlags(pFlags)
-		log.Println("Processor Flags:", flags)
-		switch inputType {
-		case "template":
-			t, p, n := inputs.Template(filename, flags)
-			switch generator {
-			case "helm":
-				generators.Helm(output, t, p, n)
-			}
-		case "yaml":
-			t := inputs.Yaml(filename, flags)
-			switch generator {
-			case "yaml":
-				generators.Yaml(output, t)
-			}
-		case "cluster":
-			log.Fatal("Openshift resources have not been implemented yet!")
-
-		}
-		log.Println("Conversion completed.")
 		flags := ProcFlags(pFlags)
-		//"yaml ./_test/yaml/multidoc/os-nginx.yaml yaml ./output map[]"
 		ops.Convert(inputType, filename, generator, output, flags)
 	},
 }
