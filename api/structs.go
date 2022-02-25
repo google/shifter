@@ -25,19 +25,18 @@ type Server struct {
 	router *gin.Engine
 }
 
-
 type Response_Status_Healthz struct {
-	Timestamp      string	`json:"timestamp"`
-	Status         int		`json:"status"`
-	Message        string	`json:"message"`
+	Timestamp string `json:"timestamp"`
+	Status    int    `json:"status"`
+	Message   string `json:"message"`
 }
 
 type Response_Status_Settings struct {
-	Timestamp      string	`json:"timestamp"`
-	RunningPort    string	`json:"runningPort"`
-	Version        int		`json:"version"`
-	Status         int		`json:"status"`
-	Message        string	`json:"message"`
+	Timestamp   string `json:"timestamp"`
+	RunningPort string `json:"runningPort"`
+	Version     int    `json:"version"`
+	Status      int    `json:"status"`
+	Message     string `json:"message"`
 }
 
 type Response_Convert_Yaml2Yaml struct {
