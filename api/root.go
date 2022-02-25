@@ -40,7 +40,6 @@ func (server *Server) setupRouter() {
 			c.POST("/yaml/yaml", Yaml2Yaml)
 		}
 
-		
 		// Download V1 API Endpoints
 		d := v1.Group("/download")
 		{
@@ -51,7 +50,7 @@ func (server *Server) setupRouter() {
 		// Status V1 API Endpoints
 		s := v1.Group("/status")
 		{
-			s.GET("/healthz", Healthz) // Operations Health Check
+			s.GET("/healthz", Healthz)   // Operations Health Check
 			s.GET("/settings", Settings) // Server Settings
 		}
 	}
