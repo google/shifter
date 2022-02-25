@@ -14,12 +14,10 @@ limitations under the license.
 package cmd
 
 import (
-	"fmt"
-	"github.com/spf13/cobra"
 	"log"
-	generators "shifter/generators"
-	inputs "shifter/inputs"
-	"strings"
+	ops "shifter/ops"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -49,7 +47,7 @@ Supply the input file or directory of files with the -i or --input flag
 Supply the output using the -o or --output flag, the directory will be created with the contents of the helm chart.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(`
+		log.Println(`
    _____ __    _ ______           
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -59,28 +57,9 @@ Supply the output using the -o or --output flag, the directory will be created w
 ----------------------------------------
 			`)
 		log.Println("Converting", inputType, filename, "to", generator, output)
-
-		flags := procFlags(pFlags)
-		log.Println("Processor Flags:", flags)
-		switch inputType {
-		case "template":
-			t, p, n := inputs.Template(filename, flags)
-			switch generator {
-			case "helm":
-				generators.Helm(output, t, p, n)
-				//fmt.Println(t)
-			}
-		case "yaml":
-			t := inputs.Yaml(filename, flags)
-			switch generator {
-			case "yaml":
-				generators.Yaml(output, t)
-			}
-		case "cluster":
-			log.Fatal("Openshift resources have not been implemented yet!")
-
-		}
-		log.Println("Conversion completed.")
+		flags := ProcFlags(pFlags)
+		//"yaml ./_test/yaml/multidoc/os-nginx.yaml yaml ./output map[]"
+		ops.Convert(inputType, filename, generator, output, flags)
 	},
 }
 
@@ -93,18 +72,4 @@ func init() {
 	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "", []string{}, "Flags passed to the processor")
 	convertCmd.MarkFlagRequired("filename")
 	convertCmd.MarkFlagRequired("output-path")
-}
-
-func procFlags(input []string) map[string]string {
-	// Process the inputting processor flags into a map
-	m := make(map[string]string)
-
-	for _, f := range input {
-		flag := strings.Split(f, "=")
-		key := string(flag[0])
-		value := string(flag[1])
-		m[key] = value
-	}
-
-	return m
 }
