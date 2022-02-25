@@ -58,5 +58,4 @@ yamlQNSTest: fmt
 	go run . convert -t yaml -i yaml -f ./_test/yaml/quoted_nested_strings.yaml -o ./out/quoted_nested_strings.yaml
 
 templateTest:
-	go run . convert -t helm -f ./_test/os-nginx-template.yaml -o ./out/helm -i template 
-
+	go run . convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/helm

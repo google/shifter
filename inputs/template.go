@@ -76,14 +76,14 @@ func readYaml(file string) OSTemplate {
 	return template
 }
 
-func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
 
-	tplname := t.Metadata.Name
+	tplname := template.Metadata.Name
 
 	//iterate over the objects inside the template
-	for _, o := range t.Objects {
+	for _, o := range template.Objects {
 		y, _ := yaml.Marshal(o)
 
 		jsonBody, err := gyaml.YAMLToJSON(y)
@@ -91,7 +91,7 @@ func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, para
 			log.Println(err)
 			os.Exit(1)
 		}
-
+		log.Print("Converting object " + o.Kind)
 		processedDocument := processor.Processor(jsonBody, o.Kind, flags)
 		if processedDocument.Kind != nil {
 			k8s = append(k8s, processedDocument)
@@ -99,7 +99,7 @@ func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, para
 	}
 
 	// get the parameters from the template and store in a slice array
-	for _, y := range t.Parameters {
+	for _, y := range template.Parameters {
 		params = append(params, y)
 	}
 

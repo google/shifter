@@ -43,5 +43,6 @@ func Convert(inputType string, filename string, generator string, output string,
 	case "cluster":
 		log.Fatal("Openshift resources have not been implemented yet!")
 	}
+	log.Println("Conversion completed")
 	return
 }

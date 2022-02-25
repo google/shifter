@@ -27,7 +27,7 @@ import (
 )
 
 func Yaml(path string, objects []lib.K8sobject, destination string) {
-	if destination == "gcs" {
+	if destination == "gcs123" {
 		for _, v := range objects {
 			var buf bytes.Buffer
 
@@ -94,5 +94,4 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 			}
 		}
 	}
-	log.Println("Conversion completed")
 }

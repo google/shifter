@@ -18,9 +18,9 @@ import (
 	"path/filepath"
 )
 
-func CreateDir(srcPath string) {
-	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
-		os.MkdirAll(srcPath, 0700)
+func CreateDir(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		os.MkdirAll(path, 0700)
 	}
 }
 
