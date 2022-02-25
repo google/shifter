@@ -29,10 +29,10 @@ func Convert(inputType string, filename string, generator string, output string,
 
 	switch inputType {
 	case "template":
-		t := inputs.Template(filename)
+		t, p, n := inputs.Template(filename, flags)
 		switch generator {
 		case "helm":
-			generators.Helm(output, t)
+			generators.Helm(output, t, p, n)
 		}
 	case "yaml":
 		t := inputs.Yaml(filename, flags)
