@@ -17,6 +17,7 @@ require (
 )
 
 require (
+	github.com/gin-contrib/cors v1.3.1 // indirect
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
