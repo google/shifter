@@ -6,47 +6,51 @@
 /____/_/ /_/_/_/  \__/\___/_/     
                                  
 ----------------------------------------
+
+Openshift to Kubernetes converter
 ```
 
-
-# Openshift to Kubernetes converter
+# Shifter - Openshift to Kubernetes converter
 
 Easily and quickly convert your RedHat OpenShift workloads to standard kubernetes for Anthos/GKE 
 
 Shifter has extensible methods for inputs and generators.
 
 -----------------
+## Convert
 
-## Processor
+### Processor
+Processors contains the logic to convert the input object (e.g. Openshift DeploymentConfig) and returns a kubernetes spec for the equivalent standard kubernetes resource (in this case a Deployment). 
 
-Processors are the converts from openshift to kubernetes.
-
------------------
-
-## Inputs
-
-Inputs are readers for your existing Openshift application deployment methods
+### Inputs
+Inputs handle the reading in from a filesystem or cluster the files or specs from your current source system
 
 Currently supported inputs:
 
-
 * **Yaml**
 
-  Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShfit specific to standard Kubernetes example: DeploymentConfig to Deployment
+  Yaml input takes a standard OpenShift yaml file(s) which can be one large file or multiple yaml files.
+  Yaml files directly describe the resources to provision and don't often offer any templating or parameterization.
 
 * **Templates**
 
-  Template converter takes a Openshift template, converts it into kubernetes compatible resources and outputs given the format required.
+  Templates are a set of parameterized objects which can contain any resource such as Deployments or Services. 
+  Parameters are usually provided at the tail of the template file called Parameters and at apply time replace the values in the main body with the values provided.
+
+  Helm charts or Kustomize scripts are a good replacement for templates as both of these provide templating mechanisms.
+
+  Templates are provided in eiter yaml, json or directly deployed to the cluster via the web interface. 
+
 
 * **Cluster**
 
   Cluster converter takes the resources deployed to a Openshift Namespace, converts those resources into kubernetes compatible resources and outputs given the format required. 
 
-----------------
+### Generators
 
-## Generators
+Generators take the converted resources from the processor and creates deployment manifests in the desired format.
 
-Generators create new code based on your input to be used by standard Kubernetes distributions.
+Generators read in standard kubernetes objects as a slice array and it's the job of the generator to iterate over and write them out to the desired format.
 
 Currently supported generators:
 
@@ -59,6 +63,9 @@ Currently supported generators:
   Create a standard yaml file for deployment, good for one off deployments such as inputting from yaml.
 
 If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
+
+
+-----------------
 
 ## Usage
 
