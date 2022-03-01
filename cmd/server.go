@@ -21,12 +21,11 @@ import (
 )
 
 var (
-	serverPort string
+	serverPort 	  		string
+	serverAddress 		string
+	gcsBucket 			string
 )
 
-const (
-	serverAddress = "0.0.0.0"
-)
 
 var serverCmd = &cobra.Command{
 	Use:   "server",
@@ -58,11 +57,11 @@ Usage: shifter server
 
 		//flags := ProcFlags(pFlags)
 		//err :=
-		server, err := api.InitServer()
+		server, err := api.InitServer(serverAddress, serverPort, gcsBucket)
 		if err != nil {
 			log.Fatal("Cannot Create HTTP Server:", err)
 		}
-		server.Start(serverAddress, serverPort)
+		server.Start()
 		if err != nil {
 			log.Fatal("Cannot Start HTTP Server:", err)
 		}
@@ -72,4 +71,6 @@ Usage: shifter server
 func init() {
 	rootCmd.AddCommand(serverCmd)
 	serverCmd.Flags().StringVarP(&serverPort, "port", "p", "8080", "Server Port: Default 8080")
+	serverCmd.Flags().StringVarP(&serverAddress, "host-address", "a", "0.0.0.0", "Host Address: Default 0.0.0.0")
+	serverCmd.Flags().StringVarP(&gcsBucket, "gcs-bucket", "b", "", "Google Storage Bucket when running in GCP. Format gs://XXXXXX")
 }

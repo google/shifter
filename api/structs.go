@@ -20,9 +20,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Custom Shifter Server Configuration
+type ServerConfig struct{
+	serverAddress 		string
+	serverPort 			string
+	storagePlatform 	string
+	gcsBucket 			string
+}
+
 // HTTP Server Based on gin-gonic
 type Server struct {
 	router *gin.Engine
+	config ServerConfig
 }
 
 type Response_Status_Healthz struct {

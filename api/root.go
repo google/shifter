@@ -15,15 +15,25 @@ package api
 
 import (
 	"time"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
 
 // Instanciate gin-gonic HTTP Server
-func InitServer() (*Server, error) {
+func InitServer(serverAddress string, serverPort string, gcsBucket string) (*Server, error) {
 	server := &Server{}
 
+	// Set Server Configuration
+	server.config.serverAddress = serverAddress
+	server.config.serverPort 	= serverPort
+	
+	// Configure Server Routes
 	server.setupRouter()
+	// Configure Server Storage
+	server.setupStorage(gcsBucket)
+
+	// Return Server Instance
 	return server, nil
 
 }
@@ -75,27 +85,34 @@ func (server *Server) setupRouter() {
 	server.router = router
 }
 
+// Setup Server Storage Data
+func (server *Server) setupStorage(gcsBucket string) {
+	// Validate Storage Bucket:
+	server.config.gcsBucket = gcsBucket
+	if gcsBucket != "" {
+		// Using GCP Cloud Storage
+		fmt.Println("Storage: Using GCP Cloud Storage Bucket")
+		server.config.storagePlatform = "GCS"
+		server.config.gcsBucket = gcsBucket
+		/*
+		TODO
+		- Add Tests for Access and Permissions on GCS Bucket
+		*/
+	} else {
+		// Using Local Storage
+		fmt.Println("Storage: Using Local Disk Storage")
+		server.config.storagePlatform = "LOCAL"
+	}
+}
+
 // Start gin-gonic HTTP Server on Specific Address
-func (server *Server) Start(serverAddress string, serverPort string) error {
-	return server.router.Run(serverAddress + ":" + serverPort)
+func (server *Server) Start() error {
+	// Run Server
+	fmt.Println(server.config)
+	return server.router.Run(server.config.serverAddress + ":" + server.config.serverPort)
 }
 
 // Standard API Error Response
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
-
-/*
-func Server(httpPort string, flags map[string]string) {
-
-	// Production Mode
-	gin.SetMode(gin.ReleaseMode)
-
-	r := gin.Default()
-	v1 := r.Group("/api/v1")
-	{
-		v1.POST("/convert/yaml/yaml", convert.Ep_ConvertYaml2Yaml)
-		v1.GET("/download/:uuid/:filename", Download)
-	}
-	r.Run((":" + httpPort)) // listen and serve on 0.0.0.0:{httpPort} (for windows "localhost:{httpPort}")
-}*/
