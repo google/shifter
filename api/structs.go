@@ -21,11 +21,11 @@ import (
 )
 
 // Custom Shifter Server Configuration
-type ServerConfig struct{
-	serverAddress 		string
-	serverPort 			string
-	storagePlatform 	string
-	gcsBucket 			string
+type ServerConfig struct {
+	serverAddress   string
+	serverPort      string
+	storagePlatform string
+	gcsBucket       string
 }
 
 // HTTP Server Based on gin-gonic

@@ -14,10 +14,10 @@ limitations under the License.
 package api
 
 import (
-	"time"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"time"
 )
 
 // Instanciate gin-gonic HTTP Server
@@ -26,8 +26,8 @@ func InitServer(serverAddress string, serverPort string, gcsBucket string) (*Ser
 
 	// Set Server Configuration
 	server.config.serverAddress = serverAddress
-	server.config.serverPort 	= serverPort
-	
+	server.config.serverPort = serverPort
+
 	// Configure Server Routes
 	server.setupRouter()
 	// Configure Server Storage
@@ -46,16 +46,16 @@ func (server *Server) setupRouter() {
 
 	// Configure CORS
 	router.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"*"},
-        AllowMethods:     []string{"GET", "POST"},
-        AllowHeaders:     []string{"Origin"},
-        ExposeHeaders:    []string{"Content-Length"},
-        AllowCredentials: true,
-        /*AllowOriginFunc: func(origin string) bool {
-            return origin == "https://example.com"
-        },*/
-        MaxAge: 12 * time.Hour,
-    }))
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		/*AllowOriginFunc: func(origin string) bool {
+		    return origin == "https://example.com"
+		},*/
+		MaxAge: 12 * time.Hour,
+	}))
 
 	// Declare API V1 Route Group and Routes
 	v1 := router.Group("/api/v1")
@@ -95,8 +95,8 @@ func (server *Server) setupStorage(gcsBucket string) {
 		server.config.storagePlatform = "GCS"
 		server.config.gcsBucket = gcsBucket
 		/*
-		TODO
-		- Add Tests for Access and Permissions on GCS Bucket
+			TODO
+			- Add Tests for Access and Permissions on GCS Bucket
 		*/
 	} else {
 		// Using Local Storage
@@ -116,4 +116,3 @@ func (server *Server) Start() error {
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
-

@@ -21,11 +21,10 @@ import (
 )
 
 var (
-	serverPort 	  		string
-	serverAddress 		string
-	gcsBucket 			string
+	serverPort    string
+	serverAddress string
+	gcsBucket     string
 )
-
 
 var serverCmd = &cobra.Command{
 	Use:   "server",
