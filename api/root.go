@@ -63,21 +63,21 @@ func (server *Server) setupRouter() {
 		// Convert V1 API Endpoints
 		c := v1.Group("/convert")
 		{
-			c.POST("/yaml/yaml", Yaml2Yaml)
+			c.POST("/yaml/yaml", server.Yaml2Yaml)
 		}
 
 		// Download V1 API Endpoints
 		d := v1.Group("/download")
 		{
-			d.GET("/:uuid/:filename", ConvertedFile) // Download Single Converted File
-			d.GET("/:uuid/", ConvertedFilesArchive)  // Download All Converted Files (Archive)
+			d.GET("/:uuid/:filename", server.ConvertedFile) // Download Single Converted File
+			d.GET("/:uuid/", server.ConvertedFilesArchive)  // Download All Converted Files (Archive)
 		}
 
 		// Status V1 API Endpoints
 		s := v1.Group("/status")
 		{
-			s.GET("/healthz", Healthz)   // Operations Health Check
-			s.GET("/settings", Settings) // Server Settings
+			s.GET("/healthz", server.Healthz)   // Operations Health Check
+			s.GET("/settings", server.Settings) // Server Settings
 		}
 	}
 

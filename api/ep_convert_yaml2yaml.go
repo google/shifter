@@ -35,7 +35,7 @@ import (
 // @Produce json
 // @Success 200 {json} Response_Convert_Yaml2Yaml
 // @Router /convert/yaml/yaml [post]
-func Yaml2Yaml(ctx *gin.Context) {
+func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()

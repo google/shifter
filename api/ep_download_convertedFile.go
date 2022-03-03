@@ -33,7 +33,7 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /download/:uuid/:filename [get]
-func ConvertedFile(ctx *gin.Context) {
+func (server *Server) ConvertedFile(ctx *gin.Context) {
 
 	// Validate URL Params
 	// UUID Validation

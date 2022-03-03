@@ -29,7 +29,7 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /status/healthz [get]
-func Healthz(ctx *gin.Context) {
+func (server *Server) Healthz(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := Response_Status_Healthz{}
 	r.Timestamp = ""

@@ -29,7 +29,7 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /status/settings [get]
-func Settings(ctx *gin.Context) {
+func (server *Server) Settings(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := Response_Status_Settings{}
 	r.RunningPort = ""
