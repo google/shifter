@@ -77,7 +77,7 @@ func (server *Server) setupRouter() {
 		s := v1.Group("/status")
 		{
 			s.GET("/healthz", server.Healthz)   // Operations Health Check
-			s.GET("/settings", server.Settings) // Server Settings
+			s.GET("/settingz", server.Settingz) // Server Settingz
 		}
 	}
 
@@ -87,22 +87,25 @@ func (server *Server) setupRouter() {
 
 // Setup Server Storage Data
 func (server *Server) setupStorage(gcsBucket string) {
-	// Validate Storage Bucket:
-	server.config.gcsBucket = gcsBucket
+
+	// Set Default Storage Type to LCL (Local Storage)
+	server.config.serverStorage.storageType = "LCL"
+	// Set Default Storage Root Path to "./data"
+	server.config.serverStorage.root = "data"
+	// Set Default Storage Description
+	server.config.serverStorage.description = "Shifter Server is Connected to Local Storage"
+
 	if gcsBucket != "" {
 		// Using GCP Cloud Storage
 		fmt.Println("Storage: Using GCP Cloud Storage Bucket")
-		server.config.storagePlatform = "GCS"
-		server.config.gcsBucket = gcsBucket
+		server.config.serverStorage.storageType = "GCS"
+		server.config.serverStorage.description = "Shifter Server is Connected to Google Cloud Storage"
+		server.config.serverStorage.bucket = gcsBucket
 		/*
 			TODO
 			- Add Tests for Access and Permissions on GCS Bucket
 		*/
-	} else {
-		// Using Local Storage
-		fmt.Println("Storage: Using Local Disk Storage")
-		server.config.storagePlatform = "LOCAL"
-	}
+	} 
 }
 
 // Start gin-gonic HTTP Server on Specific Address

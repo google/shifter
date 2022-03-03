@@ -14,6 +14,7 @@ limitations under the License.
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -28,11 +29,33 @@ import (
 // @Accept json
 // @Produce json
 // @Success 200 {blob} Blob
-// @Router /status/settings [get]
-func (server *Server) Settings(ctx *gin.Context) {
+// @Router /status/settingz [get]
+func (server *Server) Settingz(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := Response_Status_Settings{}
-	r.RunningPort = ""
+
+	// Server Settings
+	r.RunningPort = server.config.serverPort
+	r.RunningHost = server.config.serverAddress
+
+	// Storage Settings 
+	r.StorageType = server.config.serverStorage.storageType
+	
+	// If Storage is Local Storage (LCL)
+	if r.StorageType == "LCL"{
+		r.StorageDescription = server.config.serverStorage.description
+		r.StorageRoot = fmt.Sprintf("./%s", server.config.serverStorage.root)
+		r.StorageBucket = "N/A"
+	}
+
+	// If Storage is Google Cloud Storage (GCS)
+	if r.StorageType == "GCS"{
+		r.StorageDescription = server.config.serverStorage.description
+		r.StorageBucket = server.config.serverStorage.bucket
+		r.StorageRoot = "N/A"
+	}
+	
+	// General Meta Data
 	r.Timestamp = ""
 	r.Version = 0
 	r.Status = http.StatusOK

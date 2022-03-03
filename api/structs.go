@@ -20,12 +20,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ServerStorage struct {
+	description		string
+	storageType   	string
+	root			string
+	bucket			string
+}
+
+
 // Custom Shifter Server Configuration
 type ServerConfig struct {
 	serverAddress   string
 	serverPort      string
 	storagePlatform string
 	gcsBucket       string
+	serverStorage	ServerStorage
 }
 
 // HTTP Server Based on gin-gonic
@@ -41,11 +50,16 @@ type Response_Status_Healthz struct {
 }
 
 type Response_Status_Settings struct {
-	Timestamp   string `json:"timestamp"`
-	RunningPort string `json:"runningPort"`
-	Version     int    `json:"version"`
-	Status      int    `json:"status"`
-	Message     string `json:"message"`
+	Timestamp   		string `json:"timestamp"`
+	RunningPort 		string `json:"runningPort"`
+	RunningHost 		string `json:"runningHost"`
+	StorageType 		string `json:"storageType"`
+	StorageDescription	string `json:"storageDescription"`
+	StorageRoot 		string `json:"storageRoot"`
+	StorageBucket 		string `json:"storageBucket"`
+	Version     		int    `json:"version"`
+	Status      		int    `json:"status"`
+	Message     		string `json:"message"`
 }
 
 type Response_Convert_Yaml2Yaml struct {

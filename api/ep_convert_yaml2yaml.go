@@ -15,7 +15,7 @@ package api
 
 import (
 	"net/http"
-	"path"
+	//"path"
 	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
@@ -71,9 +71,9 @@ func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 		// Creating File Object
 		fileObj := ops.FileObject{
 			UUID: 			uuid,
-			StorageType:	"LCL",
-			Root:			"data",
-			Bucket:			"shifter-lz-gcp-v2-testbucket",
+			StorageType:	server.config.serverStorage.storageType,
+			Root:			server.config.serverStorage.root,
+			Bucket:			server.config.serverStorage.bucket,
 			Path:			"raw",
 			Filename: 		file.Filename,
 			Content: 		*bytes.NewBuffer(byteContainer),
