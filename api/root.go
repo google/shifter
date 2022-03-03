@@ -26,7 +26,7 @@ func InitServer(serverAddress string, serverPort string, gcsBucket string) (*Ser
 
 	// Set Server Configuration
 	server.config.serverAddress = serverAddress
-	server.config.serverPort = serverPort
+	server.config.serverPort 	= serverPort
 
 	// Configure Server Routes
 	server.setupRouter()

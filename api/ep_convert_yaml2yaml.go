@@ -14,13 +14,14 @@ limitations under the License.
 package api
 
 import (
-	"log"
 	"net/http"
 	"path"
 	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"io"
+	"bytes"
 )
 
 // @BasePath /api/v1
@@ -51,14 +52,42 @@ func Yaml2Yaml(ctx *gin.Context) {
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		// log.Fatal("Multipart Form Error:", err)
 		return
 	}
 
 	// Collect Files from Multipart Form.
 	files := form.File["multiplefiles"]
 	for _, file := range files {
-		log.Println(file.Filename)
+
+		// Read File Contents
+		fileContents, _ := file.Open()
+		byteContainer, err := io.ReadAll(fileContents)
+		if err != nil {
+			// If Unable to Read File into Byte Array
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
+		// Creating File Object
+		fileObj := ops.FileObject{
+			UUID: 			uuid,
+			StorageType:	"LCL",
+			Root:			"data",
+			Bucket:			"shifter-lz-gcp-v2-testbucket",
+			Path:			"raw",
+			Filename: 		file.Filename,
+			Content: 		*bytes.NewBuffer(byteContainer),
+			ContentLength:  len(byteContainer),
+		}
+
+		// Utilize the FileSystem File Handler
+		err = ops.WriteFile(fileObj)
+		if err != nil {
+			// If Unable to Write Uploaded File to Storage
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+
 		//Upload files to the specified directory
 		ctx.SaveUploadedFile(file, path.Join(srcPath, file.Filename))
 	}

@@ -14,8 +14,12 @@ limitations under the license.
 package ops
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"shifter/lib"
+	"bytes"
 )
 
 type JSONResponse struct {
@@ -53,4 +57,49 @@ func GetFiles(uuid string, srcPath string) []File {
 
 	// Return Splice/Array of Files
 	return files
+}
+
+
+/*
+	Cross Platform File Object. 
+	Can be used to Store Content and MetaData about
+	Files stored in Local Storage and or GCS Storage where
+	contents is written as a pointer to a bytes buffer
+*/
+type FileObject struct {
+	UUID 			string			// Unique ID of the Run
+	StorageType 	string			// GCS or LCL Storage
+	Root			string			// Root Directory "/data" LCL Storage
+	Bucket			string			// Root Bucket Nmae GCS Storage
+	Path   			string			// Sub Path ["raw", "output"]
+	Filename		string			// Filename
+	Ext				string			// File Extention
+	Content			bytes.Buffer	// Content as Bytes Buffer
+	ContentLength	int				// Content Length (len(bytes.buffer))
+}
+
+
+func WriteFile(fileObj FileObject) error{
+
+	// Handle Writing File to GCS
+	if fileObj.StorageType == "GCS"{
+		log.Println("Writting File to GCS Bucket")
+		// Run GCSL Stream File Upload Function
+		err := lib.GCSStreamFileUpload(fileObj.Content, fileObj.Bucket, fmt.Sprintf("%s/%s/%s", fileObj.Path, fileObj.UUID, fileObj.Filename))
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+	} else {
+		log.Println("Writting File to Local Storage")
+		err := lib.LocalStreamFileUpload(fileObj.Content, fmt.Sprintf("data/%s/%s/", fileObj.Path, fileObj.UUID), fileObj.Filename)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+	}
+
+	return nil
+	//log.Println(fileObj)
 }
