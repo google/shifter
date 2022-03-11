@@ -14,13 +14,16 @@ limitations under the license.
 package generator
 
 import (
+	//"bytes"
+	"bufio"
 	"fmt"
 	"gopkg.in/yaml.v3"
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
 	"regexp"
 	"shifter/lib"
-	"strconv"
+	//"strconv"
 )
 
 type Chart struct {
@@ -66,28 +69,53 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
+type Writer int
+
+func (*Writer) Write(p []byte) (n int, err error) {
+	//fmt.Println(string(mod(p)))
+	//fmt.Println(len(p))
+	p = mod(p)
+	fmt.Println(string(p))
+	return len(p), nil
+}
+
 func genTemplate(objects []lib.K8sobject, path string) {
-	for x, y := range objects {
+	for _, y := range objects {
+		//no := strconv.Itoa(x)
+		//kind := fmt.Sprintf("%v", y.Kind)
 
-		//get the contents from the object
-		content, err := yaml.Marshal(y)
-		if err != nil {
-			log.Fatal(err)
-		}
+		f := new(Writer)
+		//f, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
+		//if err != nil {
+		//	log.Fatal(err)
+		//}
+		//defer f.Close()
 
-		//convert the iteration into a string to be used in the filename
-		no := strconv.Itoa(x)
-		kind := fmt.Sprintf("%v", y.Kind)
-		file, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
+		w := bufio.NewWriter(f)
+		e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
+
+		err := e.Encode(y.Object, w)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
-		if _, err := file.Write(mod(content)); err != nil {
-			log.Fatal(err)
-		}
-		if err := file.Close(); err != nil {
-			log.Fatal(err)
-		}
+		w.Flush()
+
+		/*
+			//get the contents from the object
+			content, err := yaml.Marshal(y.Object)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			//convert the iteration into a string to be used in the filename
+
+			if _, err := file.Write(mod(content)); err != nil {
+				log.Fatal(err)
+			}
+			if err := file.Close(); err != nil {
+				log.Fatal(err)
+			}
+		*/
 	}
 }
 
