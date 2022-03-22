@@ -14,16 +14,17 @@ limitations under the license.
 package generator
 
 import (
-	//"bytes"
+	"bytes"
 	"bufio"
 	"fmt"
 	"gopkg.in/yaml.v3"
-	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
+	json "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
 	"regexp"
 	"shifter/lib"
 	//"strconv"
+	//"io"
 )
 
 type Chart struct {
@@ -36,11 +37,19 @@ type Chart struct {
 	Icon        string `yaml:"icon"`
 }
 
+type Output struct {
+	Kind string
+	Output []byte
+}
+
+var templates []Output
+
 func Helm(path string, objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
 	createFolderStruct(path)
 	genTemplate(objects, path)
 	genValues(parameters, path)
 	genChart(path, name, "v1.0.0")
+
 }
 
 func createFolderStruct(path string) {
@@ -69,30 +78,24 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-type Writer int
-
-func (*Writer) Write(p []byte) (n int, err error) {
-	//fmt.Println(string(mod(p)))
-	//fmt.Println(len(p))
-	p = mod(p)
-	fmt.Println(string(p))
-	return len(p), nil
-}
 
 func genTemplate(objects []lib.K8sobject, path string) {
-	for _, y := range objects {
+	for x, y := range objects {
+		fmt.Println(x)
 		//no := strconv.Itoa(x)
-		//kind := fmt.Sprintf("%v", y.Kind)
+		kind := fmt.Sprintf("%v", y.Kind)
 
-		f := new(Writer)
+		f := new(bytes.Buffer)
 		//f, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
 		//if err != nil {
 		//	log.Fatal(err)
 		//}
 		//defer f.Close()
 
+		fmt.Println(kind)
+	
 		w := bufio.NewWriter(f)
-		e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
+		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
 
 		err := e.Encode(y.Object, w)
 		if err != nil {
@@ -100,22 +103,10 @@ func genTemplate(objects []lib.K8sobject, path string) {
 		}
 		w.Flush()
 
-		/*
-			//get the contents from the object
-			content, err := yaml.Marshal(y.Object)
-			if err != nil {
-				log.Fatal(err)
-			}
+		b := f.Bytes
 
-			//convert the iteration into a string to be used in the filename
+		fmt.println(string(b))
 
-			if _, err := file.Write(mod(content)); err != nil {
-				log.Fatal(err)
-			}
-			if err := file.Close(); err != nil {
-				log.Fatal(err)
-			}
-		*/
 	}
 }
 
