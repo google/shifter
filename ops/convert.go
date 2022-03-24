@@ -28,7 +28,7 @@ const YAML string = "YAML"
 const TEMPLATE string = "template"
 
 // Create New Converter
-func NewConverter(inputType string, filename string, generator string, output string, flags map[string]string) *Converter {
+func NewConverter(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) *Converter {
 	// Create New Instance of Converter
 	converter := &Converter{}
 
@@ -37,13 +37,13 @@ func NewConverter(inputType string, filename string, generator string, output st
 
 	// Set all the Variables for the Converter
 	converter.InputType = inputType
-	converter.Filename = filename
+	converter.SourcePath = sourcePath
 	converter.Generator = generator
-	converter.Output = output
+	converter.OutputPath = outputPath
 	converter.Flags = flags
 
 	// Process the Path and Create Array of File Objects
-	files, err := ProcessPath(filename)
+	files, err := ProcessPath(converter.SourcePath)
 	if err != nil {
 		log.Println(err)
 	}
@@ -91,7 +91,7 @@ func (converter *Converter) ConvertFiles() {
 
 		fileObj := &FileObject{
 			StorageType:   file.StorageType,
-			SourcePath:    (converter.Output + "/" + fmt.Sprint(idx) + " - " + filepath.Ext(file.SourcePath)),
+			SourcePath:    (converter.OutputPath + "/" + fmt.Sprint(idx) + " - " + filepath.Ext(file.SourcePath)),
 			Ext:           filepath.Ext(file.SourcePath),
 			Content:       file.Content,
 			ContentLength: file.ContentLength,
@@ -110,9 +110,9 @@ func (converter *Converter) ConvertFiles() {
 	- Catch Convert Errors,
 	- Return error struct on Errors
 */
-func Convert(inputType string, filename string, generator string, output string, flags map[string]string) {
+func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
 
-	con := NewConverter(inputType, filename, generator, output, flags)
+	con := NewConverter(inputType, sourcePath, generator, outputPath, flags)
 	//con.ListSourceFiles()
 	con.LoadSourceFiles()
 	con.ConvertFiles()
@@ -120,16 +120,16 @@ func Convert(inputType string, filename string, generator string, output string,
 
 	switch inputType {
 	case "template":
-		t, p, n := inputs.Template(filename, flags)
+		t, p, n := inputs.Template(sourcePath, flags)
 		switch generator {
 		case "helm":
-			generators.Helm(output, t, p, n)
+			generators.Helm(outputPath, t, p, n)
 		}
 	case "yaml":
-		t := inputs.Yaml(filename, flags)
+		t := inputs.Yaml(sourcePath, flags)
 		switch generator {
 		case "yaml":
-			generators.Yaml(output, t, "gcs")
+			generators.Yaml(outputPath, t, "gcs")
 		}
 	case "cluster":
 		log.Fatal("Openshift resources have not been implemented yet!")

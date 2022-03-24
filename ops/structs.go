@@ -21,12 +21,12 @@ import "bytes"
 //}
 
 type Converter struct {
-	UUID      string // Unique ID of the Run
-	InputType string
-	Filename  string
-	Generator string
-	Output    string
-	Flags     map[string]string
+	UUID       string // Unique ID of the Run
+	InputType  string
+	SourcePath string
+	Generator  string
+	OutputPath string
+	Flags      map[string]string
 
 	SourceFiles []*FileObject
 	OutputFiles []*FileObject

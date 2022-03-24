@@ -13,6 +13,7 @@
 .PHONY: test lint templateTest clean build apply t1
 
 test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest templateTest
+#test: serverTest
 
 clean:
 
@@ -59,3 +60,6 @@ yamlQNSTest: fmt
 
 templateTest:
 	go run . convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/helm
+
+#serverTest:
+#	go run . server -p 8081 -f ./data/source -o ./data/output

@@ -32,7 +32,7 @@ type ServerConfig struct {
 	serverPort      string
 	storagePlatform string
 	//gcsBucket       string
-	serverStorage   ServerStorage
+	serverStorage ServerStorage
 }
 
 // HTTP Server Based on gin-gonic
