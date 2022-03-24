@@ -17,8 +17,6 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-	generators "shifter/generators"
-	inputs "shifter/inputs"
 
 	"github.com/google/uuid"
 )
@@ -50,6 +48,9 @@ func NewConverter(inputType string, sourcePath string, generator string, outputP
 
 	// Set Converter Files
 	converter.SourceFiles = files
+	if len(converter.SourceFiles) > 0 {
+		converter.LoadSourceFiles()
+	}
 
 	return converter
 }
@@ -88,10 +89,12 @@ func (converter *Converter) ConvertFiles() {
 
 		// Run Conversion..... HERE
 		// Store Return Buffer in New File and Write File
+		// Get New File name and set it here
+		outputFileName := fmt.Sprint(idx)
 
 		fileObj := &FileObject{
 			StorageType:   file.StorageType,
-			SourcePath:    (converter.OutputPath + "/" + fmt.Sprint(idx) + " - " + filepath.Ext(file.SourcePath)),
+			SourcePath:    (converter.OutputPath + "/" + outputFileName + " - " + filepath.Ext(file.SourcePath)),
 			Ext:           filepath.Ext(file.SourcePath),
 			Content:       file.Content,
 			ContentLength: file.ContentLength,
@@ -104,19 +107,9 @@ func (converter *Converter) ConvertFiles() {
 	}
 }
 
-/*
-	TODO
-	- Add Errors Handling to Convert,
-	- Catch Convert Errors,
-	- Return error struct on Errors
-*/
-func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
 
-	con := NewConverter(inputType, sourcePath, generator, outputPath, flags)
-	//con.ListSourceFiles()
-	con.LoadSourceFiles()
-	con.ConvertFiles()
-	//con.ListSourceFiles()
+/*
+func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
 
 	switch inputType {
 	case "template":
@@ -136,3 +129,4 @@ func Convert(inputType string, sourcePath string, generator string, outputPath s
 	}
 	log.Println("Conversion completed")
 }
+*/
