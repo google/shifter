@@ -23,9 +23,6 @@ import (
 var (
 	serverPort    string
 	serverAddress string
-	sourcePath    string
-	outputPath    string
-	gcsBucket     string
 )
 
 var serverCmd = &cobra.Command{
