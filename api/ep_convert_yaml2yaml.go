@@ -14,14 +14,15 @@ limitations under the License.
 package api
 
 import (
+	"bytes"
+	"io"
 	"net/http"
-	//"path"
+	"path/filepath"
+
 	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"io"
-	"bytes"
 )
 
 // @BasePath /api/v1
@@ -40,20 +41,16 @@ func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
-	// Create Raw Input Folder if not Exists
-	srcPath := ("./data/raw/" + uuid + "/")
-	ops.CreateDir(srcPath)
-
-	// Create Raw Output Folder if not Existsk
-	dstPath := ("./data/output/" + uuid + "/")
-	ops.CreateDir(dstPath)
-
 	// Validate that Request Contains at least One File
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	// Create a New Instance of Converter for File Upload
+	converter := &ops.Converter{}
+	converter.UUID = uuid
 
 	// Collect Files from Multipart Form.
 	files := form.File["multiplefiles"]
@@ -67,54 +64,34 @@ func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 			return
 		}
-
-		// Creating File Object
-		fileObj := ops.FileObject{
-			UUID: 			uuid,
-			StorageType:	server.config.serverStorage.storageType,
-			Root:			server.config.serverStorage.root,
-			Bucket:			server.config.serverStorage.bucket,
-			Path:			"raw",
-			Filename: 		file.Filename,
-			Content: 		*bytes.NewBuffer(byteContainer),
-			ContentLength:  len(byteContainer),
+		//var sourceFiles []*ops.FileObject
+		// Create FileObject for Each uploaded File.
+		fileObj := &ops.FileObject{
+			StorageType:   server.config.serverStorage.storageType,
+			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + file.Filename),
+			Ext:           filepath.Ext(file.Filename),
+			Content:       *bytes.NewBuffer(byteContainer),
+			ContentLength: len(byteContainer),
 		}
 
-		// Utilize the FileSystem File Handler
-		err = ops.WriteFile(fileObj)
-		if err != nil {
-			// If Unable to Write Uploaded File to Storage
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-			return
-		}
-
-		//Upload files to the specified directory
-		ctx.SaveUploadedFile(file, path.Join(srcPath, file.Filename))
+		// Add File Object to Array of Files
+		converter.SourceFiles = append(converter.SourceFiles, fileObj)
+		converter.WriteSourceFiles()
 	}
 
-	/*
-		TODO
-		- Add Errors Handling to ops.Convert(),
-		- Catch Conversion Errors
-		- Respond to API with Error Message JSON.
-	*/
-	// Run the Conversion Operation
-	ops.Convert("yaml", srcPath, "yaml", dstPath, make(map[string]string))
+	// Create a New Instance of the Converter to Convert the Files
+	converter = ops.NewConverter(ops.YAML, (server.config.serverStorage.sourcePath + "/" + uuid), ops.YAML, (server.config.serverStorage.outputPath + "/" + uuid), make(map[string]string))
+	converter.UUID = uuid
 
-	/*
-		TODO
-		- Add Errors Handling to ops.Archive(),
-		- Catch Archive Errors,
-		- Respond to API with Error Message JSON.
-	*/
-	// Run the Archive Operation
-	ops.Archive(dstPath, (dstPath + "/" + uuid + ".zip"))
+	// Run the Conversions
+	converter.LoadSourceFiles()
+	converter.ConvertFiles()
 
 	// Construct API Endpoint Response
 	r := Response_Convert_Yaml2Yaml{}
-	r.InputType = "yaml"
+	r.InputType = ops.YAML
 	r.UUID = string(uuid)
-	r.ConvertedFiles = ops.GetFiles(uuid, dstPath)
+	//r.ConvertedFiles = ops.GetFiles(uuid, dstPath)
 	r.UploadedFiles = files
 	r.Message = "YAML files generated."
 	// Return JSON API Response

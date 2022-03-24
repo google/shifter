@@ -15,26 +15,24 @@ package api
 
 import (
 	"mime/multipart"
-	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ServerStorage struct {
-	description		string
-	storageType   	string
-	root			string
-	bucket			string
+	description string
+	storageType string
+	sourcePath  string
+	outputPath  string
 }
-
 
 // Custom Shifter Server Configuration
 type ServerConfig struct {
 	serverAddress   string
 	serverPort      string
 	storagePlatform string
-	gcsBucket       string
-	serverStorage	ServerStorage
+	//gcsBucket       string
+	serverStorage   ServerStorage
 }
 
 // HTTP Server Based on gin-gonic
@@ -50,22 +48,22 @@ type Response_Status_Healthz struct {
 }
 
 type Response_Status_Settings struct {
-	Timestamp   		string `json:"timestamp"`
-	RunningPort 		string `json:"runningPort"`
-	RunningHost 		string `json:"runningHost"`
-	StorageType 		string `json:"storageType"`
-	StorageDescription	string `json:"storageDescription"`
-	StorageRoot 		string `json:"storageRoot"`
-	StorageBucket 		string `json:"storageBucket"`
-	Version     		int    `json:"version"`
-	Status      		int    `json:"status"`
-	Message     		string `json:"message"`
+	Timestamp          string `json:"timestamp"`
+	RunningPort        string `json:"runningPort"`
+	RunningHost        string `json:"runningHost"`
+	StorageType        string `json:"storageType"`
+	StorageDescription string `json:"storageDescription"`
+	StorageSourcePath  string `json:"storageSourcePath"`
+	StorageOutputPath  string `json:"storageOutputPath"`
+	Version            int    `json:"version"`
+	Status             int    `json:"status"`
+	Message            string `json:"message"`
 }
 
 type Response_Convert_Yaml2Yaml struct {
-	InputType      string                  `json:"inputType"`
-	UUID           string                  `json:"uuid"`
-	ConvertedFiles []ops.File              `json:"convertedFiles"`
-	UploadedFiles  []*multipart.FileHeader `json:"uploadedFiles"`
-	Message        string                  `json:"message"`
+	InputType string `json:"inputType"`
+	UUID      string `json:"uuid"`
+	//ConvertedFiles []ops.File              `json:"convertedFiles"`
+	UploadedFiles []*multipart.FileHeader `json:"uploadedFiles"`
+	Message       string                  `json:"message"`
 }

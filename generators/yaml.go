@@ -17,13 +17,15 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+
 	//"io"
-	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"os"
 	"path/filepath"
 	"shifter/lib"
 	"strconv"
+
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
 
 func Yaml(path string, objects []lib.K8sobject, destination string) {
@@ -38,8 +40,8 @@ func Yaml(path string, objects []lib.K8sobject, destination string) {
 				fmt.Println(err)
 			}
 			w.Flush()
-			kind := fmt.Sprintf("%v", v.Kind)
-			lib.GCSStreamFileUpload(buf, "shifter-tmp", kind)
+			//kind := fmt.Sprintf("%v", v.Kind)
+			//lib.GCSStreamFileUpload(buf, "shifter-tmp", kind)
 		}
 
 	} else {

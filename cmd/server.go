@@ -23,6 +23,8 @@ import (
 var (
 	serverPort    string
 	serverAddress string
+	sourcePath    string
+	outputPath    string
 	gcsBucket     string
 )
 
@@ -56,7 +58,7 @@ Usage: shifter server
 
 		//flags := ProcFlags(pFlags)
 		//err :=
-		server, err := api.InitServer(serverAddress, serverPort, gcsBucket)
+		server, err := api.InitServer(serverAddress, serverPort, sourcePath, outputPath)
 		if err != nil {
 			log.Fatal("Cannot Create HTTP Server:", err)
 		}
@@ -71,5 +73,6 @@ func init() {
 	rootCmd.AddCommand(serverCmd)
 	serverCmd.Flags().StringVarP(&serverPort, "port", "p", "8080", "Server Port: Default 8080")
 	serverCmd.Flags().StringVarP(&serverAddress, "host-address", "a", "0.0.0.0", "Host Address: Default 0.0.0.0")
-	serverCmd.Flags().StringVarP(&gcsBucket, "gcs-bucket", "b", "", "Google Storage Bucket when running in GCP. Format gs://XXXXXX")
+	serverCmd.Flags().StringVarP(&sourcePath, "source-path", "f", "", "Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written")
+	serverCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
 }

@@ -14,10 +14,13 @@ limitations under the License.
 package api
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
+
+const GCS string = "GCS"
+const LCL string = "LCL"
 
 // @BasePath /api/v1
 
@@ -38,23 +41,12 @@ func (server *Server) Settingz(ctx *gin.Context) {
 	r.RunningPort = server.config.serverPort
 	r.RunningHost = server.config.serverAddress
 
-	// Storage Settings 
+	// Storage Settings
 	r.StorageType = server.config.serverStorage.storageType
-	
-	// If Storage is Local Storage (LCL)
-	if r.StorageType == "LCL"{
-		r.StorageDescription = server.config.serverStorage.description
-		r.StorageRoot = fmt.Sprintf("./%s", server.config.serverStorage.root)
-		r.StorageBucket = "N/A"
-	}
+	r.StorageDescription = server.config.serverStorage.description
+	r.StorageSourcePath = server.config.serverStorage.sourcePath
+	r.StorageOutputPath = server.config.serverStorage.outputPath
 
-	// If Storage is Google Cloud Storage (GCS)
-	if r.StorageType == "GCS"{
-		r.StorageDescription = server.config.serverStorage.description
-		r.StorageBucket = server.config.serverStorage.bucket
-		r.StorageRoot = "N/A"
-	}
-	
 	// General Meta Data
 	r.Timestamp = ""
 	r.Version = 0
