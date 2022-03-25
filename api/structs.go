@@ -15,6 +15,7 @@ package api
 
 import (
 	"mime/multipart"
+	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,9 +62,9 @@ type Response_Status_Settings struct {
 }
 
 type Response_Convert_Yaml2Yaml struct {
-	InputType string `json:"inputType"`
-	UUID      string `json:"uuid"`
-	//ConvertedFiles []ops.File              `json:"convertedFiles"`
-	UploadedFiles []*multipart.FileHeader `json:"uploadedFiles"`
-	Message       string                  `json:"message"`
+	InputType      string                  `json:"inputType"`
+	UUID           string                  `json:"uuid"`
+	ConvertedFiles []*ops.DownloadFile     `json:"convertedFiles"`
+	UploadedFiles  []*multipart.FileHeader `json:"uploadedFiles"`
+	Message        string                  `json:"message"`
 }

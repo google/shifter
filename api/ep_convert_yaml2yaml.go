@@ -91,7 +91,7 @@ func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 	r := Response_Convert_Yaml2Yaml{}
 	r.InputType = ops.YAML
 	r.UUID = string(uuid)
-	//r.ConvertedFiles = ops.GetFiles(uuid, dstPath)
+	r.ConvertedFiles = converter.BuildDownloadFiles()
 	r.UploadedFiles = files
 	r.Message = "YAML files generated."
 	// Return JSON API Response

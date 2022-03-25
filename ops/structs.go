@@ -40,13 +40,18 @@ type FileObject struct {
 	SourcePath  string // Bucket or Local Path
 	Ext         string // File Extention
 
-	Root     string // Root Directory "/data" LCL Storage
-	Bucket   string // Root Bucket Nmae GCS Storage
-	Path     string // Sub Path ["raw", "output"]
+	//Root     string // Root Directory "/data" LCL Storage
+	//Bucket   string // Root Bucket Nmae GCS Storage
+	//Path     string // Sub Path ["raw", "output"]
 	Filename string // Filename
 
 	Content       bytes.Buffer // Content as Bytes Buffer
 	ContentLength int          // Content Length (len(bytes.buffer))
+}
+
+type DownloadFile struct {
+	Link     string `json:"link"`
+	Filename string `json:"filename"`
 }
 
 type LogObject struct {

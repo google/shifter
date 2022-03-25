@@ -95,6 +95,7 @@ func (converter *Converter) ConvertFiles() {
 		fileObj := &FileObject{
 			StorageType:   file.StorageType,
 			SourcePath:    (converter.OutputPath + "/" + outputFileName + " - " + filepath.Ext(file.SourcePath)),
+			Filename:      outputFileName,
 			Ext:           filepath.Ext(file.SourcePath),
 			Content:       file.Content,
 			ContentLength: file.ContentLength,
@@ -107,6 +108,19 @@ func (converter *Converter) ConvertFiles() {
 	}
 }
 
+func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
+	var files []*DownloadFile
+
+	// Process Output Objects
+	for _, file := range converter.OutputFiles {
+		dlFile := &DownloadFile{}
+		dlFile.Link = "https://somefile.com"
+		dlFile.Filename = file.Filename
+		files = append(files, dlFile)
+	}
+
+	return files
+}
 
 /*
 func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
