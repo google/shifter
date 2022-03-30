@@ -96,8 +96,7 @@ shifter convert
 
 ## Shifter Server
 
-Shifter also contains a under development Rest API Sever. 
-
+Shifter also contains a under development Rest API Sever.
 
 ## Server Usage
 
@@ -122,6 +121,6 @@ shifter server
 
   `./shifter server --port 8080 --source-path gs://bucket/source --output-path gs://bucket/output `
 
-
 # Git Workflow
-- Testing Builds. Again. More Tests! Again with the testing....
+
+- Testing Builds. Again. More Tests! Again with the testing.... You don't guess.... but I am doing more testing....
