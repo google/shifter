@@ -121,3 +121,6 @@ shifter server
 - Running with GCP Bucket
 
   `./shifter server --port 8080 --source-path gs://bucket/source --output-path gs://bucket/output `
+
+
+# Git Workflow
