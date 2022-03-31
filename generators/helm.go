@@ -14,8 +14,8 @@ limitations under the license.
 package generator
 
 import (
-	"bytes"
 	"bufio"
+	"bytes"
 	"fmt"
 	"gopkg.in/yaml.v3"
 	json "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -23,7 +23,7 @@ import (
 	"os"
 	"regexp"
 	"shifter/lib"
-	//"strconv"
+	"strconv"
 	//"io"
 )
 
@@ -38,7 +38,7 @@ type Chart struct {
 }
 
 type Output struct {
-	Kind string
+	Kind   string
 	Output []byte
 }
 
@@ -78,34 +78,34 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-
 func genTemplate(objects []lib.K8sobject, path string) {
 	for x, y := range objects {
-		fmt.Println(x)
-		//no := strconv.Itoa(x)
+		no := strconv.Itoa(x)
 		kind := fmt.Sprintf("%v", y.Kind)
 
-		f := new(bytes.Buffer)
-		//f, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
-		//defer f.Close()
+		log.Printf("Writing helm template file %x %s", x, kind)
 
-		fmt.Println(kind)
-	
+		f := new(bytes.Buffer)
+		file, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer file.Close()
+
 		w := bufio.NewWriter(f)
 		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
 
-		err := e.Encode(y.Object, w)
+		err = e.Encode(y.Object, w)
 		if err != nil {
 			fmt.Println(err)
 		}
 		w.Flush()
 
-		b := f.Bytes
+		c := mod(f.Bytes())
 
-		fmt.println(string(b))
+		writer := bufio.NewWriter(file)
+		writer.Write(c)
+		writer.Flush()
 
 	}
 }
