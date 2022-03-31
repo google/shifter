@@ -27,4 +27,4 @@ ENV env_serverPort=$serverPort
 WORKDIR /shifter
 COPY --from=build /shifter ./
 EXPOSE 8080
-CMD ["./shifter", "server"]
+CMD ["./shifter"]
