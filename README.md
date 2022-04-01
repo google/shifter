@@ -1,6 +1,6 @@
-# Openshift to Kubernetes converter
+# OpenShift to Kubernetes converter
 
-Easily and quickly convert your RedHat OpenShift workloads to standard kubernetes for Anthos/GKE 
+Easily and quickly convert your RedHat OpenShift workloads to standard Kubernetes for Anthos/GKE 
 
 Shifter has extensible methods for inputs and generators.
 
@@ -8,7 +8,7 @@ Shifter has extensible methods for inputs and generators.
 
 ## Processor
 
-Processors are the converts from openshift to kubernetes.
+Processors are the converts from OpenShift to Kubernetes.
 
 -----------------
 
@@ -21,15 +21,15 @@ Currently supported inputs:
 
 * **Yaml**
 
-  Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShfit specific to standard Kubernetes example: DeploymentConfig to Deployment
+  Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShift specific to standard Kubernetes example: DeploymentConfig to Deployment
 
 * **Templates**
 
-  Template converter takes a Openshift template, converts it into kubernetes compatible resources and outputs given the format required.
+  Template converter takes a OpenShift template, converts it into Kubernetes compatible resources and outputs given the format required.
 
 * **Cluster**
 
-  Cluster converter takes the resources deployed to a Openshift Namespace, converts those resources into kubernetes compatible resources and outputs given the format required. 
+  Cluster converter takes the resources deployed to a OpenShift Namespace, converts those resources into Kubernetes compatible resources and outputs given the format required. 
 
 ----------------
 
@@ -41,7 +41,7 @@ Currently supported generators:
 
 * **Helm**
 
-  Helm charts support the ability to create reusable charts that take input, this is a good fit from moving from Openshift Templates.
+  Helm charts support the ability to create reusable charts that take input, this is a good fit from moving from OpenShift Templates.
 
 * **Yaml** 
 
