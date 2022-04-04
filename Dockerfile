@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ##
-## Build Shifter Server
+## Build Shifter Core
 ##
 FROM golang:1.17.7 AS build
 
@@ -16,7 +16,7 @@ ADD . ./
 RUN go build -o /shifter
 
 ##
-## Deploy Shifter Server
+## Deploy Shifter Core
 ##
 FROM debian:11-slim
 
