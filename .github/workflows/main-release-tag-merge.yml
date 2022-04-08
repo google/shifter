@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          ref: main
+          ref: thiatt/dev
 
       - run: |
           git config --local user.email "action@github.com"
@@ -47,7 +47,7 @@ jobs:
         id: tagger
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: thiatt/dev
           bump: ${{ steps.contributor.outputs.release || steps.bot.outputs.release }}
           dry-run: "true"
 
@@ -63,6 +63,6 @@ jobs:
       - uses: phish108/autotag-action@1.1.37
         env:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          branch: thiatt/dev
           bump: ${{ steps.contributor.outputs.release || steps.bot.outputs.release }}
           with-v: true
