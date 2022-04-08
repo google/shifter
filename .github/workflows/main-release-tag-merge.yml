@@ -46,6 +46,7 @@ jobs:
       - uses: phish108/autotag-action@1.1.37
         id: tagger
         env:
+          release-branch: thiatt/dev
           github-token: ${{ secrets.GITHUB_TOKEN }}
           branch: thiatt/dev
           bump: ${{ steps.contributor.outputs.release || steps.bot.outputs.release }}
