@@ -67,9 +67,9 @@ If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 
 The Shifter CLI can be executed in several modes. Each of which has it's own subroutine.
 
-| Shifter CLI Usage ||
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------
- |
+| Shifter CLI Usage |                                                                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  |
 | **Routine**       | **Description**                                                                                                                                      |
 | ./shifter convert | Takes an OpenShift source input format and File/Directory as flags and converts to a specified Output File/Directory in the specified output format. |
 | ./shifter server  | Starts Shifter as a HTTP WebServer allowing Shifter functionality to be made available by Rest API Endpoints.                                        |
@@ -77,50 +77,51 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 <br>
 
 ## Shifter Convert
----
-<br>
 
-| **Flag**       | |**Description**        |
-| ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| -f | --filename |path to either a input file or directory (if reading multiple files).|
-| -i | --input-format |Input format. One of yaml|template (Default: yaml).|
-| -o | --output-path |Relative or full path to save the output, if you specify a .yaml or .yml file it will create a multi-document file with all resources, if you specify a directory it will create multiple files per resource type.|
-| -t | --output-format |Output format (generator to use) One of: yaml|helm|
+---
 
 <br>
----
+
+| **Flag** |                 | **Description**                                                                                                                                                                                                    |
+| -------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| -f       | --filename      | path to either a input file or directory (if reading multiple files).                                                                                                                                              |
+| -i       | --input-format  | Input format. One of yaml                                                                                                                                                                                          | template (Default: yaml). |
+| -o       | --output-path   | Relative or full path to save the output, if you specify a .yaml or .yml file it will create a multi-document file with all resources, if you specify a directory it will create multiple files per resource type. |
+| -t       | --output-format | Output format (generator to use) One of: yaml                                                                                                                                                                      | helm                      |
+
+## <br>
 
 ### Example Usage:
 
-| **CLI**       |       |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Examples #1: | YAML Conversion |
-| |`./shifter convert --input-format yaml --filename ./input.yaml --output-path ./output --output-format yaml` |
-| Examples #3: | Template Conversion |
-| |`./shifter convert --intput-format template --filename ./myapp/template.yaml --output-path ./output --output-format helm` |
+| **CLI**      |                                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| Examples #1: | YAML Conversion                                                                                                           |
+|              | `./shifter convert --input-format yaml --filename ./input.yaml --output-path ./output --output-format yaml`               |
+| Examples #3: | Template Conversion                                                                                                       |
+|              | `./shifter convert --intput-format template --filename ./myapp/template.yaml --output-path ./output --output-format helm` |
 
 <br><br>
 
 ## Shifter Server
----
-<br>
 
-| **Flag**       | |**Description**        |
-| ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| -p | --port |Server Port: Deafult (8080)|
+---
 
 <br>
----
+
+| **Flag** |        | **Description**             |
+| -------- | ------ | --------------------------- |
+| -p       | --port | Server Port: Deafult (8080) |
+
+## <br>
 
 ### Example Usage:
 
-| **CLI**       |       |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Examples #1: |Run Shifter Server Binary locally on port "8080" |
-| |`./shifter server -p 8080` |
+| **CLI**      |                                                  |
+| ------------ | ------------------------------------------------ |
+| Examples #1: | Run Shifter Server Binary locally on port "8080" |
+|              | `./shifter server -p 8080`                       |
 
-
-| **Docker Container**       |       |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Examples #1: |Run Shifter Server as a container on port "8080" |
-| |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
+| **Docker Container** |                                                                                     |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| Examples #1:         | Run Shifter Server as a container on port "8080"                                    |
+|                      | `docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
