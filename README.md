@@ -124,4 +124,3 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Examples #1: |Run Shifter Server as a container on port "8080" |
 | |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
-
