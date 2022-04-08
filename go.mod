@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/ghodss/yaml v1.0.0
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
