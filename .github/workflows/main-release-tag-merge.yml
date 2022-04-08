@@ -7,7 +7,6 @@ on:
 
 jobs:
   merge:
-    needs: build
     #if: github.actor == 'phish108' ||  startsWith(github.actor, 'dependabot')
 
     runs-on: ubuntu-latest
