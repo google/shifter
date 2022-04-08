@@ -1,0 +1,31 @@
+{
+  "name": "shifter",
+  "version": "0.13.0",
+  "description": "Shifter - OpenShift workloads to GKE/Anthos",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google/shifter.git"
+  },
+  "keywords": [
+    "shifter",
+    "k8s",
+    "kubernetes",
+    "gke",
+    "anthos",
+    "openshift"
+  ],
+  "author": "Google",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/google/shifter/issues"
+  },
+  "homepage": "https://github.com/google/shifter#readme"
+}
