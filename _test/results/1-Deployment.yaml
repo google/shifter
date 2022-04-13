@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      deploymentconfig: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+        deploymentconfig: nginx
+    spec:
+      containers:
+      - command:
+        - /usr/libexec/s2i/run
+        image: centos/nginx-112-centos7
+        imagePullPolicy: Always
+        name: nginx
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 8080-tcp
+          timeoutSeconds: 20
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/
+          name: volume-s35u4
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/conf.d
+          name: volume-1l43r
+        - mountPath: /etc/opt/rh/rh-nginx112/nginx/default.d
+          name: volume-tlwx7
+        - mountPath: /opt/app-root/src
+          name: nginx-root
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: nginx-config
+        name: volume-s35u4
+      - configMap:
+          defaultMode: 420
+          name: nginx-conf.d
+        name: volume-1l43r
+      - configMap:
+          defaultMode: 420
+          name: nginx-default.d
+        name: volume-tlwx7
+      - name: nginx-root
+        persistentVolumeClaim:
+          claimName: nginx-root
+status: {}
