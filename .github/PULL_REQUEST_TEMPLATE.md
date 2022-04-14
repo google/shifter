@@ -8,7 +8,7 @@ Fixes # (issue)
 
 Please delete options that are not relevant and mark one option with an "x".
 
-- [ ] #RELEASE New Collection of Features (containing breakinf andnon-breaking changes)
+- [ ] #RELEASE New Collection of Features (containing breaking and non-breaking changes)
 - [ ] #FT New feature (non-breaking change which adds functionality)
 - [ ] #BUG Bug Fix (non-breaking change which fixes an issue)
 - [ ] #PATCH Patch (non-breaking change which modifies only non-code object [Docs, Readme])

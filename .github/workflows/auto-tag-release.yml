@@ -14,27 +14,31 @@ jobs:
         with:
           # Can be "open", "closed", or "all".  Defaults to "open".
           state: open
+      - id: string
+        uses: ASzc/change-string-case-action@v2
+        with:
+          string: steps.getPRType.outputs.body
       - name: "PATCH"
         uses: rymndhng/release-on-push-action@master
-        if: contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#PATCH'))
+        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#patch'))
         with:
           bump_version_scheme: patch
           use_github_release_notes: true
       - name: "BUG"
         uses: rymndhng/release-on-push-action@master
-        if: contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#BUG'))
+        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#bug'))
         with:
           bump_version_scheme: patch
           use_github_release_notes: true
       - name: "FEATURE"
         uses: rymndhng/release-on-push-action@master
-        if: contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#FT'))
+        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#ft'))
         with:
           bump_version_scheme: minor
           use_github_release_notes: true
       - name: "RELEASE"
         uses: rymndhng/release-on-push-action@master
-        if: contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#RELEASE'))
+        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#release'))
         with:
           bump_version_scheme: major
           use_github_release_notes: true
