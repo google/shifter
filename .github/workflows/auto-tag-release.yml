@@ -24,21 +24,21 @@ jobs:
         with:
           bump_version_scheme: patch
           use_github_release_notes: true
-      - name: "BUG"
-        uses: rymndhng/release-on-push-action@master
-        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#bug'))
-        with:
-          bump_version_scheme: patch
-          use_github_release_notes: true
-      - name: "FEATURE"
-        uses: rymndhng/release-on-push-action@master
-        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#ft'))
-        with:
-          bump_version_scheme: minor
-          use_github_release_notes: true
-      - name: "RELEASE"
-        uses: rymndhng/release-on-push-action@master
-        if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#release'))
-        with:
-          bump_version_scheme: major
-          use_github_release_notes: true
+      #- name: "BUG"
+      #  uses: rymndhng/release-on-push-action@master
+      #  if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#bug'))
+      #  with:
+      #    bump_version_scheme: patch
+      #    use_github_release_notes: true
+      #- name: "FEATURE"
+      #  uses: rymndhng/release-on-push-action@master
+      #  if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#ft'))
+      #  with:
+      #    bump_version_scheme: minor
+      #    use_github_release_notes: true
+      #- name: "RELEASE"
+      #  uses: rymndhng/release-on-push-action@master
+      #  if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#release'))
+      #  with:
+      #    bump_version_scheme: major
+      #    use_github_release_notes: true
