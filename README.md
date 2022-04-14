@@ -5,7 +5,7 @@
  ___/ / / / / / __/ /_/  __/ /
 /____/_/ /_/_/_/  \__/\___/_/
 
-----------------------------------------
+
 ```
 
 # Openshift to Kubernetes converter
@@ -14,13 +14,13 @@ Easily and quickly convert your RedHat OpenShift workloads to standard kubernete
 
 Shifter has extensible methods for inputs and generators.
 
----
+
 
 ## Processor
 
 Processors are the converts from openshift to kubernetes.
 
----
+
 
 ## Supported Inputs
 
@@ -40,8 +40,6 @@ Currently supported inputs:
 
   Cluster converter takes the resources deployed to a Openshift Namespace, converts those resources into kubernetes compatible resources and outputs given the format required.
 
----
-
 ## Generators
 
 Generators create new code based on your input to be used by standard Kubernetes distributions.
@@ -56,12 +54,7 @@ Currently supported generators:
 
   Create a standard yaml file for deployment, good for one off deployments such as inputting from yaml.
 
-If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 
----
-
-<br>
-<br>
 
 # Usage
 
@@ -77,47 +70,53 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 <br>
 
 ## Shifter Convert
----
-<br>
+Shifter Convert has several configurations options made available via the way of flags. 
 
-| **Flag**       | |**Description**        |
+| **Flag**       | **Description**        |
 | ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| -f | --filename |path to either a input file or directory (if reading multiple files).|
-| -i | --input-format |Input format. One of yaml|template (Default: yaml).|
-| -o | --output-path |Relative or full path to save the output, if you specify a .yaml or .yml file it will create a multi-document file with all resources, if you specify a directory it will create multiple files per resource type.|
-| -t | --output-format |Output format (generator to use) One of: yaml|helm|
+| -f  <br> --filename | path to either a input file or directory (if reading multiple files).|
+| -i  <br> --input-format |Input format. One of yaml|template (Default: yaml).|
+| -o <br> --output-path | Relative or full path to save the output, if you specify a .yaml or .yml file it will create a multi-document file with all resources, if you specify a directory it will create multiple files per resource type.|
+| -t  <br> --output-format |Output format (generator to use) One of: yaml|helm|
 
-<br>
----
+
+
 
 ### Example Usage:
 
 | **CLI**       |       |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Examples #1: | YAML Conversion |
+| Examples #1: | YAML Conversion using Go Binary via CLI |
 | |`./shifter convert --input-format yaml --filename ./input.yaml --output-path ./output --output-format yaml` |
-| Examples #3: | Template Conversion |
+| Examples #2: | Template Conversion using Go Binary via CLI |
 | |`./shifter convert --intput-format template --filename ./myapp/template.yaml --output-path ./output --output-format helm` |
 
 
 | **Docker Container**       |       |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Examples #1: |Run Shifter Server as a container on port "8080" |
-| |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
+| Examples #1: |YAML Conversion in Docker Container with local System Volume Mount |
+| |```docker run --rm -it -u $(id -u) -v ${PWD}/[SRC_FILE/DIR_PATH]/:/source images.shifter.cloud/shifter ./shifter convert --input-format yaml --filename "/source/" --output-path "/source/results" --output-format yaml ```|
+| Examples #2: |Template Conversion in Docker Container with local System Volume Mount |
+| |```docker run --rm -it -u $(id -u) -v ${PWD}/[SRC_FILE/DIR_PATH]/:/source images.shifter.cloud/shifter ./shifter convert --input-format template --filename "/source/" --output-path "/source/results" --output-format helm ``` |
 
+<br><br><br><br>
 
-<br><br>
+```
+	 _____ __    _ ______            
+	/ ___// /_  (_) __/ /____  _____       ___   ____ ____ ______  ___    ___   ____
+	\__ \/ __ \/ / /_/ __/ _ \/ ___/      / _ \ / __// __//_  __/ / _ |  / _ \ /  _/
+   ___/ / / / / / __/ /_/  __/ /         / , _// _/ _\ \   / /   / __ | / ___/_/ /
+  /____/_/ /_/_/_/  \__/\___/_/         /_/|_|/___//___/  /_/   /_/ |_|/_/   /___/ 
+                                 
+```
 
 ## Shifter Server
----
-<br>
+Shifter Server has several configurations options made available via the way of flags. 
 
 | **Flag**       | |**Description**        |
 | ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | -p | --port |Server Port: Deafult (8080)|
 
-<br>
----
 
 ### Example Usage:
 
@@ -130,6 +129,12 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 | **Docker Container**       |       |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Examples #1: |Run Shifter Server as a container on port "8080" |
-| |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
+| |`docker run -it -p 8080:8080 images.shifter.cloud/shifter:latest ./shifter server -p 8080` |
 
 
+
+# Contribution
+
+If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
+
+---
