@@ -99,6 +99,13 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 | Examples #3: | Template Conversion |
 | |`./shifter convert --intput-format template --filename ./myapp/template.yaml --output-path ./output --output-format helm` |
 
+
+| **Docker Container**       |       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Examples #1: |Run Shifter Server as a container on port "8080" |
+| |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
+
+
 <br><br>
 
 ## Shifter Server
@@ -124,3 +131,5 @@ The Shifter CLI can be executed in several modes. Each of which has it's own sub
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Examples #1: |Run Shifter Server as a container on port "8080" |
 | |`docker run -it -p 8080:8080 shifter.cloud/shifter:latest ./shifter server -p 8080` |
+
+

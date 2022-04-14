@@ -1,0 +1,40 @@
+name: Bump & Tag New Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release-on-push:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: jwalton/gh-find-current-pr@v1
+        id: getPRType
+        with:
+          # Can be "open", "closed", or "all".  Defaults to "open".
+          state: open
+      - name: "PATCH"
+        uses: rymndhng/release-on-push-action@master
+        if: steps.getPRType.outputs.body contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#PATCH'))
+        with:
+          bump_version_scheme: patch
+          use_github_release_notes: true
+      - name: "BUG"
+        uses: rymndhng/release-on-push-action@master
+        if: steps.getPRType.outputs.body contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#BUG'))
+        with:
+          bump_version_scheme: patch
+          use_github_release_notes: true
+      - name: "FEATURE"
+        uses: rymndhng/release-on-push-action@master
+        if: steps.getPRType.outputs.body contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#FT'))
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
+      - name: "RELEASE"
+        uses: rymndhng/release-on-push-action@master
+        if: steps.getPRType.outputs.body contains(lowercase(steps.getPRType.outputs.body), lowercase('[x] /#RELEASE'))
+        with:
+          bump_version_scheme: major
+          use_github_release_notes: true
