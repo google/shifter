@@ -15,66 +15,39 @@ package generator
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
-	"os"
-	"path/filepath"
 	"shifter/lib"
 	"strconv"
 )
 
-func Yaml(path string, objects []lib.K8sobject) {
+func (generator *Generator) yaml(name string, objects []lib.K8sobject) []lib.Converted {
+	var converted []lib.Converted
 
-	// Create our output folder
-	outPath := filepath.Clean(path)
-	if filepath.Ext(outPath) == ".yaml" || filepath.Ext(outPath) == ".yml" {
-		log.Println("Creating multidoc file", outPath)
-		createFolder(filepath.Dir(outPath))
-		_, err := os.Create(outPath)
+	for k, v := range objects {
+		no := strconv.Itoa(k)
+		kind := fmt.Sprintf("%v", v.Kind)
+
+		log.Println("Generating file", no, " - ", name)
+		buff := new(bytes.Buffer)
+		writer := bufio.NewWriter(buff)
+
+		yaml := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
+		err := yaml.Encode(v.Object, writer)
 		if err != nil {
 			fmt.Println(err)
 		}
+		writer.Flush()
 
-		for _, v := range objects {
-			f, err := os.OpenFile(outPath, os.O_RDWR|os.O_APPEND, 0666)
-			if err != nil {
-				log.Println(err)
-			}
-			w := bufio.NewWriter(f)
-			defer f.Close()
+		var result lib.Converted
+		result.Name = kind + ".yaml"
+		result.Path = "/"
+		result.Payload = *buff
 
-			fmt.Fprintln(w, "---")
-			e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
-			err = e.Encode(v.Object, w)
-			if err != nil {
-				fmt.Println(err)
-			}
-			w.Flush()
-		}
-
-	} else {
-		createFolder(outPath)
-		// Iterate over our objects to write out
-		for k, v := range objects {
-			no := strconv.Itoa(k)
-			kind := fmt.Sprintf("%v", v.Kind)
-
-			f, err := os.Create(outPath + "/" + no + "-" + kind + ".yaml")
-			if err != nil {
-				fmt.Println(err)
-			}
-			defer f.Close()
-
-			log.Println("Creating file", f.Name())
-			w := bufio.NewWriter(f)
-			e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
-			err = e.Encode(v.Object, w)
-			if err != nil {
-				fmt.Println(err)
-			}
-			w.Flush()
-		}
+		converted = append(converted, result)
 	}
-	log.Println("Conversion completed")
+
+	return converted
 }

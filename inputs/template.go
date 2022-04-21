@@ -59,7 +59,7 @@ type OSTemplateParams struct {
 	}
 }
 
-func Template(input string, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+func Template(input string, flags map[string]string) (name string, objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
 	return parse(readYaml(input), flags)
 }
 
@@ -76,7 +76,7 @@ func readYaml(file string) OSTemplate {
 	return template
 }
 
-func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+func parse(t OSTemplate, flags map[string]string) (name string, objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
 
@@ -104,5 +104,5 @@ func parse(t OSTemplate, flags map[string]string) (objects []lib.K8sobject, para
 	}
 
 	// return the converted resources and parameterized values
-	return k8s, params, tplname
+	return tplname, k8s, params
 }

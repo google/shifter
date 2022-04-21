@@ -20,11 +20,9 @@ import (
 	"gopkg.in/yaml.v3"
 	json "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
-	"os"
 	"regexp"
 	"shifter/lib"
 	"strconv"
-	//"io"
 )
 
 type Chart struct {
@@ -44,32 +42,6 @@ type Output struct {
 
 var templates []Output
 
-func Helm(path string, objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
-	createFolderStruct(path)
-	genTemplate(objects, path)
-	genValues(parameters, path)
-	genChart(path, name, "v1.0.0")
-
-}
-
-func createFolderStruct(path string) {
-	var chartsFldr string
-	var templatesFldr string
-
-	chartsFldr = path + "/charts"
-	templatesFldr = path + "/templates"
-
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.Mkdir(path, 0700)
-	}
-	if _, err := os.Stat(chartsFldr); os.IsNotExist(err) {
-		os.Mkdir(chartsFldr, 0700)
-	}
-	if _, err := os.Stat(templatesFldr); os.IsNotExist(err) {
-		os.Mkdir(templatesFldr, 0700)
-	}
-}
-
 func mod(o []byte) []byte {
 	str1 := string(o)
 	var re = regexp.MustCompile(`(?m)\${([^}]*)}`)
@@ -78,64 +50,50 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-func genTemplate(objects []lib.K8sobject, path string) {
-	for x, y := range objects {
-		no := strconv.Itoa(x)
-		kind := fmt.Sprintf("%v", y.Kind)
+func (generator *Generator) helm(name string, objects []lib.K8sobject, parameters []lib.OSTemplateParams) []lib.Converted {
+	var helmChart []lib.Converted
 
-		log.Printf("Writing helm template file %x %s", x, kind)
+	helmChart = append(helmChart, createChart(name))
 
-		f := new(bytes.Buffer)
-		file, err := os.Create(path + "/templates/" + no + "-" + kind + ".yaml")
+	// Templates
+	for k, v := range objects {
+		no := strconv.Itoa(k)
+		kind := fmt.Sprintf("%v", v.Kind)
+
+		log.Printf("Writing helm template file %x %s", k, kind)
+		fmt.Println(no)
+
+		buff := new(bytes.Buffer)
+		writer := bufio.NewWriter(buff)
+		yaml := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+
+		err := yaml.Encode(v.Object, writer)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
-		defer file.Close()
-
-		w := bufio.NewWriter(f)
-		e := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
-
-		err = e.Encode(y.Object, w)
-		if err != nil {
-			fmt.Println(err)
-		}
-		w.Flush()
-
-		c := mod(f.Bytes())
-
-		writer := bufio.NewWriter(file)
-		writer.Write(c)
 		writer.Flush()
+		c := mod(buff.Bytes())
 
+		buff.Reset()
+		buff.Write(c)
+
+		var resultTemplates lib.Converted
+		resultTemplates.Name = kind + ".yaml"
+		resultTemplates.Path = "/templates/"
+		resultTemplates.Payload = *buff
+		helmChart = append(helmChart, resultTemplates)
 	}
+
+
+	helmChart = append(helmChart, createValues(parameters))
+
+
+	return helmChart
 }
 
-func genChart(path string, name string, version string) {
-	var c Chart
-	c.ApiVersion = "v2"
-	c.Name = name
-	c.Version = version
-
-	cg, err := yaml.Marshal(&c)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	chartFile, err := os.Create(path + "/Chart.yaml")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := chartFile.Write(cg); err != nil {
-		log.Fatal(err)
-	}
-	if err := chartFile.Close(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func genValues(parameters []lib.OSTemplateParams, path string) {
+func createValues(parameters []lib.OSTemplateParams) lib.Converted {
 	m := make(map[interface{}]interface{})
+	buff := new(bytes.Buffer)
 
 	for _, y := range parameters {
 		m[y.Name] = y.Value
@@ -146,12 +104,38 @@ func genValues(parameters []lib.OSTemplateParams, path string) {
 		log.Fatal(err)
 	}
 
-	file, err := os.Create(path + "/values.yaml")
+	buff.Write(content)
+
+	var resultValues lib.Converted
+	resultValues.Name = "values.yaml"
+	resultValues.Path = "/"
+	resultValues.Payload = *buff
+
+	return resultValues
+}
+
+func createChart(name string) lib.Converted {
+	// Chart
+	var chart Chart
+	var version string = "v1.0"
+
+	buff := new(bytes.Buffer)
+
+	chart.ApiVersion = "v2"
+	chart.Name = name
+	chart.Version = version
+
+	cg, err := yaml.Marshal(&chart)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if _, err := file.Write(content); err != nil {
-		log.Fatal(err)
-	}
+	buff.Write(cg)
+
+	var resultChart lib.Converted
+	resultChart.Name = "chart.yaml"
+	resultChart.Path = "/"
+	resultChart.Payload =  *buff
+
+	return resultChart
 }

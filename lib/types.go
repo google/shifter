@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -31,4 +32,10 @@ type K8sobject struct {
 	// type of converted Openshift Resource to Kubernetes Resource
 	Kind   interface{}
 	Object runtime.Object
+}
+
+type Converted struct {
+	Name    string
+	Path    string
+	Payload bytes.Buffer
 }

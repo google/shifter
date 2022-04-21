@@ -18,7 +18,7 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(path string, flags map[string]string) []lib.K8sobject {
+func Yaml(path string, flags map[string]string) (name string, object []lib.K8sobject) {
 	file, err := os.Stat(path)
 	if err != nil {
 		log.Println(err)
@@ -30,13 +30,13 @@ func Yaml(path string, flags map[string]string) []lib.K8sobject {
 	switch mode := file.Mode(); {
 	case mode.IsDir():
 		fileContent := readMultiFilesInDir(path, flags)
-		return fileContent
+		return file.Name(), fileContent
 
 	case mode.IsRegular():
 		fileContent := readMultiDocFile(path, flags)
-		return fileContent
+		return file.Name(), fileContent
 	}
-	return nil
+	return "", nil
 }
 
 func readMultiFilesInDir(filePath string, flags map[string]string) []lib.K8sobject {

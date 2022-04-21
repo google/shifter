@@ -14,9 +14,11 @@ limitations under the license.
 package ops
 
 import (
+	"fmt"
 	"log"
 	generators "shifter/generators"
 	inputs "shifter/inputs"
+	lib "shifter/lib"
 )
 
 /*
@@ -26,22 +28,27 @@ import (
 	- Return error struct on Errors
 */
 func Convert(inputType string, filename string, generator string, output string, flags map[string]string) {
-
+	var outputFiles []lib.Converted
 	switch inputType {
 	case "template":
-		t, p, n := inputs.Template(filename, flags)
+		name, t, p := inputs.Template(filename, flags)
 		switch generator {
 		case "helm":
-			generators.Helm(output, t, p, n)
+			outputFiles = generators.NewGenerator(generator, name, t, p)
 		}
 	case "yaml":
-		t := inputs.Yaml(filename, flags)
+		name, t := inputs.Yaml(filename, flags)
 		switch generator {
 		case "yaml":
-			generators.Yaml(output, t)
+			outputFiles = generators.NewGenerator(generator, name, t, nil)
 		}
 	case "cluster":
 		log.Fatal("Openshift resources have not been implemented yet!")
+	}
+
+	for k := range outputFiles {
+		fmt.Println(outputFiles[k].Path + outputFiles[k].Name)
+		fmt.Println(outputFiles[k].Payload.String())
 	}
 	return
 }

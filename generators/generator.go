@@ -14,24 +14,36 @@ limitations under the license.
 package generator
 
 import (
-	"fmt"
-	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
-	"os"
 	"shifter/lib"
 )
 
-func serializer(input lib.K8sobject) {
-	e := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
-
-	err := e.Encode(input.Object, os.Stdout)
-	if err != nil {
-		fmt.Println(err)
+type Generator struct {
+	OutputType string
+	Name       string
+	Input      struct {
+		Object     []lib.K8sobject
+		Parameters []lib.OSTemplateParams
 	}
-
 }
 
-func createFolder(path string) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, 0700)
+type Input struct {
+	Object []lib.K8sobject
+}
+
+func NewGenerator(outputType string, name string, input []lib.K8sobject, parameters []lib.OSTemplateParams) []lib.Converted {
+	generator := &Generator{}
+
+	outputType = outputType
+	generator.Name = name
+	generator.Input.Object = input
+	generator.Input.Parameters = parameters
+
+	switch outputType {
+	case "yaml":
+		return generator.yaml("", generator.Input.Object)
+	case "helm":
+		return generator.helm("", generator.Input.Object, generator.Input.Parameters)
 	}
+
+	return nil
 }
