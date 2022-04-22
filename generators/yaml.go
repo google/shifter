@@ -42,7 +42,7 @@ func (generator *Generator) yaml(name string, objects []lib.K8sobject) []lib.Con
 		writer.Flush()
 
 		var result lib.Converted
-		result.Name = kind + ".yaml"
+		result.Name = kind
 		result.Path = "/"
 		result.Payload = *buff
 

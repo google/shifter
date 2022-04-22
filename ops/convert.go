@@ -14,7 +14,6 @@ limitations under the license.
 package ops
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"log"
 	"path/filepath"
@@ -100,14 +99,10 @@ func (converter *Converter) ConvertFiles() {
 		}
 
 		//outputFileName := fmt.Sprint(idx)
-
 		for k := range r {
-			fmt.Println(r[k].Name)
-			//fmt.Println(r[k].Payload.String())
-
 			fileObj := &FileObject{
 				StorageType:   file.StorageType,
-				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + " - " + filepath.Ext(file.SourcePath)),
+				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
 				Filename:      r[k].Name,
 				Ext:           filepath.Ext(file.SourcePath),
 				Content:       r[k].Payload,
@@ -119,9 +114,7 @@ func (converter *Converter) ConvertFiles() {
 
 			// Add Converted File Object to Converter
 			converter.OutputFiles = append(converter.OutputFiles, fileObj)
-
 		}
-
 	}
 }
 
@@ -138,26 +131,3 @@ func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
 
 	return files
 }
-
-/*
-func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
-
-	switch inputType {
-	case "template":
-		t, p, n := inputs.Template(sourcePath, flags)
-		switch generator {
-		case "helm":
-			generators.Helm(outputPath, t, p, n)
-		}
-	case "yaml":
-		t := inputs.Yaml(sourcePath, flags)
-		switch generator {
-		case "yaml":
-			generators.Yaml(outputPath, t, "gcs")
-		}
-	case "cluster":
-		log.Fatal("Openshift resources have not been implemented yet!")
-	}
-	log.Println("Conversion completed")
-}
-*/

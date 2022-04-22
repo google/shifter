@@ -78,7 +78,7 @@ func (generator *Generator) helm(name string, objects []lib.K8sobject, parameter
 		buff.Write(c)
 
 		var resultTemplates lib.Converted
-		resultTemplates.Name = kind + ".yaml"
+		resultTemplates.Name = kind
 		resultTemplates.Path = "/templates/"
 		resultTemplates.Payload = *buff
 		helmChart = append(helmChart, resultTemplates)
@@ -105,7 +105,7 @@ func createValues(parameters []lib.OSTemplateParams) lib.Converted {
 	buff.Write(content)
 
 	var resultValues lib.Converted
-	resultValues.Name = "values.yaml"
+	resultValues.Name = "values"
 	resultValues.Path = "/"
 	resultValues.Payload = *buff
 
@@ -131,7 +131,7 @@ func createChart(name string) lib.Converted {
 	buff.Write(cg)
 
 	var resultChart lib.Converted
-	resultChart.Name = "chart.yaml"
+	resultChart.Name = "chart"
 	resultChart.Path = "/"
 	resultChart.Payload = *buff
 
