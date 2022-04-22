@@ -15,7 +15,6 @@ package input
 
 import (
 	"bytes"
-	"fmt"
 	gyaml "github.com/ghodss/yaml"
 	//"io/ioutil"
 	"log"
@@ -64,7 +63,7 @@ func Template(input bytes.Buffer, flags map[string]string) (objects []lib.K8sobj
 	template := OSTemplate{}
 	err := yaml.Unmarshal(input.Bytes(), &template)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return parse(template, flags)
 }

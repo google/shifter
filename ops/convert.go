@@ -15,11 +15,11 @@ package ops
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"path/filepath"
-	inputs "shifter/inputs"
 	"shifter/generators"
-	"github.com/google/uuid"
+	inputs "shifter/inputs"
 )
 
 // Input Types
@@ -92,19 +92,14 @@ func (converter *Converter) ConvertFiles() {
 		// Store Return Buffer in New File and Write File
 		// Get New File name and set it here
 
-		//var outputFiles []lib.Converted
-		fmt.Println("*******" + converter.Generator)
-
-		fmt.Println(file.Content.String())
-
 		switch converter.InputType {
 		case "yaml":
 			sourceFile := inputs.Yaml(file.Content, nil)
-			fmt.Println(sourceFile)
+			r := generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
+			fmt.Println(r)
 		case "template":
 			sourceFile, values := inputs.Template(file.Content, nil)
 			r := generator.NewGenerator(converter.Generator, "test", sourceFile, values)
-
 			fmt.Println(r)
 		}
 
