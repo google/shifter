@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 	"shifter/generators"
 	inputs "shifter/inputs"
+	"shifter/lib"
 )
 
 // Input Types
@@ -86,38 +87,41 @@ func (converter *Converter) ListOutputFiles() {
 
 func (converter *Converter) ConvertFiles() {
 	// Process Input Objects
-	for idx, file := range converter.SourceFiles {
+	for _, file := range converter.SourceFiles {
 
-		// Run Conversion..... HERE
-		// Store Return Buffer in New File and Write File
-		// Get New File name and set it here
-
+		var r []lib.Converted
 		switch converter.InputType {
 		case "yaml":
 			sourceFile := inputs.Yaml(file.Content, nil)
-			r := generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
-			fmt.Println(r)
+			r = generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
 		case "template":
 			sourceFile, values := inputs.Template(file.Content, nil)
-			r := generator.NewGenerator(converter.Generator, "test", sourceFile, values)
-			fmt.Println(r)
+			r = generator.NewGenerator(converter.Generator, "test", sourceFile, values)
 		}
 
-		outputFileName := fmt.Sprint(idx)
+		//outputFileName := fmt.Sprint(idx)
 
-		fileObj := &FileObject{
-			StorageType:   file.StorageType,
-			SourcePath:    (converter.OutputPath + "/" + outputFileName + " - " + filepath.Ext(file.SourcePath)),
-			Filename:      outputFileName,
-			Ext:           filepath.Ext(file.SourcePath),
-			Content:       file.Content,
-			ContentLength: file.ContentLength,
+		for k := range r {
+			fmt.Println(r[k].Name)
+			//fmt.Println(r[k].Payload.String())
+
+			fileObj := &FileObject{
+				StorageType:   file.StorageType,
+				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + " - " + filepath.Ext(file.SourcePath)),
+				Filename:      r[k].Name,
+				Ext:           filepath.Ext(file.SourcePath),
+				Content:       r[k].Payload,
+				ContentLength: file.ContentLength,
+			}
+
+			// Write Converted File to Storage
+			fileObj.WriteFile()
+
+			// Add Converted File Object to Converter
+			converter.OutputFiles = append(converter.OutputFiles, fileObj)
+
 		}
 
-		// Write Converted File to Storage
-		fileObj.WriteFile()
-		// Add Converted File Object to Converter
-		converter.OutputFiles = append(converter.OutputFiles, fileObj)
 	}
 }
 
