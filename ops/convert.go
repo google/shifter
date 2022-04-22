@@ -17,7 +17,8 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
-
+	inputs "shifter/inputs"
+	"shifter/generators"
 	"github.com/google/uuid"
 )
 
@@ -95,6 +96,17 @@ func (converter *Converter) ConvertFiles() {
 		fmt.Println("*******" + converter.Generator)
 
 		fmt.Println(file.Content.String())
+
+		switch converter.InputType {
+		case "yaml":
+			sourceFile := inputs.Yaml(file.Content, nil)
+			fmt.Println(sourceFile)
+		case "template":
+			sourceFile, values := inputs.Template(file.Content, nil)
+			r := generator.NewGenerator(converter.Generator, "test", sourceFile, values)
+
+			fmt.Println(r)
+		}
 
 		outputFileName := fmt.Sprint(idx)
 

@@ -14,6 +14,7 @@ limitations under the license.
 package lib
 
 import (
+	"bytes"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 

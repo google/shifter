@@ -14,9 +14,10 @@ limitations under the license.
 package input
 
 import (
+	"bytes"
 	"fmt"
 	gyaml "github.com/ghodss/yaml"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
 	"os"
 	"shifter/lib"
@@ -59,28 +60,20 @@ type OSTemplateParams struct {
 	}
 }
 
-func Template(input string, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
-	return parse(readYaml(input), flags)
-}
-
-func readYaml(file string) OSTemplate {
-	yamlFile, err := ioutil.ReadFile(file)
-	if err != nil {
-		fmt.Println(err)
-	}
+func Template(input bytes.Buffer, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
 	template := OSTemplate{}
-	err = yaml.Unmarshal(yamlFile, &template)
+	err := yaml.Unmarshal(input.Bytes(), &template)
 	if err != nil {
 		fmt.Println(err)
 	}
-	return template
+	return parse(template, flags)
 }
 
-func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, name string) {
+func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
 
-	tplname := template.Metadata.Name
+	//tplname := template.Metadata.Name
 
 	//iterate over the objects inside the template
 	for _, o := range template.Objects {
@@ -104,5 +97,5 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 	}
 
 	// return the converted resources and parameterized values
-	return k8s, params, tplname
+	return k8s, params
 }
