@@ -84,9 +84,7 @@ func (generator *Generator) helm(name string, objects []lib.K8sobject, parameter
 		helmChart = append(helmChart, resultTemplates)
 	}
 
-
 	helmChart = append(helmChart, createValues(parameters))
-
 
 	return helmChart
 }
@@ -135,7 +133,7 @@ func createChart(name string) lib.Converted {
 	var resultChart lib.Converted
 	resultChart.Name = "chart.yaml"
 	resultChart.Path = "/"
-	resultChart.Payload =  *buff
+	resultChart.Payload = *buff
 
 	return resultChart
 }

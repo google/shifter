@@ -90,6 +90,12 @@ func (converter *Converter) ConvertFiles() {
 		// Run Conversion..... HERE
 		// Store Return Buffer in New File and Write File
 		// Get New File name and set it here
+
+		var outputFiles []lib.Converted
+		fmt.Println("*******" + converter.Generator)
+
+		outputFiles := generators.NewGenerator(converter.Generator, file.Name) 
+
 		outputFileName := fmt.Sprint(idx)
 
 		fileObj := &FileObject{

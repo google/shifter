@@ -45,3 +45,9 @@ type K8sobject struct {
 	Kind   interface{}
 	Object runtime.Object
 }
+
+type Converted struct {
+	Name    string
+	Path    string
+	Payload bytes.Buffer
+}
