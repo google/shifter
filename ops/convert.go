@@ -14,11 +14,12 @@ limitations under the license.
 package ops
 
 import (
-	"fmt"
+	"github.com/google/uuid"
 	"log"
 	"path/filepath"
-
-	"github.com/google/uuid"
+	"shifter/generators"
+	inputs "shifter/inputs"
+	"shifter/lib"
 )
 
 // Input Types
@@ -85,26 +86,35 @@ func (converter *Converter) ListOutputFiles() {
 
 func (converter *Converter) ConvertFiles() {
 	// Process Input Objects
-	for idx, file := range converter.SourceFiles {
+	for _, file := range converter.SourceFiles {
 
-		// Run Conversion..... HERE
-		// Store Return Buffer in New File and Write File
-		// Get New File name and set it here
-		outputFileName := fmt.Sprint(idx)
-
-		fileObj := &FileObject{
-			StorageType:   file.StorageType,
-			SourcePath:    (converter.OutputPath + "/" + outputFileName + " - " + filepath.Ext(file.SourcePath)),
-			Filename:      outputFileName,
-			Ext:           filepath.Ext(file.SourcePath),
-			Content:       file.Content,
-			ContentLength: file.ContentLength,
+		var r []lib.Converted
+		switch converter.InputType {
+		case "yaml":
+			sourceFile := inputs.Yaml(file.Content, nil)
+			r = generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
+		case "template":
+			sourceFile, values := inputs.Template(file.Content, nil)
+			r = generator.NewGenerator(converter.Generator, "test", sourceFile, values)
 		}
 
-		// Write Converted File to Storage
-		fileObj.WriteFile()
-		// Add Converted File Object to Converter
-		converter.OutputFiles = append(converter.OutputFiles, fileObj)
+		//outputFileName := fmt.Sprint(idx)
+		for k := range r {
+			fileObj := &FileObject{
+				StorageType:   file.StorageType,
+				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
+				Filename:      r[k].Name,
+				Ext:           filepath.Ext(file.SourcePath),
+				Content:       r[k].Payload,
+				ContentLength: file.ContentLength,
+			}
+
+			// Write Converted File to Storage
+			fileObj.WriteFile()
+
+			// Add Converted File Object to Converter
+			converter.OutputFiles = append(converter.OutputFiles, fileObj)
+		}
 	}
 }
 
@@ -121,26 +131,3 @@ func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
 
 	return files
 }
-
-/*
-func Convert(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) {
-
-	switch inputType {
-	case "template":
-		t, p, n := inputs.Template(sourcePath, flags)
-		switch generator {
-		case "helm":
-			generators.Helm(outputPath, t, p, n)
-		}
-	case "yaml":
-		t := inputs.Yaml(sourcePath, flags)
-		switch generator {
-		case "yaml":
-			generators.Yaml(outputPath, t, "gcs")
-		}
-	case "cluster":
-		log.Fatal("Openshift resources have not been implemented yet!")
-	}
-	log.Println("Conversion completed")
-}
-*/

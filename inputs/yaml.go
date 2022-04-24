@@ -14,6 +14,7 @@ limitations under the license.
 package input
 
 import (
+	"bytes"
 	"fmt"
 	gyaml "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v3"
@@ -21,7 +22,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"shifter/lib"
 	"shifter/processor"
 	"strings"
@@ -31,60 +31,11 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(path string, flags map[string]string) []lib.K8sobject {
-	file, err := os.Stat(path)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
+func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 
-	log.Println("Reading in file", file.Name())
+	//nestedQuotedStringHack(fileName)
 
-	switch mode := file.Mode(); {
-	case mode.IsDir():
-		fileContent := readMultiFilesInDir(path, flags)
-		return fileContent
-
-	case mode.IsRegular():
-		fileContent := readMultiDocFile(path, flags)
-		return fileContent
-	}
-	return nil
-}
-
-func readMultiFilesInDir(filePath string, flags map[string]string) []lib.K8sobject {
-	objects := make([]lib.K8sobject, 0)
-
-	fileList := make([]string, 0)
-	err := filepath.Walk(filePath, func(path string, f os.FileInfo, err error) error {
-		if f.IsDir() == false {
-			fileList = append(fileList, path)
-		}
-		return err
-	})
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	for _, file := range fileList {
-		t := readMultiDocFile(file, flags)
-		for _, v := range t {
-			objects = append(objects, v)
-		}
-
-		//objects = append(objects, t)
-	}
-	return objects
-}
-
-func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject {
-	nestedQuotedStringHack(fileName)
-	f, err := os.Open(fileName)
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
+	f := bytes.NewReader(input.Bytes())
 
 	d := yaml.NewDecoder(f)
 
@@ -104,7 +55,7 @@ func readMultiDocFile(fileName string, flags map[string]string) []lib.K8sobject 
 		if err == io.EOF {
 			break
 		}
-		log.Println("Converting", doc["kind"], "from", fileName)
+		//log.Println("Converting", doc["kind"], "from", fileName)
 
 		val, err := yaml.Marshal(doc)
 		if err != nil {
