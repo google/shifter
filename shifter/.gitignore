@@ -1,0 +1,11 @@
+shifter
+out/
+*.swp
+shifter_linux_*
+shifter_darwin_*
+shifter_windows_*
+shifter_win_*
+data**
+.vscode
+*.zip
+data**

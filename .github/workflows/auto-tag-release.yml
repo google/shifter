@@ -41,4 +41,8 @@ jobs:
       #  if: contains(${{ steps.string.outputs.lowercase }}, lowercase('[x] /#release'))
       #  with:
       #    bump_version_scheme: major
+<<<<<<< HEAD
       #    use_github_release_notes: true
+=======
+      #    use_github_release_notes: true
+>>>>>>> thiatt/ft_server
