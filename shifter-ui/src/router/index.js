@@ -23,6 +23,11 @@ const router = createRouter({
       name: "healthz",
       component: () => import("../views/status/HealthzView.vue"),
     },
+    {
+      path: "/status/settingz",
+      name: "settingz",
+      component: () => import("../views/status/SettingzView.vue"),
+    },
   ],
 });
 

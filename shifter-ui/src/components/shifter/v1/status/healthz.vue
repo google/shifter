@@ -1,18 +1,18 @@
 <script setup>
 import {useShifterV1StatusHealthz} from '../../../../stores/shifter/v1/status/healthz'
-import WelcomeItem from '../../../WelcomeItem.vue';
+import DetailsListItem from '../../../DetailsListItem.vue';
 import DocumentationIcon from "../../../icons/IconDocumentation.vue";
 </script>
 
 <template>
-  <WelcomeItem>
+  <DetailsListItem>
     <template #icon>
-      <!--<DocumentationIcon />-->
+      <DocumentationIcon />
     </template>
     <template #heading>Shifter Server Status</template>
 
    {{data.message}}
-  </WelcomeItem>
+  </DetailsListItem>
 </template>
 
 <script>
@@ -25,10 +25,6 @@ export default {
 
   methods: {
     ...mapActions(useShifterV1StatusHealthz, ['fetchHealthz']),
-
-    addToCart() {
-      // we'll populate this later
-    }
   },
 
   created() {

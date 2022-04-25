@@ -1,21 +1,21 @@
 <script setup>
 
-import HelloWorld from "@/components/HelloWorld.vue";
-import HomeDetailsView from "./HomeDetailsView.vue";
+import HomeTitle from "@/components/Home/HomeTitle.vue";
+import HomeDetails from "@/components/Home/HomeDetails.vue";
 </script>
 
 <template>
   <header>
-    <!--<img
+    <img
       alt="Shifter"
       class="logo"
-      src="@/assets/logo.svg"
+      src="@/assets/logo-shifter.svg"
       width="125"
       height="125"
-    />-->
+    />
 
     <div class="wrapper">
-      <HelloWorld msg="Shifter" />
+      <HomeTitle msg="Shifter" />
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
@@ -23,7 +23,7 @@ import HomeDetailsView from "./HomeDetailsView.vue";
       </nav>
     </div>
   </header>
-  <HomeDetailsView />
+  <HomeDetails />
 </template>
 
 
@@ -32,9 +32,6 @@ import { shifterConfig } from "@/main"
 export default {
   
   created() {
-    console.log("---- Hello Home View -----")
-    console.log(shifterConfig)
-    console.log("---- ================== -----")
   }
 };
 </script>

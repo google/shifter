@@ -5,18 +5,18 @@ import { defineStore } from 'pinia'
 // API Endpoint Configuration
 const config = {
     method: 'get',
-    url: (shifterConfig.API_BASE_URL+'/status/healthz'),
+    url: (shifterConfig.API_BASE_URL+'/status/settingz'),
     headers: {
     
     },
     data : null
 };
 
-export const useShifterV1StatusHealthz = defineStore('shifter-v1-status-healthz', {
+export const useShifterV1StatusSettingz = defineStore('shifter-v1-status-settingz', {
   state: () => {
     return {
       data: {
-        message: "Running Connection Tests."
+        message: "Collecting Server Settings."
       },
       fetching: false
     }
@@ -33,7 +33,7 @@ export const useShifterV1StatusHealthz = defineStore('shifter-v1-status-healthz'
   },
 
   actions: {
-    async fetchHealthz() {
+    async fetchSettingz() {
       this.fetching = true;
       try{
         const response = await axios(config);
@@ -42,7 +42,7 @@ export const useShifterV1StatusHealthz = defineStore('shifter-v1-status-healthz'
         this.data = result;
       } catch (err) {
         this.data = [];
-        console.error('Error loading Shifter Server, Status, Healthz API:', err);
+        console.error('Error loading Shifter Server Settings, Status, Settingz API:', err);
         return err;
       }
       }

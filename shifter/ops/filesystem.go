@@ -23,39 +23,6 @@ type JSONResponse struct {
 	Value2 string `json:"Link"`
 }
 
-//func CreateDir(srcPath string) {
-//	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
-//		os.MkdirAll(srcPath, 0700)
-//	}
-//}
-
-//func GetFilename(path string) string {
-//	return filepath.Base(path)
-//}
-
-//func GetFileLink(uuid string, path string) string {
-//	return ("/download/" + uuid + "/" + filepath.Base(path))
-//}
-
-//func GetFiles(uuid string, srcPath string) []File {
-
-// Create Splice of File Structs
-//	var files []File
-
-// Walk Upload Directory Directory
-//	err := filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
-// Add Each File to Splice
-//		files = append(files, File{Filename: GetFilename(path), Link: GetFileLink(uuid, path)})
-//		return nil
-//	})
-//	if err != nil {
-//		panic(err)
-//	}
-
-// Return Splice/Array of Files
-//	return files
-//}
-
 /*
 	Cross Platform File Object.
 	Can be used to Store Content and MetaData about
@@ -114,26 +81,3 @@ func ProcessPath(path string) ([]*FileObject, error) {
 		return ProcessLCLPath(path)
 	}
 }
-
-/*
-func WriteFile(fileObj FileObject) error {
-	// Handle Writing File to GCS
-	if fileObj.StorageType == "GCS" {
-		log.Println("Writting File to GCS Bucket")
-		// Run GCSL Stream File Upload Function
-		err := lib.GCSStreamFileUpload(fileObj.Content, fileObj.Bucket, fmt.Sprintf("%s/%s/%s", fileObj.Path, fileObj.UUID, fileObj.Filename))
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-	} else {
-		log.Println("Writting File to Local Storage")
-		err := lib.LocalStreamFileUpload(fileObj.Content, fmt.Sprintf("data/%s/%s/", fileObj.Path, fileObj.UUID), fileObj.Filename)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-	}
-	return nil
-	//log.Println(fileObj)
-}*/

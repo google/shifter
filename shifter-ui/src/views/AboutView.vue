@@ -19,9 +19,6 @@ import { shifterConfig } from "@/main"
 export default {
   
   created() {
-    console.log("---- Hello About View -----")
-    console.log(shifterConfig)
-    console.log("---- ================== -----")
   }
 };
 </script>
