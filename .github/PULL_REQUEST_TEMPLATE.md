@@ -10,6 +10,7 @@ Please mark one option with an "x".
 
 - [ ] Shifter (Core CLI and Server Application)
 - [ ] Shifter UI (The Web Interface)
+- [ ] Cross Component Configuration (.github workflows, templates, docs, .MD files)
 
 ## Type of change
 
