@@ -1,4 +1,4 @@
-import { shifterConfig } from "@/main"
+import { shifterConfig } from "../../../../main"
 import axios from "axios"
 import { defineStore } from 'pinia'
 

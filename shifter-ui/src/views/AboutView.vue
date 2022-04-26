@@ -15,7 +15,7 @@
 </style>
 
 <script>
-import { shifterConfig } from "@/main"
+import { shifterConfig } from "../main"
 export default {
   
   created() {

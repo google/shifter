@@ -1,7 +1,6 @@
 <script setup>
-
-import HomeTitle from "@/components/Home/HomeTitle.vue";
-import HomeDetails from "@/components/Home/HomeDetails.vue";
+import HomeTitle from "../components/Home/HomeTitle.vue";
+import HomeDetails from "../components/Home/HomeDetails.vue"
 </script>
 
 <template>
@@ -9,7 +8,7 @@ import HomeDetails from "@/components/Home/HomeDetails.vue";
     <img
       alt="Shifter"
       class="logo"
-      src="@/assets/logo-shifter.svg"
+      src="../assets/logo-shifter.svg"
       width="125"
       height="125"
     />
@@ -28,7 +27,7 @@ import HomeDetails from "@/components/Home/HomeDetails.vue";
 
 
 <script>
-import { shifterConfig } from "@/main"
+import { shifterConfig } from "../main"
 export default {
   
   created() {

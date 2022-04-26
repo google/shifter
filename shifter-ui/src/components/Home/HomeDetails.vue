@@ -1,5 +1,5 @@
 <script setup>
-import HomeDetailsList from "@/components/Home/HomeDetailsList.vue";
+import HomeDetailsList from "../../components/Home/HomeDetailsList.vue";
 </script>
 
 <template>

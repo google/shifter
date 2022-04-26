@@ -20,7 +20,7 @@ import ShifterV1StatusHealthz from '../../components/shifter/v1/status/healthz.v
 
 
 <script>
-import { shifterConfig } from "@/main"
+import { shifterConfig } from "../../main"
 export default {
   
   created() {
