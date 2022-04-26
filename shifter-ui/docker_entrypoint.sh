@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Remove Current Assets Folder Including All Previous Modifications
+rm -rf assets/
+# Utilize Backup Copy.
+cp -r assets_originals/ assets/
 
 ########################################
 # Replace all References to Environment Variables  
