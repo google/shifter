@@ -24,6 +24,9 @@ import { shifterConfig } from "@/main"
 export default {
   
   created() {
+    console.log("====== Settingz View ======")
+    console.log(shifterConfig)
+    console.log("====== ------------ ======")
   }
 };
 </script>
