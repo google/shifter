@@ -43,6 +43,8 @@ COPY --from=build-stage /usr/src/app/dist/assets ./assets_originals
 # Configure web-app for environment variable usage
 WORKDIR /
 
+RUN rm -rf /code/assets
+
 # VueJS JS File Location
 ENV JSFOLDER=/code/assets/*.js
 

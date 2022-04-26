@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo "--------------------"
+echo "--------------------"
+echo "   I AM RUNNING "
+echo "--------------------"
+echo "--------------------"
+
 # Remove Current Assets Folder Including All Previous Modifications
 rm -rf code/assets/
 # Utilize Backup Copy.
@@ -13,6 +19,7 @@ export EXISTING_VARS=$(printenv | awk -F= '{print $1}' | sed 's/^/\$/g' | paste 
 for file in $JSFOLDER;
 do
   cat $file | envsubst $EXISTING_VARS | tee $file
+  
 done
 
 
