@@ -24,7 +24,7 @@ RUN npm run build
 # Create Fixed Backup of Assets Folder
 RUN ls 
 RUN pwd
-COPY /dist/assets /dist/assets_originals
+COPY dist/assets dist/assets_originals
 
 
 # production stage
