@@ -21,11 +21,6 @@ RUN jq 'to_entries | map_values({ (.key) : ("$" + .key) }) | reduce .[] as $item
 RUN npm install
 RUN npm run build
 
-# Create Fixed Backup of Assets Folder
-RUN ls 
-RUN pwd
-COPY dist/assets dist/assets_originals
-
 
 # production stage
 # nginx state for serving content
@@ -41,6 +36,9 @@ RUN adduser --disabled-password -u 1501 nginxuser nginxusers
 COPY nginx/default.conf /etc/nginx/nginx.conf
 WORKDIR /code
 COPY --from=build-stage /usr/src/app/dist .
+
+# Create Fixed Backup of Assets Folder
+COPY --from=build-stage /usr/src/app/dist/assets ./assets_originals
 
 # Configure web-app for environment variable usage
 WORKDIR /
