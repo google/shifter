@@ -22,7 +22,9 @@ RUN npm install
 RUN npm run build
 
 # Create Fixed Backup of Assets Folder
-COPY /usr/src/app/dist/assets /usr/src/app/dist/assets_originals
+RUN ls 
+RUN pwd
+COPY /dist/assets /dist/assets_originals
 
 
 # production stage
