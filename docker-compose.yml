@@ -3,7 +3,7 @@ services:
   shifter-ui:
     container_name: shifter_ui
     domainname: shifter.local
-    image: gcr.io/shifter-ui-lz-002/shifter-ui:v0.0.1-dev
+    image: images.shifter.cloud/shifter-ui:latest
     environment:
       SHIFTER_SERVER_ENDPOINT: "http://localhost:9091/api/v1"
     ports:

@@ -21,6 +21,9 @@ RUN jq 'to_entries | map_values({ (.key) : ("$" + .key) }) | reduce .[] as $item
 RUN npm install
 RUN npm run build
 
+# Create Fixed Backup of Assets Folder
+COPY /usr/src/app/dist/assets /usr/src/app/dist/assets_originals
+
 
 # production stage
 # nginx state for serving content
