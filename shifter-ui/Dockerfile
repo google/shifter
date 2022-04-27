@@ -36,6 +36,7 @@ RUN adduser --disabled-password -u 1501 nginxuser nginxusers
 COPY nginx/default.conf /etc/nginx/nginx.conf
 WORKDIR /code
 COPY --from=build-stage /usr/src/app/dist .
+COPY --from=build-stage /usr/src/app/dist/assets ./assets_original
 
 # Configure web-app for environment variable usage
 WORKDIR /
