@@ -15,12 +15,17 @@ package processor
 
 import (
 	osroutev1 "github.com/openshift/api/route/v1"
+	"golang.org/x/exp/maps"
 	v1beta1 "k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"log"
 )
 
 func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1beta1.Ingress {
+
+	flagIngressFacing := flags["ingress-facing"]
+
 	ingress := &v1beta1.Ingress{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.k8s.io/v1beta1",
@@ -64,8 +69,18 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	ingressRuleValue.HTTP = &httpIngressRuleValue
 	ingressRule.IngressRuleValue = ingressRuleValue
 	ingressSpec.Rules = append(ingressSpec.Rules, ingressRule)
-
 	ingress.Spec = ingressSpec
+
+	if flagIngressFacing == "internal" {
+		log.Println("Modifying ingress to internal loadbalancer")
+		annotation := make(map[string]string)
+		annotation["kubernetes.io/ingress.class"] = "gce-internal"
+		if ingress.ObjectMeta.Annotations != nil {
+			maps.Copy(ingress.ObjectMeta.Annotations, annotation)
+		} else {
+			ingress.ObjectMeta.Annotations = annotation
+		}
+	}
 
 	return *ingress
 }

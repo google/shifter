@@ -91,10 +91,10 @@ func (converter *Converter) ConvertFiles() {
 		var r []lib.Converted
 		switch converter.InputType {
 		case "yaml":
-			sourceFile := inputs.Yaml(file.Content, nil)
+			sourceFile := inputs.Yaml(file.Content, converter.Flags)
 			r = generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
 		case "template":
-			sourceFile, values := inputs.Template(file.Content, nil)
+			sourceFile, values := inputs.Template(file.Content, converter.Flags)
 			r = generator.NewGenerator(converter.Generator, "test", sourceFile, values)
 		}
 

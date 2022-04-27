@@ -22,7 +22,7 @@ import (
 	"log"
 	"regexp"
 	"shifter/lib"
-	"strconv"
+	//"strconv"
 )
 
 type Chart struct {
@@ -57,11 +57,10 @@ func (generator *Generator) helm(name string, objects []lib.K8sobject, parameter
 
 	// Templates
 	for k, v := range objects {
-		no := strconv.Itoa(k)
+		//no := strconv.Itoa(k)
 		kind := fmt.Sprintf("%v", v.Kind)
 
 		log.Printf("Writing helm template file %x %s", k, kind)
-		fmt.Println(no)
 
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)

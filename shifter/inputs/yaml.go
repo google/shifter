@@ -36,9 +36,7 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 	//nestedQuotedStringHack(fileName)
 
 	f := bytes.NewReader(input.Bytes())
-
 	d := yaml.NewDecoder(f)
-
 	objects := make([]lib.K8sobject, 0)
 
 	for {
