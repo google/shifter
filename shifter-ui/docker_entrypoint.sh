@@ -2,7 +2,7 @@
 export FILE="/code/shifter.server.endpoint"
 export EXISTING_VARS=$(printenv | awk -F= '{print $1}' | sed 's/^/\$/g' | paste -sd,); 
 
-if [ -f "$FILE" ]; then
+if [ -e "$FILE" ]; then
   PREVIOUS_ENDPOINT=$(cat ${FILE})
   if [ "$PREVIOUS_ENDPOINT" = "$SHIFTER_SERVER_ENDPOINT" ]; then
     echo "Note: shifter.server.endpoint is Unchanged."
