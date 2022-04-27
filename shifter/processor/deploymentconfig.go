@@ -69,7 +69,7 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 			newImg := strings.Split(containers.Image, "/")
 			n := string(newImg[len(newImg)-1])
 			n = flagImageRepo + n
-			log.Println("Changing image source from", containers.Image, "to", n)
+			log.Println("Modifying image registry source from", containers.Image, "to", n)
 			deployment.Spec.Template.Spec.Containers[i].Image = n
 
 		}

@@ -12,6 +12,8 @@ require (
 	github.com/openshift/api v3.9.0+incompatible
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
+	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
+	google.golang.org/api v0.66.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	k8s.io/api v0.23.3
 	k8s.io/apimachinery v0.23.3
@@ -57,7 +59,6 @@ require (
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	google.golang.org/api v0.66.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220201184016-50beb8ab5c44 // indirect
 	google.golang.org/grpc v1.43.0 // indirect
