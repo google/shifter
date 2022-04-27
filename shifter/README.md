@@ -77,9 +77,12 @@ Processor flags allow you to make changes to the way the processor handles certa
 This is achieved using key value pairs passed into the `--pflags` flag.
 
 `--pflags ingress-facing=internal` causes the processor to add the annotation to each ingress object to use a internal load balancer
+
 `--pflags --image-repo=my://registry/address` allows you to change the image registry prefix for your source images
 
+
 You can chain multiple flags together example:
+
 ``go run . convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/helm --pflags ingress-facing=internal --pflags image-repo=gcs://shifter-lz-002``
 
 ### Converter Examples:
