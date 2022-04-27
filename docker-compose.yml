@@ -3,7 +3,7 @@ services:
   shifter-ui:
     container_name: shifter_ui
     domainname: shifter.local
-    image: dev.images.shifter.cloud/thiatt/fix_patchdynamicenv/shifter-ui:latest
+    image: images.shifter.cloud/shifter-ui:latest
     environment:
       SHIFTER_SERVER_ENDPOINT: "http://localhost:9091/api/v1"
     ports:
@@ -15,7 +15,7 @@ services:
   shifter-server:
     container_name: shifter_server
     domainname: shifter-server.local
-    image: dev.images.shifter.cloud/thiatt/fix_patchdynamicenv/shifter:latest
+    image: images.shifter.cloud/shifter:latest
     entrypoint: ["./shifter", "server"]
     ports:
       - 9091:8080
