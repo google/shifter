@@ -10,6 +10,15 @@ import DocumentationIcon from "../../../icons/IconDocumentation.vue";
     <template #icon>
       <DocumentationIcon />
     </template>
+    <template #heading>Shifter Server API Endpoint</template>
+
+   {{shifterConfig.API_BASE_URL}}
+  </DetailsListItem>
+
+  <DetailsListItem>
+    <template #icon>
+      <DocumentationIcon />
+    </template>
     <template #heading>Shifter Server Port</template>
 
    {{data.runningPort}}
@@ -57,6 +66,7 @@ import DocumentationIcon from "../../../icons/IconDocumentation.vue";
 </template>
 
 <script>
+import { shifterConfig } from "@/main"
 import { mapState, mapActions } from 'pinia'
 
 export default {
