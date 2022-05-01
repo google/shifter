@@ -63,17 +63,28 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		// Convert V1 API Endpoints
-		c := v1.Group("/convert")
+		o := v1.Group("/openshift")
 		{
-			c.POST("/yaml/yaml", server.Yaml2Yaml)
+			p := o.Group("/projects")
+			{
+				p.POST("/", server.OpenShiftGetProjects)
+				p.POST("/:projectName", server.OpenShiftGetProject)
+			}
+
 		}
 
+		// Convert V1 API Endpoints
+		/*c := v1.Group("/convert")
+		{
+			c.POST("/yaml/yaml", server.Yaml2Yaml)
+		}*/
+
 		// Download V1 API Endpoints
-		d := v1.Group("/download")
+		/*d := v1.Group("/download")
 		{
 			d.GET("/:uuid/:filename", server.ConvertedFile) // Download Single Converted File
 			d.GET("/:uuid/", server.ConvertedFilesArchive)  // Download All Converted Files (Archive)
-		}
+		}*/
 
 		// Status V1 API Endpoints
 		s := v1.Group("/status")
