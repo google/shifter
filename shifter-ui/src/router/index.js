@@ -49,6 +49,14 @@ const router = createRouter({
       component: () => import("../views/view-configure.vue"),
     },
     {
+      path: "/configure",
+      name: "configure",
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("../views/Configure.vue"),
+    },
+    {
       path: "/status/healthz",
       name: "healthz",
       component: () => import("../views/view-healthz.vue"),
@@ -63,6 +71,11 @@ const router = createRouter({
       name: "404",
       component: () => import("../views/view-404.vue"),
     },
+    { 
+      path: "/:pathMatch(.*)*", 
+      name: "404",
+      component: PageNotFound 
+    }
   ],
 });
 
