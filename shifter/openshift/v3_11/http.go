@@ -9,6 +9,9 @@ import (
 	"net/url"
 )
 
+/*
+	Configure HTTP Request
+*/
 func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.BaseURL.ResolveReference(rel)
@@ -33,6 +36,10 @@ func (c *Client) NewRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthOptions.BearerToken))
 	return req, nil
 }
+
+/*
+	Execute HTTP Request
+*/
 func (c *Client) Do(req *http.Request, target interface{}) (*http.Response, error) {
 
 	resp, err := c.httpClient.Do(req)

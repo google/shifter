@@ -15,43 +15,56 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
+
 	os "shifter/openshift/v3_11"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) OpenShiftGetProjects(ctx *gin.Context) {
+func (server *Server) SOSGetProject(ctx *gin.Context) {
+
+	// Validate Project Name has been Provided
+	projectName := ctx.Param("projectName")
+	if projectName == "" {
+		// UUID param required & not found.
+		err := errors.New("OpenShift Project Name must be supplied")
+		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+		log.Fatal(err.Error())
+		return
+	}
 
 	// Parse REST Request JSON Body
-	var sOSProjects ShifterGetOpenShiftProjects
-	//decoder :=
-	err := json.NewDecoder(ctx.Request.Body).Decode(&sOSProjects)
+	var sOSProject SOSProject
+	err := json.NewDecoder(ctx.Request.Body).Decode(&sOSProject)
 	if err != nil {
 		fmt.Printf("error %s", err)
 		ctx.JSON(501, gin.H{"error": err})
+		return
 	}
 
 	// Create OpenShift Client
 	openshift := os.NewClient(http.DefaultClient)
 	// Configure Authorization
-	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSProjects.Shifter.ClusterConfig.BearerToken}
-	openshift.BaseURL, err = url.Parse(sOSProjects.Shifter.ClusterConfig.BaseUrl)
+	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSProject.Shifter.ClusterConfig.BearerToken}
+	openshift.BaseURL, err = url.Parse(sOSProject.Shifter.ClusterConfig.BaseUrl)
 	if err != nil {
 		panic(err)
 	}
 
 	// Get List of OpenShift Projects
-	projects, err := openshift.Apis.Projects.Get()
+	project, err := openshift.Apis.Project.Get(projectName)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	// Add Projects to the Response
-	sOSProjects.Projects = *projects
+	// Add Project to the Response
+	sOSProject.Project = *project
 
 	// Return JSON API Response
-	ctx.JSON(http.StatusOK, sOSProjects)
+	ctx.JSON(http.StatusOK, sOSProject)
 }
