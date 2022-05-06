@@ -65,10 +65,27 @@ func (server *Server) setupRouter() {
 		// Convert V1 API Endpoints
 		o := v1.Group("/openshift")
 		{
-			p := o.Group("/projects")
+			op := o.Group("/projects")
 			{
-				p.POST("/", server.OpenShiftGetProjects)
-				p.POST("/:projectName", server.OpenShiftGetProject)
+				op.POST("/", server.OpenShiftGetProjects)
+				op.POST("/:projectName", server.OpenShiftGetProject)
+			}
+
+			dc := o.Group("/deploymentconfigs")
+			{
+				dc.POST("/", server.OpenShiftGetProjects)
+				dc.POST("/:projectName", server.OpenShiftGetProject)
+			}
+
+		}
+
+		// Convert V1 API Endpoints
+		s := v1.Group("/shifter")
+		{
+			sc := s.Group("/convert")
+			{
+				sc.POST("/", server.Convert)
+				//sc.POST("/:projectName", server.OpenShiftGetProject)
 			}
 
 		}
@@ -87,10 +104,10 @@ func (server *Server) setupRouter() {
 		}*/
 
 		// Status V1 API Endpoints
-		s := v1.Group("/status")
+		st := v1.Group("/status")
 		{
-			s.GET("/healthz", server.Healthz)   // Operations Health Check
-			s.GET("/settingz", server.Settingz) // Server Settingz
+			st.GET("/healthz", server.Healthz)   // Operations Health Check
+			st.GET("/settingz", server.Settingz) // Server Settingz
 		}
 	}
 

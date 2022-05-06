@@ -14,7 +14,7 @@ limitations under the License.
 package api
 
 import (
-	os "shifter/openshift"
+	osNativeProject "github.com/openshift/api/project/v1"
 )
 
 type ShifterClusterConfig struct {
@@ -28,11 +28,11 @@ type Shifter struct {
 }
 
 type ShifterGetOpenShiftProjects struct {
-	Shifter  Shifter     `json:"shifter"`
-	Projects os.Projects `json:"projects"`
+	Shifter  Shifter                     `json:"shifter"`
+	Projects osNativeProject.ProjectList `json:"projects"`
 }
 
 type ShifterGetOpenShiftProject struct {
-	Shifter Shifter    `json:"shifter"`
-	Project os.Project `json:"project"`
+	Shifter Shifter                 `json:"shifter"`
+	Project osNativeProject.Project `json:"project"`
 }

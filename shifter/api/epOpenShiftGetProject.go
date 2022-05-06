@@ -20,7 +20,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"shifter/openshift"
+
+	os "shifter/openshift/v3_11"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,16 +48,16 @@ func (server *Server) OpenShiftGetProject(ctx *gin.Context) {
 	}
 
 	// Create OpenShift Client
-	os := openshift.NewClient(http.DefaultClient)
+	openshift := os.NewClient(http.DefaultClient)
 	// Configure Authorization
-	os.AuthOptions = &openshift.AuthOptions{BearerToken: sOSProject.Shifter.ClusterConfig.BearerToken}
-	os.BaseURL, err = url.Parse(sOSProject.Shifter.ClusterConfig.BaseUrl)
+	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSProject.Shifter.ClusterConfig.BearerToken}
+	openshift.BaseURL, err = url.Parse(sOSProject.Shifter.ClusterConfig.BaseUrl)
 	if err != nil {
 		panic(err)
 	}
 
 	// Get List of OpenShift Projects
-	project, err := os.Project(projectName)
+	project, err := openshift.Apis.Project.Get(projectName)
 	if err != nil {
 		fmt.Println(err)
 	}
