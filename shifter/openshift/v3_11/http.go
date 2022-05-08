@@ -1,4 +1,4 @@
-package openshift
+package v3_11
 
 import (
 	"bytes"
@@ -9,7 +9,10 @@ import (
 	"net/url"
 )
 
-func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
+/*
+	Configure HTTP Request
+*/
+func (c *Client) NewRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.BaseURL.ResolveReference(rel)
 	var buf io.ReadWriter
@@ -33,7 +36,11 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthOptions.BearerToken))
 	return req, nil
 }
-func (c *Client) do(req *http.Request, target interface{}) (*http.Response, error) {
+
+/*
+	Execute HTTP Request
+*/
+func (c *Client) Do(req *http.Request, target interface{}) (*http.Response, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {

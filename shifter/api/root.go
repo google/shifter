@@ -1,16 +1,3 @@
-/*
-Copyright 2019 Google LLC
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package api
 
 import (
@@ -65,19 +52,30 @@ func (server *Server) setupRouter() {
 		// Convert V1 API Endpoints
 		o := v1.Group("/openshift")
 		{
-			p := o.Group("/projects")
+			op := o.Group("/projects")
 			{
-				p.POST("/", server.OpenShiftGetProjects)
-				p.POST("/:projectName", server.OpenShiftGetProject)
+				op.POST("/", server.SOSGetProjects)
+				op.POST("/:projectName", server.SOSGetProject)
+			}
+
+			dc := o.Group("/deploymentconfigs")
+			{
+				dc.POST("/", server.SOSGetDeploymentConfigs)
+				dc.POST("/:projectName", server.SOSGetDeploymentConfigsByProject)
+				dc.POST("/:projectName/:deploymentConfigName", server.SOSGetDeploymentConfig)
 			}
 
 		}
 
 		// Convert V1 API Endpoints
-		/*c := v1.Group("/convert")
+		s := v1.Group("/shifter")
 		{
-			c.POST("/yaml/yaml", server.Yaml2Yaml)
-		}*/
+			sc := s.Group("/convert")
+			{
+				sc.POST("/", server.Convert)
+			}
+
+		}
 
 		// Download V1 API Endpoints
 		/*d := v1.Group("/download")
@@ -87,10 +85,10 @@ func (server *Server) setupRouter() {
 		}*/
 
 		// Status V1 API Endpoints
-		s := v1.Group("/status")
+		st := v1.Group("/status")
 		{
-			s.GET("/healthz", server.Healthz)   // Operations Health Check
-			s.GET("/settingz", server.Settingz) // Server Settingz
+			st.GET("/healthz", server.Healthz)   // Operations Health Check
+			st.GET("/settingz", server.Settingz) // Server Settingz
 		}
 	}
 
