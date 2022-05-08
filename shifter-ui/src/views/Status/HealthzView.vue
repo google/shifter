@@ -1,16 +1,16 @@
 <script setup>
-import ShifterV1StatusSettingz from '../../components/shifter/v1/status/settingz.vue';
+import ShifterV1StatusHealthz from '../../components/Shifter/v1/Status/Healthz.vue';
 </script>
 
 <template>
-  <div class="settingz">
-    <ShifterV1StatusSettingz/>
+  <div class="healthz">
+    <ShifterV1StatusHealthz/>
   </div>
 </template>
 
 <style>
 @media (min-width: 1024px) {
-  .settingz {
+  .healthz {
     min-height: 100vh;
     display: flex;
     align-items: center;
