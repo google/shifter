@@ -68,3 +68,8 @@ type Response_Convert_Yaml2Yaml struct {
 	UploadedFiles  []*multipart.FileHeader `json:"uploadedFiles"`
 	Message        string                  `json:"message"`
 }
+
+type ResponseConvert struct {
+	UUID    string `json:"uuid"`
+	Message string `json:"message"`
+}

@@ -1,4 +1,4 @@
-package openshift
+package v3_11
 
 import (
 	"crypto/tls"
@@ -20,7 +20,13 @@ func ClientInit(httpClient *http.Client) *Client {
 	}
 
 	c := &Client{httpClient: httpClient}
+	c.Apis = &Apis{
+		Project:  &Project{Client: c},
+		Projects: &Projects{Client: c},
+		DeploymentConfig:  &DeploymentConfig{Client: c},
+		DeploymentConfigs: &DeploymentConfigs{Client: c},
+	}
 	// Add Apis Service Object
-	c.Apis = &Apis{client: c}
+	//c.Apis = &Apis{client: c}
 	return c
 }

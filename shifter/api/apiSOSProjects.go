@@ -18,15 +18,15 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"shifter/openshift"
+	os "shifter/openshift/v3_11"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) OpenShiftGetProjects(ctx *gin.Context) {
+func (server *Server) SOSGetProjects(ctx *gin.Context) {
 
 	// Parse REST Request JSON Body
-	var sOSProjects ShifterGetOpenShiftProjects
+	var sOSProjects SOSProjects
 	//decoder :=
 	err := json.NewDecoder(ctx.Request.Body).Decode(&sOSProjects)
 	if err != nil {
@@ -35,16 +35,16 @@ func (server *Server) OpenShiftGetProjects(ctx *gin.Context) {
 	}
 
 	// Create OpenShift Client
-	os := openshift.NewClient(http.DefaultClient)
+	openshift := os.NewClient(http.DefaultClient)
 	// Configure Authorization
-	os.AuthOptions = &openshift.AuthOptions{BearerToken: sOSProjects.Shifter.ClusterConfig.BearerToken}
-	os.BaseURL, err = url.Parse(sOSProjects.Shifter.ClusterConfig.BaseUrl)
+	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSProjects.Shifter.ClusterConfig.BearerToken}
+	openshift.BaseURL, err = url.Parse(sOSProjects.Shifter.ClusterConfig.BaseUrl)
 	if err != nil {
 		panic(err)
 	}
 
 	// Get List of OpenShift Projects
-	projects, err := os.Projects()
+	projects, err := openshift.Apis.Projects.Get()
 	if err != nil {
 		fmt.Println(err)
 	}
