@@ -1,17 +1,17 @@
 <script setup>
-import NavBar from "./components/NavBar/NavBar.vue"
-import { RouterLink, RouterView } from "vue-router";
+import NavBar from "./components/component-navbar.vue";
+//import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-<div class="flex flex-col h-screen">
-  <div class="hidden sm:block">
-    <NavBar/>
+  <div class="flex flex-col h-screen">
+    <div class="hidden sm:block">
+      <NavBar />
+    </div>
+    <div class="flex flex-grow">
+      <RouterView />
+    </div>
   </div>
-  <div class="flex flex-grow">
-    <RouterView />
-  </div>
-</div>
 </template>
 
 <style>

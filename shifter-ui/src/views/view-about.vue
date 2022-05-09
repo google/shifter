@@ -15,10 +15,7 @@
 </style>
 
 <script>
-import { shifterConfig } from "@/main"
 export default {
-  
-  created() {
-  }
+  created() {},
 };
 </script>
