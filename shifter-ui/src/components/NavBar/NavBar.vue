@@ -87,7 +87,11 @@
             Configure
             </li>
           </router-link>
-        
+          <router-link to="/convert">
+            <li class="text-sm font-bold hover:text-shifter-red-muted"> 
+            Convert
+            </li>
+          </router-link>
         </ul>
       </nav>
     </div>
