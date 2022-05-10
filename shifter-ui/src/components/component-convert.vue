@@ -11,7 +11,7 @@ import { useConfigurationsClusters } from "../stores/configurations/clusters";
         class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12"
       >
         <div
-          v-for="step in convertSteps"
+          v-for="step in activeSteps"
           :key="step.id"
           class="container flex justify-center items-center"
         >
@@ -23,7 +23,11 @@ import { useConfigurationsClusters } from "../stores/configurations/clusters";
           <div class="flex ml-4">{{ step.title }}</div>
         </div>
       </div>
-      <div class="container flex-row mx-auto justify-center py-12">
+      <!-- STEP 1 CLUSTER SELECTION -->
+      <div
+        v-show="currentStep === 1"
+        class="container flex-row mx-auto justify-center py-12"
+      >
         <div class="container flex-row justify-center items-center">
           <div class="flex justify-center bold text-4xl m-2">
             Cluster Selection
@@ -48,8 +52,38 @@ import { useConfigurationsClusters } from "../stores/configurations/clusters";
           </select>
         </div>
       </div>
-      <div class="container flex mx-auto justify-end px-10">
-        <a class="uppercase">Next</a>
+      <!-- END STEP 1 CLUSTER SELECTION -->
+
+      <!-- STEP 2 OBJECT SELECTION -->
+      <div
+        v-show="currentStep == 2"
+        class="container flex-row mx-auto justify-center py-12"
+      >
+        <div class="container flex-row justify-center items-center">
+          <div class="flex justify-center bold text-4xl m-2">
+            Object Selection
+          </div>
+          <div class="flex justify-center text-baseline m-2">
+            Select deployment configurations to convert for migration.
+          </div>
+        </div>
+        <div class="container flex mx-auto justify-center my-4"></div>
+      </div>
+      <!-- END STEP 2 OBJECT SELECTION -->
+
+      <div class="container flex mx-auto justify-end px-10 gap-4">
+        <a
+          v-show="currentStep > 1"
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          :onclick="previousStep"
+          >Previous</a
+        >
+        <a
+          v-show="currentStep < maxSteps"
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          :onclick="nextStep"
+          >Next</a
+        >
       </div>
     </div>
   </div>
@@ -61,6 +95,7 @@ import { mapState } from "pinia";
 export default {
   data() {
     return {
+      currentStep: 1,
       convert: {
         shifter: {},
       },
@@ -68,22 +103,27 @@ export default {
         {
           id: 1,
           title: "Cluster Selection",
+          enabled: true,
         },
         {
           id: 2,
           title: "Object Selection",
+          enabled: true,
         },
         {
           id: 3,
           title: "Review",
+          enabled: false,
         },
         {
           id: 4,
           title: "Shift Workflows",
+          enabled: false,
         },
         {
           id: 5,
           title: "Summary",
+          enabled: false,
         },
       ],
     };
@@ -92,9 +132,27 @@ export default {
     ...mapState(useConfigurationsClusters, {
       configurationClusters: "getActiveClusters",
     }),
+
+    activeSteps() {
+      return this.convertSteps.filter((step) => step.enabled);
+    },
+    maxSteps() {
+      return this.convertSteps.filter((step) => step.enabled).length;
+    },
   },
 
   methods: {
+    nextStep() {
+      if (this.currentStep < this.maxSteps) {
+        this.currentStep++;
+      }
+    },
+    previousStep() {
+      if (this.currentStep > 1) {
+        this.currentStep--;
+      }
+    },
+
     //...mapActions(useConfigurationsClusters, ['fetchClusters']),
   },
 
