@@ -28,7 +28,6 @@ import (
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
-
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 

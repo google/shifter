@@ -12,9 +12,10 @@ import (
 
 func (server *Server) SOSGetDeploymentConfigs(ctx *gin.Context) {
 
+	// TODO: Handle Incorrect Payload. Where Shifter{} block or incorrect Shifter{} block is provided in body
+
 	// Parse REST Request JSON Body
 	var sOSDeploymentConfigs SOSDeploymentConfigs
-	//decoder :=
 	err := json.NewDecoder(ctx.Request.Body).Decode(&sOSDeploymentConfigs)
 	if err != nil {
 		fmt.Printf("error %s", err)
@@ -24,6 +25,7 @@ func (server *Server) SOSGetDeploymentConfigs(ctx *gin.Context) {
 	// Create OpenShift Client
 	openshift := os.NewClient(http.DefaultClient)
 	// Configure Authorization
+	fmt.Println(sOSDeploymentConfigs)
 	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken}
 	openshift.BaseURL, err = url.Parse(sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl)
 	if err != nil {
