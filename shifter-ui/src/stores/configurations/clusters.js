@@ -57,6 +57,10 @@ export const useConfigurationsClusters = defineStore(
       getAllClusters(state) {
         return state.clusters;
       },
+      getCluster(state) {
+        return (clusterId) =>
+          state.clusters.find((cluster) => cluster.id === clusterId);
+      },
     },
 
     actions: {},

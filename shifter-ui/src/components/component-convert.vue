@@ -1,5 +1,7 @@
 <script setup>
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
+import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
 </script>
 
 <template>
@@ -67,7 +69,26 @@ import { useConfigurationsClusters } from "../stores/configurations/clusters";
             Select deployment configurations to convert for migration.
           </div>
         </div>
-        <div class="container flex mx-auto justify-center my-4"></div>
+        <div class="container flex mx-auto justify-center my-4">
+          <FormTableConvertObjects />
+        </div>
+      </div>
+      <!-- END STEP 2 OBJECT SELECTION -->
+
+      <!-- STEP 3 OBJECT Review -->
+      <div
+        v-show="currentStep == 3"
+        class="container flex-row mx-auto justify-center py-12"
+      >
+        <div class="container flex-row justify-center items-center">
+          <div class="flex justify-center bold text-4xl m-2">Object Review</div>
+          <div class="flex justify-center text-baseline m-2">
+            Review configurations selected for conversion.
+          </div>
+        </div>
+        <div class="container flex mx-auto justify-center my-4">
+          <FormTableConvertObjectsReview />
+        </div>
       </div>
       <!-- END STEP 2 OBJECT SELECTION -->
 
@@ -95,7 +116,7 @@ import { mapState } from "pinia";
 export default {
   data() {
     return {
-      currentStep: 1,
+      currentStep: 2,
       convert: {
         shifter: {},
       },
@@ -113,7 +134,7 @@ export default {
         {
           id: 3,
           title: "Review",
-          enabled: false,
+          enabled: true,
         },
         {
           id: 4,
