@@ -18,14 +18,11 @@ RUN go build -o /shifter
 ##
 ## Deploy Shifter Server
 ##
-FROM debian:bookworm-slim
+FROM gcr.io/distroless/base-debian11 
 
 ARG serverPort=8080
 ENV env_serverPort=$serverPort
 
-RUN apt-get update && apt-get upgrade -y
-
-WORKDIR /shifter
-COPY --from=build /shifter ./
+COPY --from=build /shifter /
 EXPOSE 8080
-CMD ["./shifter"]
+CMD ["/shifter"]
