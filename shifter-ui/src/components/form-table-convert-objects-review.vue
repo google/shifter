@@ -104,9 +104,7 @@ export default {
     ...mapState(useConfigurationsClusters, {
       getSelectedCluster: "getCluster",
     }),
-
     ...mapState(useConvertObjects, { dcIsSelected: "contains" }),
-
     ...mapState(useConvertObjects, { dcSelected: "selected" }),
 
     selectedDeploymentConfigs() {
