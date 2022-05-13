@@ -1,5 +1,6 @@
 <script setup>
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import { useConvertObjects } from "../stores/convert/convert-objects";
 import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
 </script>
@@ -105,6 +106,12 @@ import FormTableConvertObjectsReview from "../components/form-table-convert-obje
           :onclick="nextStep"
           >Next</a
         >
+        <a
+          v-show="currentStep === maxSteps"
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          :onclick="convertStep"
+          >Convert</a
+        >
       </div>
     </div>
   </div>
@@ -112,11 +119,13 @@ import FormTableConvertObjectsReview from "../components/form-table-convert-obje
 
 <script>
 import { mapState } from "pinia";
+import { shifterConfig } from "@/main";
+import axios from "axios";
 
 export default {
   data() {
     return {
-      currentStep: 2,
+      currentStep: 3,
       convert: {
         shifter: {},
       },
@@ -153,12 +162,24 @@ export default {
     ...mapState(useConfigurationsClusters, {
       configurationClusters: "getActiveClusters",
     }),
+    ...mapState(useConfigurationsClusters, {
+      getSelectedCluster: "getCluster",
+    }),
+    ...mapState(useConvertObjects, { dcSelected: "selected" }),
 
     activeSteps() {
       return this.convertSteps.filter((step) => step.enabled);
     },
     maxSteps() {
       return this.convertSteps.filter((step) => step.enabled).length;
+    },
+
+    selectedCluster() {
+      return this.getSelectedCluster(1);
+    },
+
+    selectedDeploymentConfigs() {
+      return this.dcSelected;
     },
   },
 
@@ -173,8 +194,48 @@ export default {
         this.currentStep--;
       }
     },
+    convertStep() {
+      this.fetching = true;
+      this.convertObjets(); //.then(
+      //this.fetching = false;
+      //)
+    },
 
-    //...mapActions(useConfigurationsClusters, ['fetchClusters']),
+    async convertObjets() {
+      const config = {
+        method: "post",
+        url: shifterConfig.API_BASE_URL + "/shifter/convert/",
+        headers: {},
+        data: {
+          shifter: { ...this.selectedCluster.shifter },
+          items: ]JSON.parse([...this.selectedDeploymentConfigs]),
+        },
+      };
+
+      console.log(config);
+      this.fetching = true;
+      try {
+        const response = await axios(config);
+        try {
+          console.log(response);
+          //this.data = response.data.deploymentConfigs.items;
+          this.fetching = false;
+        } catch (err) {
+          this.data = [];
+          console.error(
+            "Error Fetching OpenShift Object from Shifter Server.",
+            err
+          );
+          this.fetching = false;
+          return err;
+        }
+      } catch (err) {
+        this.data = {
+          message: "Shifter Server Unreachable, Timeout",
+        };
+        this.fetching = false;
+      }
+    },
   },
 
   created() {
