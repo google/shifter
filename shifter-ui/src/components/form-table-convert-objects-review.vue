@@ -1,6 +1,6 @@
 <script setup>
-import { useConfigurationsClusters } from "../stores/configurations/clusters";
-import { useConvertObjects } from "../stores/convert/convert-objects";
+//import { useConfigurationsClusters } from "../stores/configurations/clusters";
+//import { useConvertObjects } from "../stores/convert/convert-objects";
 </script>
 
 <template>
@@ -16,12 +16,12 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
         </tr>
       </thead>
       <tbody>
-        <tr v-for="dc in selectedDeploymentConfigs" :key="dc.metadata.uid">
+        <tr v-for="dc in all" :key="dc.deploymentConfig.metadata.uid">
           <td>
-            {{ dc.metadata.namespace }}
+            {{ dc.deploymentConfig.metadata.namespace }}
           </td>
           <td>
-            {{ dc.metadata.name }}
+            {{ dc.deploymentConfig.metadata.name }}
           </td>
           <td>
             <div class="flex justify-center">
@@ -34,16 +34,9 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
           <td>
             <div class="flex justify-center">
               <a
-                v-if="dcIsSelected(dc)"
                 @click="dcRemove(dc)"
                 class="rounded bg-shifter-red-soft px-6 my-1"
                 >Remove</a
-              >
-              <a
-                v-else
-                @click="dcAdd(dc)"
-                class="rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
-                >Select</a
               >
             </div>
           </td>
@@ -54,9 +47,10 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
 </template>
 
 <script>
-import { shifterConfig } from "@/main";
+//import { shifterConfig } from "@/main";
 import { mapState, mapActions } from "pinia";
-import axios from "axios";
+import { useConvertObjects } from "../stores/convert/convert";
+//import axios from "axios";
 
 // API Endpoint Configuration
 export default {
@@ -67,10 +61,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions(useConvertObjects, { dcRemove: "removeItem" }),
-    ...mapActions(useConvertObjects, { dcAdd: "addItem" }),
+    ...mapActions(useConvertObjects, { dcRemove: "remove" }),
+    ...mapActions(useConvertObjects, { dcAdd: "add" }),
+    //...mapActions(useConvertObjects, { dcAdd: "addItem" }),
 
-    async fetchObjects() {
+    /*async fetchObjects() {
       const config = {
         method: "post",
         url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
@@ -97,17 +92,24 @@ export default {
         };
       }
       this.fetching = false;
-    },
+    },*/
   },
 
   computed: {
-    ...mapState(useConfigurationsClusters, {
+    /*...mapState(useConfigurationsClusters, {
       getSelectedCluster: "getCluster",
-    }),
-    ...mapState(useConvertObjects, { dcIsSelected: "contains" }),
-    ...mapState(useConvertObjects, { dcSelected: "selected" }),
+    }),*/
 
-    selectedDeploymentConfigs() {
+    ...mapState(useConvertObjects, {
+      isSelected: "isSelected",
+    }),
+    ...mapState(useConvertObjects, { all: "all" }),
+
+    //...mapState(useConvertObjects, { dcIsSelected: "contains" }),
+
+    //...mapState(useConvertObjects, { dcSelected: "selected" }),
+
+    /* selectedDeploymentConfigs() {
       return this.dcSelected;
     },
 
@@ -116,11 +118,11 @@ export default {
     },
     deploymentConfigs() {
       return this.data;
-    },
+    },*/
   },
 
   mounted() {
-    this.fetchObjects();
+    //this.fetchObjects();
   },
 };
 </script>

@@ -1,7 +1,4 @@
-<script setup>
-import { useConfigurationsClusters } from "../stores/configurations/clusters";
-import { useConvertObjects } from "../stores/convert/convert-objects";
-</script>
+<script setup></script>
 
 <template>
   <div class="container flex-row mx-auto justify-center">
@@ -16,7 +13,7 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
         </tr>
       </thead>
       <tbody>
-        <tr v-for="dc in deploymentConfigs" :key="dc.metadata.uid">
+        <tr v-for="dc in all" :key="dc.metadata.uid">
           <td>
             {{ dc.metadata.namespace }}
           </td>
@@ -34,7 +31,7 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
           <td>
             <div class="flex justify-center">
               <a
-                v-if="dcIsSelected(dc)"
+                v-if="isSelected(dc)"
                 @click="dcRemove(dc)"
                 class="rounded bg-shifter-red-soft px-6 my-1"
                 >Remove</a
@@ -54,23 +51,35 @@ import { useConvertObjects } from "../stores/convert/convert-objects";
 </template>
 
 <script>
-import { shifterConfig } from "@/main";
-import { mapState, mapActions } from "pinia";
-import axios from "axios";
+//import { shifterConfig } from "@/main";
+import { mapActions, mapState } from "pinia";
+//import { useOSProjects } from "../stores/openshift/projects";
+import { useOSDeploymentConfigs } from "../stores/openshift/deployment-configs";
+import { useConvertObjects } from "../stores/convert/convert";
+//import axios from "axios";
 
 // API Endpoint Configuration
 export default {
+  setup() {
+    //const oSProjects = useOSProjects();
+    //const oSDeploymentConfigs = useOSDeploymentConfigs();
+    return {
+      // oSProjects,
+      // oSDeploymentConfigs,
+    };
+  },
+
   data() {
     return {
-      data: null,
-      fetching: false,
+      //osDeploymentConfigs: null,
+      //osProjects: null,
+      //fetching: false,
     };
   },
   methods: {
-    ...mapActions(useConvertObjects, { dcRemove: "removeItem" }),
-    ...mapActions(useConvertObjects, { dcAdd: "addItem" }),
-
-    async fetchObjects() {
+    ...mapActions(useConvertObjects, { dcRemove: "remove" }),
+    ...mapActions(useConvertObjects, { dcAdd: "add" }),
+    /* async fetchDeploymentConfigs() {
       const config = {
         method: "post",
         url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
@@ -82,9 +91,9 @@ export default {
       try {
         const response = await axios(config);
         try {
-          this.data = response.data.deploymentConfigs.items;
+          this.osDeploymentConfigs = response.data.deploymentConfigs.items;
         } catch (err) {
-          this.data = [];
+          this.osDeploymentConfigs = [];
           console.error(
             "Error Fetching OpenShift Object from Shifter Server.",
             err
@@ -92,33 +101,68 @@ export default {
           return err;
         }
       } catch (err) {
-        this.data = {
+        this.osDeploymentConfigs = {
           message: "Shifter Server Unreachable, Timeout",
         };
       }
       this.fetching = false;
     },
+
+    async fetchProjects() {
+      const config = {
+        method: "post",
+        url: shifterConfig.API_BASE_URL + "/openshift/projects/",
+        headers: {},
+        data: { ...this.selectedCluster },
+      };
+
+      this.fetching = true;
+      try {
+        const response = await axios(config);
+        try {
+          this.osProjects = response.data.projects.items;
+        } catch (err) {
+          this.osProjects = [];
+          console.error(
+            "Error Fetching OpenShift Object from Shifter Server.",
+            err
+          );
+          return err;
+        }
+      } catch (err) {
+        this.osProjects = {
+          message: "Shifter Server Unreachable, Timeout",
+        };
+      }
+      this.fetching = false;
+    },*/
   },
 
   computed: {
-    ...mapState(useConfigurationsClusters, {
+    /*...mapState(useConfigurationsClusters, {
       getSelectedCluster: "getCluster",
+    }),*/
+    ...mapState(useConvertObjects, {
+      isSelected: "isSelected",
     }),
 
-    ...mapState(useConvertObjects, { dcIsSelected: "contains" }),
+    ...mapState(useOSDeploymentConfigs, { all: "all" }),
 
-    ...mapState(useConvertObjects, { dcSelected: "selected" }),
+    // ...mapState(useConvertObjects, { dcSelected: "selected" }),
 
-    selectedCluster() {
+    /*selectedCluster() {
       return this.getSelectedCluster(1);
-    },
-    deploymentConfigs() {
-      return this.data;
+    },*/
+    loadedDeploymentConfigs() {
+      return this.osDeploymentConfigs;
     },
   },
 
-  mounted() {
-    this.fetchObjects();
+  created() {
+    //this.fetchDeploymentConfigs();
+    //this.fetchProjects();
+    //oSProjects;
+    //this.oSDeploymentConfigs.fetch();
   },
 };
 </script>
