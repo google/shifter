@@ -5,6 +5,6 @@ import (
 )
 
 type SOSDeploymentConfig struct {
-	Shifter          Shifter                          `json:"shifter"`
+	Shifter          Shifter                   `json:"shifter"`
 	DeploymentConfig osNative.DeploymentConfig `json:"deploymentConfig"`
 }
