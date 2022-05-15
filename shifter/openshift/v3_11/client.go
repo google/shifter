@@ -21,8 +21,8 @@ func ClientInit(httpClient *http.Client) *Client {
 
 	c := &Client{httpClient: httpClient}
 	c.Apis = &Apis{
-		Project:  &Project{Client: c},
-		Projects: &Projects{Client: c},
+		Project:           &Project{Client: c},
+		Projects:          &Projects{Client: c},
 		DeploymentConfig:  &DeploymentConfig{Client: c},
 		DeploymentConfigs: &DeploymentConfigs{Client: c},
 	}
