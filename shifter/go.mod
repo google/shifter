@@ -9,8 +9,8 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/openshift/api v3.9.0+incompatible
-	github.com/openshift/client-go v3.9.0+incompatible
+	github.com/openshift/api v0.0.0-20220511093956-b017c00b66b6
+	github.com/openshift/client-go v0.0.0-20220512130520-80c0822dfe76
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
 	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
@@ -40,7 +40,6 @@ require (
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
@@ -70,7 +69,7 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
+	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
 	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect

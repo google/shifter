@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-	os "shifter/openshift/v3_11"
+	os "shifter/openshift"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,23 +32,12 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	}
 
 	// Create OpenShift Client
-	openshift := os.NewClient(http.DefaultClient)
-	// Configure Authorization
-	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken}
-	openshift.BaseURL, err = url.Parse(sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl)
-	if err != nil {
-		panic(err)
-	}
+	var openshift os.Openshift
 
 	// Get List of OpenShift Projects
-	deploymentconfigs, err := openshift.Apis.DeploymentConfigs.GetByProject(projectName)
-	if err != nil {
-		fmt.Println(err)
-	}
-
+	deploymentconfigs := openshift.GetDeploymentConfigs(projectName)
 	// Add Projects to the Response
 	sOSDeploymentConfigs.DeploymentConfigs = *deploymentconfigs
-
 	// Return JSON API Response
 	ctx.JSON(http.StatusOK, sOSDeploymentConfigs)
 }

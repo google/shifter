@@ -17,13 +17,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"net/url"
-
-	os "shifter/openshift/v3_11"
-
-	"github.com/gin-gonic/gin"
+	os "shifter/openshift"
 )
 
 func (server *Server) SOSGetProject(ctx *gin.Context) {
@@ -48,19 +45,10 @@ func (server *Server) SOSGetProject(ctx *gin.Context) {
 	}
 
 	// Create OpenShift Client
-	openshift := os.NewClient(http.DefaultClient)
-	// Configure Authorization
-	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSProject.Shifter.ClusterConfig.BearerToken}
-	openshift.BaseURL, err = url.Parse(sOSProject.Shifter.ClusterConfig.BaseUrl)
-	if err != nil {
-		panic(err)
-	}
+	var openshift os.Openshift
 
 	// Get List of OpenShift Projects
-	project, err := openshift.Apis.Project.Get(projectName)
-	if err != nil {
-		fmt.Println(err)
-	}
+	project := openshift.GetProject(projectName)
 
 	// Add Project to the Response
 	sOSProject.Project = *project
