@@ -23,8 +23,11 @@ import (
 type Openshift struct {
 	Endpoint  string
 	AuthToken string
+<<<<<<< HEAD
 	Username  string
 	Password  string
+=======
+>>>>>>> 6f965c1 (Moving to native go client)
 }
 
 func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
