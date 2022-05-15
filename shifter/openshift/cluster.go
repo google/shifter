@@ -14,7 +14,6 @@ limitations under the license.
 package openshift
 
 import (
-	"fmt"
 	restclientcmdapi "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -24,24 +23,6 @@ import (
 type Openshift struct {
 	Endpoint  string
 	AuthToken string
-}
-
-func (cluster *Openshift) Test() {
-
-	projectList := cluster.listProjects()
-
-	for _, v := range projectList.Items {
-
-		projName := v.Name
-
-		fmt.Println(projName)
-		fmt.Println("***************")
-		deployments := cluster.listDeploymentConfigs(projName)
-
-		for _, k := range deployments.Items {
-			fmt.Println(k.ObjectMeta.Name)
-		}
-	}
 }
 
 func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {

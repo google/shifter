@@ -20,14 +20,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (c Openshift) getDeploymentConfigs(namespace string) *v1.DeploymentConfigList {
+func (c Openshift) GetDeploymentConfigs(namespace string) *v1.DeploymentConfigList {
 	app, _ := appsv1.NewForConfig(c.clusterClient())
 	depCfgLst, _ := app.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
 
 	return depCfgLst
 }
 
-func (c Openshift) getDeploymentConfig(name string, namespace string) *v1.DeploymentConfig {
+func (c Openshift) GetDeploymentConfig(name string, namespace string) *v1.DeploymentConfig {
 	app, _ := appsv1.NewForConfig(c.clusterClient())
 	depCfg, _ := app.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 

@@ -20,18 +20,20 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
+	"reflect"
 	generator "shifter/generators"
 	lib "shifter/lib"
-	osh "shifter/openshift/v3_11"
+	os "shifter/openshift"
 	ops "shifter/ops"
+
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
+	var openshift os.Openshift
+
 	// Create API Unique RUN ID
 	//uuid := uuid.New().String()
 	suid := ops.CreateSUID("")
@@ -43,55 +45,31 @@ func (server *Server) Convert(ctx *gin.Context) {
 	}
 
 	// Process Each Item
-	for _, item := range convert.Items {
-		// Create OpenShift Client
-		openshift := osh.NewClient(http.DefaultClient)
-		// Configure Authorization
-		openshift.AuthOptions = &osh.AuthOptions{
-			BearerToken: convert.Shifter.ClusterConfig.BearerToken,
-		}
-		// Configure Base URL
-		var err error
-		openshift.BaseURL, err = url.Parse(convert.Shifter.ClusterConfig.BaseUrl)
-		if err != nil {
-			panic(err)
-		}
+	// Confirm Project/Namespace Exists
+	deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
-		// Confirm Project/Namespace Exists
-		_, err = openshift.Apis.Project.Get(item.Namespace.ObjectMeta.Name)
-		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
-		}
+	u, err := json.Marshal(deploymentConfig)
+	if err != nil {
+		panic(err)
+	}
 
-		// Confirm Project/Namespace Exists
-		deploymentConfig, err := openshift.Apis.DeploymentConfig.Get(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
-		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
+	// Handle the Conversion of the Manifests and File Writing
+	var generator generator.Generator
+	var objs []lib.K8sobject
+	obj := processor.Processor(u, "DeploymentConfig", nil)
+	objs = append(objs, obj)
+	convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
+	for _, conObj := range convertedObjects {
+		fileObj := &ops.FileObject{
+			//StorageType: "GCS",
+			//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+			StorageType:   server.config.serverStorage.storageType,
+			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+			Ext:           "yaml",
+			Content:       conObj.Payload,
+			ContentLength: conObj.Payload.Len(),
 		}
-
-		u, err := json.Marshal(deploymentConfig)
-		if err != nil {
-			panic(err)
-		}
-
-		// Handle the Conversion of the Manifests and File Writing
-		var generator generator.Generator
-		var objs []lib.K8sobject
-		obj := processor.Processor(u, "DeploymentConfig", nil)
-		objs = append(objs, obj)
-		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
-		for _, conObj := range convertedObjects {
-			fileObj := &ops.FileObject{
-				//StorageType: "GCS",
-				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
-				StorageType:   server.config.serverStorage.storageType,
-				SourcePath:    (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
-				Ext:           "yaml",
-				Content:       conObj.Payload,
-				ContentLength: conObj.Payload.Len(),
-			}
-			fileObj.WriteFile()
-		}
+		fileObj.WriteFile()
 	}
 
 	// Zip / Package Converted Objects

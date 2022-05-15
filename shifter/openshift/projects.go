@@ -15,21 +15,19 @@ package openshift
 
 import (
 	"context"
-	v1 "github.com/openshift/api/apps/v1"
-	appsv1 "github.com/openshift/client-go/apps/clientset/versioned"
+	v1 "github.com/openshift/api/project/v1"
+	projectv1 "github.com/openshift/client-go/project/clientset/versioned/typed/project/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (c Openshift) getDeploymentConfigs(namespace string) *v1.DeploymentConfigList {
-	app, _ := appsv1.NewForConfig(c.clusterClient())
-	depCfgLst, _ := app.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
-
-	return depCfgLst
+func (c Openshift) GetProjects() *v1.ProjectList {
+	proj, _ := projectv1.NewForConfig(c.clusterClient())
+	x, _ := proj.Projects().List(context.TODO(), metav1.ListOptions{})
+	return x
 }
 
-func (c Openshift) getDeploymentConfig(name string, namespace string) *v1.DeploymentConfig {
-	app, _ := appsv1.NewForConfig(c.clusterClient())
-	depCfg, _ := app.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
-
-	return depCfg
+func (c Openshift) GetProject(name string) *v1.Project {
+	proj, _ := projectv1.NewForConfig(c.clusterClient())
+	x, _ := proj.Projects().Get(context.TODO(), name, metav1.GetOptions{})
+	return x
 }
