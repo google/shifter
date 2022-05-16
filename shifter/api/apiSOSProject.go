@@ -18,10 +18,16 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	osNativeProject "github.com/openshift/api/project/v1"
 	"log"
 	"net/http"
 	os "shifter/openshift"
 )
+
+type SOSProject struct {
+	Shifter Shifter                 `json:"shifter"`
+	Project osNativeProject.Project `json:"project"`
+}
 
 func (server *Server) SOSGetProject(ctx *gin.Context) {
 

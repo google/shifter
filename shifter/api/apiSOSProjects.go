@@ -20,7 +20,13 @@ import (
 	os "shifter/openshift"
 
 	"github.com/gin-gonic/gin"
+	osNativeProject "github.com/openshift/api/project/v1"
 )
+
+type SOSProjects struct {
+	Shifter  Shifter                     `json:"shifter"`
+	Projects osNativeProject.ProjectList `json:"projects"`
+}
 
 func (server *Server) SOSGetProjects(ctx *gin.Context) {
 
@@ -37,7 +43,7 @@ func (server *Server) SOSGetProjects(ctx *gin.Context) {
 	var openshift os.Openshift
 
 	// Get List of OpenShift Projects
-	projects := openshift.GetProjects()
+	projects := openshift.GetAllProjects()
 
 	// Add Projects to the Response
 	sOSProjects.Projects = *projects
