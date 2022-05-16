@@ -7,7 +7,13 @@ import (
 	os "shifter/openshift"
 
 	"github.com/gin-gonic/gin"
+	osNative "github.com/openshift/api/apps/v1"
 )
+
+type SOSDeploymentConfigs struct {
+	Shifter           Shifter                       `json:"shifter"`
+	DeploymentConfigs osNative.DeploymentConfigList `json:"deploymentConfigs"`
+}
 
 func (server *Server) SOSGetDeploymentConfigs(ctx *gin.Context) {
 
@@ -23,7 +29,7 @@ func (server *Server) SOSGetDeploymentConfigs(ctx *gin.Context) {
 
 	// Create OpenShift Client
 	var openshift os.Openshift
-	deploymentconfigs := openshift.GetDeploymentConfigs("default")
+	deploymentconfigs := openshift.GetAllDeploymentConfigs("default")
 
 	// Add Projects to the Response
 	sOSDeploymentConfigs.DeploymentConfigs = *deploymentconfigs

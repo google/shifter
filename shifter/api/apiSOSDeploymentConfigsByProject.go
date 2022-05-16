@@ -35,7 +35,7 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	var openshift os.Openshift
 
 	// Get List of OpenShift Projects
-	deploymentconfigs := openshift.GetDeploymentConfigs(projectName)
+	deploymentconfigs := openshift.GetAllDeploymentConfigs(projectName)
 	// Add Projects to the Response
 	sOSDeploymentConfigs.DeploymentConfigs = *deploymentconfigs
 	// Return JSON API Response
