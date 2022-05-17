@@ -3,6 +3,8 @@
 <template>
   <div
     class="
+      container
+      flex
       absolute
       insert-0
       flex
@@ -13,13 +15,16 @@
       bg-shifter-black
       border
       rounded-2xl
+      truncate
     "
     :class="showJSONModal ? 'visible' : 'invisible'"
   >
-    <div class="container flex mx-auto justify-end px-10 gap-4">
+    <div class="container flex-row mx-auto justify-end px-10 gap-4">
       <a @click="closeModal">close</a>
     </div>
-    
+    <div class="container flex-row mx-auto justify-end px-10 gap-4">
+      {{ getContent }}
+    </div>
   </div>
 </template>
 
@@ -37,6 +42,9 @@ export default {
   computed: {
     ...mapState(useJSONModal, {
       showJSONModal: "showJSONModal",
+    }),
+    ...mapState(useJSONModal, {
+      getContent: "getContent",
     }),
   },
   created() {},
