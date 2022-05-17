@@ -15,12 +15,10 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
-	"reflect"
 	os "shifter/openshift/v3_11"
-
+"fmt"
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +26,6 @@ import (
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
-
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
@@ -42,6 +39,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 
 	// Process Each Item
 	var count int = 0
+	
 	for idx, item := range convert.Items {
 		// Create OpenShift Client
 		openshift := os.NewClient(http.DefaultClient)
@@ -73,8 +71,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 			panic(err)
 		}
 		convertedObject := processor.Processor(u, "DeploymentConfig", nil)
-		fmt.Println(reflect.TypeOf(convertedObject))
-
+		fmt.Println(convertedObject)
 		count = (int(idx) + 1)
 	}
 

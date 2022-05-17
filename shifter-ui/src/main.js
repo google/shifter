@@ -1,12 +1,12 @@
 import { createApp } from "vue";
 
 // Import Pinia for State Management
-import { createPinia } from 'pinia'
+import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
 // Import Tailwind CSS Configuration
-import './index.css'
+import "./index.css";
 
 // Import Config JSON File
 import Config from "./env-config.json";
@@ -15,7 +15,7 @@ import Config from "./env-config.json";
 const app = createApp(App);
 
 // Create Pinia State Store
-const store = createPinia()
+const store = createPinia();
 
 // Setup Shifter Environment Variable Configuration:
 app.config.globalProperties.$shifterConfig = {
@@ -24,7 +24,7 @@ app.config.globalProperties.$shifterConfig = {
 };
 
 // Add Pinia Store to Vue Application
-app.use(store)
+app.use(store);
 // Add Vue Router to Vue Application
 app.use(router);
 

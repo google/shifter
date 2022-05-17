@@ -1,14 +1,22 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import NavBar from "./components/component-navbar.vue";
+//import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <RouterView />
+  <div class="flex flex-col h-screen">
+    <div class="hidden sm:block">
+      <NavBar />
+    </div>
+    <div class="flex flex-grow">
+      <RouterView />
+    </div>
+  </div>
 </template>
 
 <style>
 @import "@/assets/base.css";
-
+/*
 #app {
   max-width: 1280px;
   margin: 0 auto;
@@ -101,5 +109,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+}*/
 </style>

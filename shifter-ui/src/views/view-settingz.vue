@@ -1,10 +1,10 @@
 <script setup>
-import ShifterV1StatusSettingz from '../../components/shifter/v1/status/settingz.vue';
+import ShifterV1StatusSettingz from "../../components/Shifter/v1/Status/Settingz.vue";
 </script>
 
 <template>
   <div class="settingz">
-    <ShifterV1StatusSettingz/>
+    <ShifterV1StatusSettingz />
   </div>
 </template>
 
@@ -18,12 +18,8 @@ import ShifterV1StatusSettingz from '../../components/shifter/v1/status/settingz
 }
 </style>
 
-
 <script>
-import { shifterConfig } from "@/main"
 export default {
-  
-  created() {
-  }
+  created() {},
 };
 </script>
