@@ -14,14 +14,13 @@ limitations under the License.
 package api
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	os "shifter/openshift/v3_11"
 	ops "shifter/ops"
 	"shifter/processor"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -69,14 +68,19 @@ func (server *Server) Convert(ctx *gin.Context) {
 		if err != nil {
 			panic(err)
 		}
-		convertedObject := processor.Processor(u, "DeploymentConfig", nil)
+		//convertedObject := processor.Processor(u, "DeploymentConfig", nil)
+		convertedObject := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, processor.Processor(u, "DeploymentConfig", nil))
+		fmt.Println(convertedObject)
+		fmt.Println(idx)
 		fileObj := &ops.FileObject{
 			StorageType:   server.config.serverStorage.storageType,
 			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 			Ext:           "yaml",
-			Content:       *bytes.NewBuffer(byteContainer),
-			ContentLength: len(byteContainer),
+			Content:       *convertedObject.Payload,
+			ContentLength: len(convertedObject.Payload),
 		}
+
+		fileObj.Meta()
 	}
 
 	// Construct API Endpoint Response
