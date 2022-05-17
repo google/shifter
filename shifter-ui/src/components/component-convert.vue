@@ -178,7 +178,7 @@ export default {
   data() {
     return {
       clusterId: "",
-      currentStep: 2,
+      currentStep: 1,
       convert: {
         shifter: {},
       },
