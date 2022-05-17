@@ -23,7 +23,7 @@
           <td>
             <div class="flex justify-center">
               <a
-                @click="openModal()"
+                @click="openModal(dc)"
                 class="
                   rounded
                   bg-shifter-red-soft
