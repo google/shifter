@@ -4,14 +4,24 @@
 
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
 import { useConvertObjects } from "../stores/convert/convert";
+import { useJSONModal } from "../stores/convert/jsonModal";
 import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
+import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
 </script>
 
 <template>
   <div class="container flex mx-auto m-6 items-center">
     <div
-      class="container flex-row mx-auto bg-shifter-black-mute justify-center rounded-2xl py-6"
+      class="
+        container
+        flex-row
+        mx-auto
+        bg-shifter-black-mute
+        justify-center
+        rounded-2xl
+        py-6
+      "
     >
       <div
         class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12"
@@ -22,7 +32,15 @@ import FormTableConvertObjectsReview from "../components/form-table-convert-obje
           class="container flex justify-center items-center"
         >
           <div
-            class="flex rounded-full shadow-2xl bg-shifter-black px-4 py-2 text-shifter-red-muted text-bold"
+            class="
+              flex
+              rounded-full
+              shadow-2xl
+              bg-shifter-black
+              px-4
+              py-2
+              text-shifter-red-muted text-bold
+            "
           >
             {{ step.id }}
           </div>
@@ -101,24 +119,46 @@ import FormTableConvertObjectsReview from "../components/form-table-convert-obje
       <div class="container flex mx-auto justify-end px-10 gap-4">
         <a
           v-show="currentStep > 1"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="
+            uppercase
+            rounded
+            px-6
+            py-2
+            bg-shifter-black
+            hover:bg-shifter-red hover:animate-pulse
+          "
           :onclick="previousStep"
           >Previous</a
         >
         <a
           v-show="currentStep < maxSteps"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="
+            uppercase
+            rounded
+            px-6
+            py-2
+            bg-shifter-black
+            hover:bg-shifter-red hover:animate-pulse
+          "
           :onclick="nextStep"
           >Next</a
         >
         <a
           v-show="currentStep === maxSteps"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="
+            uppercase
+            rounded
+            px-6
+            py-2
+            bg-shifter-black
+            hover:bg-shifter-red hover:animate-pulse
+          "
           :onclick="convertStep"
           >Convert</a
         >
       </div>
     </div>
+    <FormTableJSONModal />
   </div>
 </template>
 
@@ -138,7 +178,7 @@ export default {
   data() {
     return {
       clusterId: "",
-      currentStep: 1,
+      currentStep: 2,
       convert: {
         shifter: {},
       },
@@ -178,6 +218,9 @@ export default {
     ...mapState(useConfigurationsClusters, {
       getSelectedCluster: "getCluster",
     }),
+    ...mapState(useJSONModal, {
+      showJSONModal: "showJSONModal",
+    }),
     ...mapState(useConvertObjects, { dcSelected: "selected" }),
 
     activeSteps() {
@@ -186,7 +229,6 @@ export default {
     maxSteps() {
       return this.convertSteps.filter((step) => step.enabled).length;
     },
-
     /*selectedCluster() {
       return this.getSelectedCluster(1);
     },*/
