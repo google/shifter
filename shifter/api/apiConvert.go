@@ -14,11 +14,12 @@ limitations under the License.
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/url"
 	os "shifter/openshift/v3_11"
-"fmt"
+	ops "shifter/ops"
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
@@ -38,8 +39,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 	}
 
 	// Process Each Item
-	var count int = 0
-	
 	for idx, item := range convert.Items {
 		// Create OpenShift Client
 		openshift := os.NewClient(http.DefaultClient)
@@ -71,14 +70,19 @@ func (server *Server) Convert(ctx *gin.Context) {
 			panic(err)
 		}
 		convertedObject := processor.Processor(u, "DeploymentConfig", nil)
-		fmt.Println(convertedObject)
-		count = (int(idx) + 1)
+		fileObj := &ops.FileObject{
+			StorageType:   server.config.serverStorage.storageType,
+			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+			Ext:           "yaml",
+			Content:       *bytes.NewBuffer(byteContainer),
+			ContentLength: len(byteContainer),
+		}
 	}
 
 	// Construct API Endpoint Response
 	r := ResponseConvert{
 		UUID:    uuid,
-		Message: "Converted..." + string(count) + " Objects",
+		Message: "Converted..." + string(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
 }
