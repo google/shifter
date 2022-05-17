@@ -72,6 +72,6 @@ func init() {
 	serverCmd.Flags().StringVarP(&serverAddress, "host-address", "a", "0.0.0.0", "Host Address: Default 0.0.0.0")
 	serverCmd.Flags().StringVarP(&sourcePath, "source-path", "f", "", "Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written")
 	serverCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
-	serverCmd.Flags().StringVarP(&path, "path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
-	serverCmd.Flags().StringVarP(&storageType, "patstorage-type", "o", "", "LCL for Local or GCS for Google Cloud Storage Bucket")
+	//serverCmd.Flags().StringVarP(&path, "path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
+	//serverCmd.Flags().StringVarP(&storageType, "patstorage-type", "o", "", "LCL for Local or GCS for Google Cloud Storage Bucket")
 }
