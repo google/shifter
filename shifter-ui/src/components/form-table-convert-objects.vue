@@ -23,7 +23,14 @@
           <td>
             <div class="flex justify-center">
               <a
-                class="rounded bg-shifter-red-soft px-6 my-1 hover:bg-shifter-red hover:animate-pulse"
+                @click="openModal(dc)"
+                class="
+                  rounded
+                  bg-shifter-red-soft
+                  px-6
+                  my-1
+                  hover:bg-shifter-red hover:animate-pulse
+                "
                 >View</a
               >
             </div>
@@ -39,7 +46,13 @@
               <a
                 v-else
                 @click="dcAdd(dc)"
-                class="rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
+                class="
+                  rounded
+                  border border-shifter-red-soft
+                  px-6
+                  my-1
+                  hover:bg-shifter-red-soft hover:animate-pulse
+                "
                 >Select</a
               >
             </div>
@@ -56,6 +69,7 @@ import { mapActions, mapState } from "pinia";
 //import { useOSProjects } from "../stores/openshift/projects";
 import { useOSDeploymentConfigs } from "../stores/openshift/deployment-configs";
 import { useConvertObjects } from "../stores/convert/convert";
+import { useJSONModal } from "../stores/convert/jsonModal";
 //import axios from "axios";
 
 // API Endpoint Configuration
@@ -79,6 +93,7 @@ export default {
   methods: {
     ...mapActions(useConvertObjects, { dcRemove: "remove" }),
     ...mapActions(useConvertObjects, { dcAdd: "add" }),
+    ...mapActions(useJSONModal, { openModal: "openModal" }),
     /* async fetchDeploymentConfigs() {
       const config = {
         method: "post",
