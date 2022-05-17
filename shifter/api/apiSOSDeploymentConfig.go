@@ -8,8 +8,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	os "shifter/openshift"
 	osNative "github.com/openshift/api/apps/v1"
+	os "shifter/openshift"
 )
 
 type SOSDeploymentConfig struct {
