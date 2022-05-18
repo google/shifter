@@ -1,4 +1,5 @@
 <script setup>
+// Vue Component Imports
 import ClusterConfiguration from "../components/configutation-cluster-connections.vue";
 import ShifterServerSettingz from "../components/configuration-shifter-server-settingz.vue";
 </script>
@@ -6,14 +7,7 @@ import ShifterServerSettingz from "../components/configuration-shifter-server-se
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-4 place-items-center gap-6 w-full">
     <div
-      class="
-        grid
-        place-items-end
-        w-full
-        gap-6
-        border-r-2 border-shifter-black-soft
-        pr-4
-      "
+      class="grid place-items-end w-full gap-6 border-r-2 border-shifter-black-soft pr-4"
     >
       <ul class="space-y-4">
         <li
