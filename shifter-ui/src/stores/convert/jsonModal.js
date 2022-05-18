@@ -10,7 +10,7 @@ export const useJSONModal = defineStore("configurations-convert-json-modal", {
 
   getters: {
     getContent(state) {
-      return state.content
+      return state.content;
     },
     showJSONModal(state) {
       return state.showModal;
@@ -22,12 +22,12 @@ export const useJSONModal = defineStore("configurations-convert-json-modal", {
       this.showModal = false;
     },
     async openModal(content) {
-      this.content = content
+      this.content = content;
       this.showModal = true;
     },
 
     async setContnet(content) {
-      this.content = content
+      this.content = content;
     },
   },
 });

@@ -1,7 +1,3 @@
-<script setup>
-import { useShifterV1StatusHealthz } from "../stores/shifter/v1/status/healthz";
-</script>
-
 <template>
   <ui>
     <li>Shifter Server Status: {{ data.message }}</li>
@@ -9,6 +5,9 @@ import { useShifterV1StatusHealthz } from "../stores/shifter/v1/status/healthz";
 </template>
 
 <script>
+// Pinia Store Imports
+import { useShifterV1StatusHealthz } from "../stores/shifter/v1/status/healthz";
+// Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
 
 export default {

@@ -1,27 +1,13 @@
 <script setup>
-//import { useOSProjects } from "../stores/openshift/projects";
-//import { useOSDeploymentConfigs } from "../stores/openshift/deployment-configs";
-
-import { useConfigurationsClusters } from "../stores/configurations/clusters";
-import { useConvertObjects } from "../stores/convert/convert";
-import { useJSONModal } from "../stores/convert/jsonModal";
+// Vue Component Imports
 import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
 import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
 </script>
-
 <template>
   <div class="container flex mx-auto m-6 items-center">
     <div
-      class="
-        container
-        flex-row
-        mx-auto
-        bg-shifter-black-mute
-        justify-center
-        rounded-2xl
-        py-6
-      "
+      class="container flex-row mx-auto bg-shifter-black-mute justify-center rounded-2xl py-6"
     >
       <div
         class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12"
@@ -35,16 +21,7 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           "
         >
           <div
-            class="
-              flex
-              rounded-full
-              shadow-2xl
-              bg-shifter-black
-              px-4
-              py-2
-              text-shifter-red-muted text-bold
-              no-underline
-            "
+            class="flex rounded-full shadow-2xl bg-shifter-black px-4 py-2 text-shifter-red-muted text-bold no-underline"
             :class="step.id === currentStep ? 'no-underline' : 'no-underline'"
           >
             {{ step.id }}
@@ -113,7 +90,7 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
       </div>
       <!-- END STEP 2 OBJECT SELECTION -->
 
-      <!-- STEP 3 OBJECT Review -->
+      <!-- STEP 3 OBJECT REVIEW -->
       <div
         v-show="currentStep == 3"
         class="container flex-row mx-auto justify-center py-12"
@@ -128,74 +105,47 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           <FormTableConvertObjectsReview />
         </div>
       </div>
-      <!-- END STEP 2 OBJECT SELECTION -->
+      <!-- END STEP 3 OBJECT REVIEW -->
 
       <div class="container flex mx-auto justify-end px-10 gap-4">
         <a
           v-show="currentStep > 1"
-          class="
-            uppercase
-            rounded
-            px-6
-            py-2
-            bg-shifter-black
-            hover:bg-shifter-red hover:animate-pulse
-          "
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
           :onclick="previousStep"
           >Previous</a
         >
         <a
           v-show="currentStep < maxSteps"
-          class="
-            uppercase
-            rounded
-            px-6
-            py-2
-            bg-shifter-black
-            hover:bg-shifter-red hover:animate-pulse
-          "
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
           :onclick="nextStep"
           >Next</a
         >
         <a
           v-show="currentStep === maxSteps"
-          class="
-            uppercase
-            rounded
-            px-6
-            py-2
-            bg-shifter-black
-            hover:bg-shifter-red hover:animate-pulse
-          "
+          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
           :onclick="convertStep"
           >Convert</a
         >
       </div>
     </div>
+    <!-- Deployment Config JSON Modal -->
     <FormTableJSONModal />
   </div>
 </template>
 
 <script>
+// Pinia Store Imports
+import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import { useConvertObjects } from "../stores/convert/convert";
+import { useJSONModal } from "../stores/convert/jsonModal";
+// Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
-//import { shifterConfig } from "@/main";
-//import axios from "axios";
 
 export default {
-  setup() {
-    //const convertObjects = useConvertObjects();
-    //const { items } = storeToRefs(convertObjects);
-    //return {
-    //  items,
-    //};
-  },
   data() {
     return {
       clusterId: "",
       currentStep: 1,
-      convert: {
-        shifter: {},
-      },
       convertSteps: [
         {
           id: 1,
@@ -243,13 +193,6 @@ export default {
     maxSteps() {
       return this.convertSteps.filter((step) => step.enabled).length;
     },
-    /*selectedCluster() {
-      return this.getSelectedCluster(1);
-    },*/
-
-    /*selectedDeploymentConfigs() {
-      return this.dcSelected;
-    },*/
   },
 
   methods: {
@@ -270,42 +213,6 @@ export default {
     changeCluster() {
       this.setCluster(this.clusterId);
     },
-
-    //async convertStep() {
-    /*const config = {
-        method: "post",
-        url: shifterConfig.API_BASE_URL + "/shifter/convert/",
-        headers: {},
-        data: {
-          shifter: JSON.parse(
-            JSON.stringify({ ...this.getSelectedCluster(0).shifter })
-          ),
-          items: JSON.parse(JSON.stringify([...this.dcSelected])),
-        },
-      };
-      this.fetching = true;
-      try {
-        const response = await axios(config);
-        try {
-          console.log(response);
-          //this.data = response.data.deploymentConfigs.items;
-          this.fetching = false;
-        } catch (err) {
-          this.data = [];
-          console.error(
-            "Error Fetching OpenShift Object from Shifter Server.",
-            err
-          );
-          this.fetching = false;
-          return err;
-        }
-      } catch (err) {
-        this.data = {
-          message: "Shifter Server Unreachable, Timeout",
-        };
-        this.fetching = false;
-      }*/
-    // },
   },
 
   created() {

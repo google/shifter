@@ -1,5 +1,3 @@
-<script setup></script>
-
 <template>
   <div class="items-center bg-dummy-blue shadow-md rounded p-2">
     <div class="bg-dummy-blue shadow-md rounded p-2">
@@ -112,11 +110,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  created() {},
-};
-</script>
-
-<style scoped></style>

@@ -1,4 +1,5 @@
 <script setup>
+// Vue Component Imports
 import ShifterV1StatusHealthz from "../components/component-shifter-status-healthz.vue";
 </script>
 
@@ -17,9 +18,3 @@ import ShifterV1StatusHealthz from "../components/component-shifter-status-healt
   }
 }
 </style>
-
-<script>
-export default {
-  created() {},
-};
-</script>
