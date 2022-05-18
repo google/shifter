@@ -17,8 +17,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	generator "shifter/generators"
+	lib "shifter/lib"
 	os "shifter/openshift/v3_11"
-"fmt"
+	ops "shifter/ops"
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
@@ -38,9 +40,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 	}
 
 	// Process Each Item
-	var count int = 0
-	
-	for idx, item := range convert.Items {
+	for _, item := range convert.Items {
 		// Create OpenShift Client
 		openshift := os.NewClient(http.DefaultClient)
 		// Configure Authorization
@@ -70,15 +70,31 @@ func (server *Server) Convert(ctx *gin.Context) {
 		if err != nil {
 			panic(err)
 		}
-		convertedObject := processor.Processor(u, "DeploymentConfig", nil)
-		fmt.Println(convertedObject)
-		count = (int(idx) + 1)
+
+		// Handle the Conversion of the Manifests and File Writing
+		var generator generator.Generator
+		var objs []lib.K8sobject
+		obj := processor.Processor(u, "DeploymentConfig", nil)
+		objs = append(objs, obj)
+		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
+		for _, conObj := range convertedObjects {
+			fileObj := &ops.FileObject{
+				//StorageType: "GCS",
+				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+				StorageType: server.config.serverStorage.storageType,
+				SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+				Ext:           "yaml",
+				Content:       conObj.Payload,
+				ContentLength: conObj.Payload.Len(),
+			}
+			fileObj.WriteFile()
+		}
 	}
 
 	// Construct API Endpoint Response
 	r := ResponseConvert{
 		UUID:    uuid,
-		Message: "Converted..." + string(count) + " Objects",
+		Message: "Converted..." + string(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
 }

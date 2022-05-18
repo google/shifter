@@ -17,13 +17,14 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"shifter/lib"
 	"strconv"
+
+	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
 
-func (generator *Generator) yaml(name string, objects []lib.K8sobject) []lib.Converted {
+func (generator *Generator) Yaml(name string, objects []lib.K8sobject) []lib.Converted {
 	var converted []lib.Converted
 
 	for k, v := range objects {
