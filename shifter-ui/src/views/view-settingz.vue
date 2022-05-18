@@ -1,5 +1,5 @@
 <script setup>
-import ShifterV1StatusSettingz from "../../components/Shifter/v1/Status/Settingz.vue";
+import ShifterV1StatusSettingz from "../components/component-shifter-status-settingz.vue";
 </script>
 
 <template>
