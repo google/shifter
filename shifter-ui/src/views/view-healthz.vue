@@ -1,5 +1,4 @@
 <script setup>
-//import ShifterV1StatusHealthz from "../../components/Shifter/v1/Status/Healthz.vue";
 import ShifterV1StatusHealthz from "../components/component-shifter-status-healthz.vue";
 </script>
 

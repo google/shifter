@@ -30,6 +30,9 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           v-for="step in activeSteps"
           :key="step.id"
           class="container flex justify-center items-center"
+          :class="
+            step.id === currentStep ? 'animate-pulse text-bold' : 'animate-none'
+          "
         >
           <div
             class="
@@ -40,11 +43,22 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
               px-4
               py-2
               text-shifter-red-muted text-bold
+              no-underline
             "
+            :class="step.id === currentStep ? 'no-underline' : 'no-underline'"
           >
             {{ step.id }}
           </div>
-          <div class="flex ml-4">{{ step.title }}</div>
+          <div
+            class="flex ml-4"
+            :class="
+              step.id === currentStep
+                ? 'animate-pulse underline decoration-4 underline-offset-4 text-bold'
+                : 'animate-none'
+            "
+          >
+            {{ step.title }}
+          </div>
         </div>
       </div>
       <!-- STEP 1 CLUSTER SELECTION -->
