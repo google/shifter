@@ -64,7 +64,6 @@ export const useConvertObjects = defineStore("configurations-convert-object", {
     },
     async add(deploymentconfig) {
       try {
-        //this.remove(deploymentconfig);
         const newConversionItem = {
           namespace: oSProjects.getByName(deploymentconfig.metadata.namespace),
           deploymentConfig: oSDeploymentConfigs.getByUid(

@@ -1,4 +1,5 @@
 <script setup>
+// Vue Component Imports
 import ShifterV1StatusSettingz from "../components/component-shifter-status-settingz.vue";
 </script>
 
@@ -17,9 +18,3 @@ import ShifterV1StatusSettingz from "../components/component-shifter-status-sett
   }
 }
 </style>
-
-<script>
-export default {
-  created() {},
-};
-</script>

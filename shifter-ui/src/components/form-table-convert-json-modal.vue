@@ -1,44 +1,15 @@
-<script setup></script>
-
 <template>
   <div
-    class="
-      container
-      flex-row
-      absolute
-      items-center
-      w-full
-      h-full
-      bg-shifter-black-soft
-      border
-      rounded-2xl
-      overflow-y-auto
-    "
+    class="container flex-row absolute items-center w-full h-full bg-shifter-black-soft border rounded-2xl overflow-y-auto"
     :class="showJSONModal ? 'visible' : 'invisible'"
   >
     <div class="container flex-row mx-auto bg-shifter-black- text-xl">
       <div
-        class="
-          container
-          flex
-          mx-auto
-          justify-end
-          p-4
-          bg-shifter-black-mute
-          gap-4
-        "
+        class="container flex mx-auto justify-end p-4 bg-shifter-black-mute gap-4"
       >
         <a
           @click="closeModal"
-          class="
-            rounded
-            bg-shifter-red-soft
-            rounded
-            border border-shifter-red-soft
-            px-6
-            my-1
-            hover:bg-shifter-red-soft hover:animate-pulse
-          "
+          class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
           >Close</a
         >
       </div>
@@ -46,16 +17,7 @@
     <div class="container flex mx-auto justify-end px-4 py-10">
       <div class="container flex flex-row mx-auto">
         <div
-          class="
-            container
-            flex
-            w-1/4
-            mr-4
-            text-lg
-            font-bold
-            hover:animate-pulse
-            cursor cursor-pointer
-          "
+          class="container flex w-1/4 mr-4 text-lg font-bold hover:animate-pulse cursor cursor-pointer"
         >
           Deployment Config JSON
         </div>
@@ -68,13 +30,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "pinia";
+// Pinia Store Imports
 import { useJSONModal } from "../stores/convert/jsonModal";
-export default {
-  data() {
-    return {};
-  },
+// Plugin & Package Imports
+import { mapState, mapActions } from "pinia";
 
+export default {
   methods: {
     ...mapActions(useJSONModal, { closeModal: "closeModal" }),
     ...mapActions(useJSONModal, { openModal: "openModal" }),
@@ -123,12 +84,6 @@ export default {
   border-radius: 100vh;
   background: #f7f4ed;
 }
-/*pre {
-  background-color: ghostwhite;
-  border: 1px solid silver;
-  padding: 10px 20px;
-  margin: 20px;
-}*/
 .json-key {
   color: brown;
 }

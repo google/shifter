@@ -1,5 +1,3 @@
-<script setup></script>
-
 <template>
   <div
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 place-items-center gap-6 w-full"
@@ -40,12 +38,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  created() {},
-};
-</script>
 
 <style scoped>
 .item {
