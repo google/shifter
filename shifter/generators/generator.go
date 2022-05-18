@@ -42,7 +42,7 @@ func NewGenerator(outputType string, name string, input []lib.K8sobject, paramet
 	case "yaml":
 		return generator.Yaml("", generator.Input.Object)
 	case "helm":
-		return generator.helm("", generator.Input.Object, generator.Input.Parameters)
+		return generator.Helm("", generator.Input.Object, generator.Input.Parameters)
 	}
 
 	return nil
