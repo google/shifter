@@ -6,36 +6,60 @@
       container
       flex-row
       absolute
-      insert-0
       items-center
       w-full
       h-full
       bg-shifter-black-soft
       border
       rounded-2xl
-      overflow-y-scroll
+      overflow-y-auto
     "
     :class="showJSONModal ? 'visible' : 'invisible'"
   >
-    <div class="container flex-row mx-auto m-10 bg-shifter-black- text-xl">
-      <a
-        @click="closeModal"
+    <div class="container flex-row mx-auto bg-shifter-black- text-xl">
+      <div
         class="
-          rounded
-          bg-shifter-red-soft
-          rounded
-          border border-shifter-red-soft
-          px-6
-          my-1
-          hover:bg-shifter-red-soft hover:animate-pulse
+          container
+          flex
+          mx-auto
+          justify-end
+          p-4
+          bg-shifter-black-mute
+          gap-4
         "
-        >Close</a
       >
+        <a
+          @click="closeModal"
+          class="
+            rounded
+            bg-shifter-red-soft
+            rounded
+            border border-shifter-red-soft
+            px-6
+            my-1
+            hover:bg-shifter-red-soft hover:animate-pulse
+          "
+          >Close</a
+        >
+      </div>
     </div>
-    <div class="container flex mx-auto justify-end px-10">
-      <div class="container flex-col mx-auto">
-        <div class="container flex">Deployment Config</div>
-        <div class="container flex">
+    <div class="container flex mx-auto justify-end px-4 py-10">
+      <div class="container flex flex-row mx-auto">
+        <div
+          class="
+            container
+            flex
+            w-1/4
+            mr-4
+            text-lg
+            font-bold
+            hover:animate-pulse
+            cursor cursor-pointer
+          "
+        >
+          Deployment Config JSON
+        </div>
+        <div class="container flex w-3/4 bg-shifter-black-soft text-sm">
           <pre v-html="content"></pre>
         </div>
       </div>
@@ -95,6 +119,10 @@ export default {
 </script>
 
 <style scoped>
+.scrollbar::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: #f7f4ed;
+}
 /*pre {
   background-color: ghostwhite;
   border: 1px solid silver;
