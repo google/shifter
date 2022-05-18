@@ -4,13 +4,13 @@ export const useJSONModal = defineStore("configurations-convert-json-modal", {
   state: () => {
     return {
       content: {},
-      showModal: true,
+      showModal: false,
     };
   },
 
   getters: {
     getContent(state) {
-      return state.content;
+      return state.content
     },
     showJSONModal(state) {
       return state.showModal;
