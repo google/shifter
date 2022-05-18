@@ -17,11 +17,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"gopkg.in/yaml.v3"
-	json "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"log"
 	"regexp"
 	"shifter/lib"
+
+	"gopkg.in/yaml.v3"
+	json "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	//"strconv"
 )
 
@@ -50,7 +51,7 @@ func mod(o []byte) []byte {
 	return []byte(str1)
 }
 
-func (generator *Generator) helm(name string, objects []lib.K8sobject, parameters []lib.OSTemplateParams) []lib.Converted {
+func (generator *Generator) Helm(name string, objects []lib.K8sobject, parameters []lib.OSTemplateParams) []lib.Converted {
 	var helmChart []lib.Converted
 
 	helmChart = append(helmChart, createChart(name))
