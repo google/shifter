@@ -13,14 +13,14 @@ limitations under the License.
 
 package api
 
-import (
+/*import (
 	"errors"
 	// "log"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
-)
+)*/
 
 // @BasePath /api/v1
 
@@ -33,40 +33,40 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /download/:uuid [get]
-func (server *Server) ConvertedFilesArchive(ctx *gin.Context) {
+//func (server *Server) ConvertedFilesArchive(ctx *gin.Context) {
 
 	// Validate URL Params
 	// UUID Validation
-	uuid := ctx.Param("uuid")
-	if uuid == "" {
+//	uuid := ctx.Param("uuid")
+/*	if uuid == "" {
 		// UUID param required & not found.
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
 		// log.Fatal(err.Error())
 		return
 	}
-
+*/
 	/*
 		TODO
 		- Migrate Archive File Path for Download Folder and file to Function
 		- Configure File and Folder Path within Server Instantiation Configuration
 	*/
 	// Construct Archive File Path
-	filePath := ("./data/output/" + uuid + "/" + uuid + ".zip")
+//	filePath := ("./data/output/" + uuid + "/" + uuid + ".zip")
 
 	// Validate File Path and Archive File Exists
-	if _, err := os.Stat(filePath); err == nil {
+//	if _, err := os.Stat(filePath); err == nil {
 		// File Exists, Send Download File Response
-		ctx.File(filePath)
-	} else if errors.Is(err, os.ErrNotExist) {
+//		ctx.File(filePath)
+//	} else if errors.Is(err, os.ErrNotExist) {
 		// Archive File Does Not Exists, Error
-		ctx.JSON(http.StatusNotFound, errorResponse(err))
+//		ctx.JSON(http.StatusNotFound, errorResponse(err))
 		// log.Error("Requested Archive File Not Found Error:", err)
-		return
-	} else {
+//		return
+//	} else {
 		// Archive File Status Unknown, Error
-		ctx.JSON(http.StatusNotFound, errorResponse(err))
+//		ctx.JSON(http.StatusNotFound, errorResponse(err))
 		// log.Fatal("Requested Archive File Status Unknown Error:", err)
-		return
-	}
-}
+//		return
+//	}
+//}
