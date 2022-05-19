@@ -31,7 +31,7 @@ import (
 // @Router /status/healthz [get]
 func (server *Server) Healthz(ctx *gin.Context) {
 	// Construct API Endpoint Response
-	r := Response_Status_Healthz{}
+	r := ResponseStatusHealthz{}
 	r.Timestamp = ""
 	r.Status = http.StatusOK
 	r.Message = "Shifter Server is reachable."

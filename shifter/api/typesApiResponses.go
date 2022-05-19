@@ -13,26 +13,13 @@ limitations under the License.
 
 package api
 
-import (
-	"mime/multipart"
-	ops "shifter/ops"
-
-	"github.com/gin-gonic/gin"
-)
-
-// HTTP Server Based on gin-gonic
-type Server struct {
-	router *gin.Engine
-	config ServerConfig
-}
-
-type Response_Status_Healthz struct {
+type ResponseStatusHealthz struct {
 	Timestamp string `json:"timestamp"`
 	Status    int    `json:"status"`
 	Message   string `json:"message"`
 }
 
-type Response_Status_Settings struct {
+type ResponseStatusSettings struct {
 	Timestamp          string `json:"timestamp"`
 	RunningPort        string `json:"runningPort"`
 	RunningHost        string `json:"runningHost"`
@@ -43,14 +30,6 @@ type Response_Status_Settings struct {
 	Version            int    `json:"version"`
 	Status             int    `json:"status"`
 	Message            string `json:"message"`
-}
-
-type Response_Convert_Yaml2Yaml struct {
-	InputType      string                  `json:"inputType"`
-	UUID           string                  `json:"uuid"`
-	ConvertedFiles []*ops.DownloadFile     `json:"convertedFiles"`
-	UploadedFiles  []*multipart.FileHeader `json:"uploadedFiles"`
-	Message        string                  `json:"message"`
 }
 
 type ResponseConvert struct {
