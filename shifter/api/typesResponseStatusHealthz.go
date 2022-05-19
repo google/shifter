@@ -18,21 +18,3 @@ type ResponseStatusHealthz struct {
 	Status    int    `json:"status"`
 	Message   string `json:"message"`
 }
-
-type ResponseStatusSettings struct {
-	Timestamp          string `json:"timestamp"`
-	RunningPort        string `json:"runningPort"`
-	RunningHost        string `json:"runningHost"`
-	StorageType        string `json:"storageType"`
-	StorageDescription string `json:"storageDescription"`
-	StorageSourcePath  string `json:"storageSourcePath"`
-	StorageOutputPath  string `json:"storageOutputPath"`
-	Version            int    `json:"version"`
-	Status             int    `json:"status"`
-	Message            string `json:"message"`
-}
-
-type ResponseConvert struct {
-	UUID    string `json:"uuid"`
-	Message string `json:"message"`
-}

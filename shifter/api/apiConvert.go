@@ -30,7 +30,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
-	//body:=Body{}
 	convert := Convert{}
 	// using BindJson method to serialize body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
