@@ -13,7 +13,7 @@ limitations under the License.
 
 package api
 
-import (
+/*import (
 	"bytes"
 	"io"
 	"net/http"
@@ -23,7 +23,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-)
+)*/
 
 // @BasePath /api/v1
 
@@ -36,64 +36,64 @@ import (
 // @Produce json
 // @Success 200 {json} Response_Convert_Yaml2Yaml
 // @Router /convert/yaml/yaml [post]
-func (server *Server) Yaml2Yaml(ctx *gin.Context) {
+//func (server *Server) Yaml2Yaml(ctx *gin.Context) {
 
-	// Create API Unique RUN ID
-	uuid := uuid.New().String()
+// Create API Unique RUN ID
+//	uuid := uuid.New().String()
 
-	// Validate that Request Contains at least One File
-	form, err := ctx.MultipartForm()
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
+// Validate that Request Contains at least One File
+//	form, err := ctx.MultipartForm()
+//	if err != nil {
+//		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+//		return
+//	}
 
-	// Create a New Instance of Converter for File Upload
-	converter := &ops.Converter{}
-	converter.UUID = uuid
+// Create a New Instance of Converter for File Upload
+//	converter := &ops.Converter{}
+//	converter.UUID = uuid
 
-	// Collect Files from Multipart Form.
-	files := form.File["multiplefiles"]
-	for _, file := range files {
+// Collect Files from Multipart Form.
+//	files := form.File["multiplefiles"]
+//	for _, file := range files {
 
-		// Read File Contents
-		fileContents, _ := file.Open()
-		byteContainer, err := io.ReadAll(fileContents)
-		if err != nil {
-			// If Unable to Read File into Byte Array
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-			return
-		}
-		//var sourceFiles []*ops.FileObject
-		// Create FileObject for Each uploaded File.
-		fileObj := &ops.FileObject{
-			StorageType:   server.config.serverStorage.storageType,
-			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + file.Filename),
-			Ext:           filepath.Ext(file.Filename),
-			Content:       *bytes.NewBuffer(byteContainer),
-			ContentLength: len(byteContainer),
-		}
+// Read File Contents
+//		fileContents, _ := file.Open()
+//		byteContainer, err := io.ReadAll(fileContents)
+//		if err != nil {
+// If Unable to Read File into Byte Array
+//			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+//			return
+//		}
+//var sourceFiles []*ops.FileObject
+// Create FileObject for Each uploaded File.
+//		fileObj := &ops.FileObject{
+//			StorageType:   server.config.serverStorage.storageType,
+//			SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + file.Filename),
+//			Ext:           filepath.Ext(file.Filename),
+//			Content:       *bytes.NewBuffer(byteContainer),
+//			ContentLength: len(byteContainer),
+//		}
 
-		// Add File Object to Array of Files
-		converter.SourceFiles = append(converter.SourceFiles, fileObj)
-		converter.WriteSourceFiles()
-	}
+// Add File Object to Array of Files
+//		converter.SourceFiles = append(converter.SourceFiles, fileObj)
+//		converter.WriteSourceFiles()
+//	}
 
-	// Create a New Instance of the Converter to Convert the Files
-	converter = ops.NewConverter(ops.YAML, (server.config.serverStorage.sourcePath + "/" + uuid), ops.YAML, (server.config.serverStorage.outputPath + "/" + uuid), make(map[string]string))
-	converter.UUID = uuid
+// Create a New Instance of the Converter to Convert the Files
+//	converter = ops.NewConverter(ops.YAML, (server.config.serverStorage.sourcePath + "/" + uuid), ops.YAML, (server.config.serverStorage.outputPath + "/" + uuid), make(map[string]string))
+//	converter.UUID = uuid
 
-	// Run the Conversions
-	converter.LoadSourceFiles()
-	converter.ConvertFiles()
+// Run the Conversions
+//	converter.LoadSourceFiles()
+//	converter.ConvertFiles()
 
-	// Construct API Endpoint Response
-	r := Response_Convert_Yaml2Yaml{}
+// Construct API Endpoint Response
+/*	r := Response_Convert_Yaml2Yaml{}
 	r.InputType = ops.YAML
 	r.UUID = string(uuid)
 	r.ConvertedFiles = converter.BuildDownloadFiles()
 	r.UploadedFiles = files
-	r.Message = "YAML files generated."
-	// Return JSON API Response
-	ctx.JSON(http.StatusOK, r)
-}
+	r.Message = "YAML files generated."*/
+// Return JSON API Response
+//	ctx.JSON(http.StatusOK, r)
+//}

@@ -20,22 +20,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ServerStorage struct {
-	description string
-	storageType string
-	sourcePath  string
-	outputPath  string
-}
-
-// Custom Shifter Server Configuration
-type ServerConfig struct {
-	serverAddress   string
-	serverPort      string
-	storagePlatform string
-	//gcsBucket       string
-	serverStorage ServerStorage
-}
-
 // HTTP Server Based on gin-gonic
 type Server struct {
 	router *gin.Engine
