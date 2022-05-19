@@ -31,7 +31,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
-	//body:=Body{}
 	convert := Convert{}
 	// using BindJson method to serialize body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
@@ -81,7 +80,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 			fileObj := &ops.FileObject{
 				//StorageType: "GCS",
 				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
-				StorageType: server.config.serverStorage.storageType,
+				StorageType:   server.config.serverStorage.storageType,
 				SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,

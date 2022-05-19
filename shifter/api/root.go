@@ -75,14 +75,12 @@ func (server *Server) setupRouter() {
 				sc.POST("/", server.Convert)
 			}
 
-		}
+			sd := s.Group("/downloads")
+			{
+				sd.POST("/", server.Download)
+			}
 
-		// Download V1 API Endpoints
-		/*d := v1.Group("/download")
-		{
-			d.GET("/:uuid/:filename", server.ConvertedFile) // Download Single Converted File
-			d.GET("/:uuid/", server.ConvertedFilesArchive)  // Download All Converted Files (Archive)
-		}*/
+		}
 
 		// Status V1 API Endpoints
 		st := v1.Group("/status")
