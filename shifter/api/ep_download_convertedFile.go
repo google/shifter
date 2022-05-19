@@ -13,6 +13,7 @@ limitations under the License.
 
 package api
 
+/*
 import (
 	"context"
 	"errors"
@@ -27,7 +28,7 @@ import (
 	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
-)
+)*/
 
 // @BasePath /api/v1
 
@@ -40,59 +41,59 @@ import (
 // @Produce json
 // @Success 200 {blob} Blob
 // @Router /download/:uuid/:filename [get]
-func (server *Server) ConvertedFile(ctx *gin.Context) {
+//func (server *Server) ConvertedFile(ctx *gin.Context) {
 
-	// Validate URL Params
-	// UUID Validation
-	uuid := ctx.Param("uuid")
-	if uuid == "" {
+// Validate URL Params
+// UUID Validation
+//	uuid := ctx.Param("uuid")
+//	if uuid == "" {
+// UUID param required & not found.
+//		err := errors.New("Requested Download URL Path Not Found Error")
+//		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+//log.Fatal(err.Error())
+//		return
+//	}
+
+// Filename Validation
+//	filename := ctx.Param("filename")
+/*	if filename == "" {
 		// UUID param required & not found.
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
 		//log.Fatal(err.Error())
 		return
 	}
+*/
+/*
+	TODO
+	- Migrate File Path for Download Folder and file to Function
+	- Configure File and Folder Path within Server Instantiation Configuration
+*/
+// Construct File Path
+//filePath := ("./data/output/" + uuid + "/" + filename)
 
-	// Filename Validation
-	filename := ctx.Param("filename")
-	if filename == "" {
-		// UUID param required & not found.
+/*	if server.config.serverStorage.storageType == ops.GCS {
+	log.Println("-----> Running a GCS Download")
+	context := context.Background()
+	client, err := storage.NewClient(context)
+	if err != nil {
 		err := errors.New("Requested Download URL Path Not Found Error")
 		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-		//log.Fatal(err.Error())
 		return
 	}
+	defer client.Close()*/
+/*opts := &storage.SignedURLOptions{
+	Scheme:  storage.SigningSchemeV4,
+	Method:  "GET",
+	Expires: time.Now().Add(15 * time.Minute),
+}*/
+//u, err := client.Bucket(bucket).SignedURL(object, opts)
+//if err != nil {
+//        return "", fmt.Errorf("Bucket(%q).SignedURL: %v", bucket, err)
+//}
 
-	/*
-		TODO
-		- Migrate File Path for Download Folder and file to Function
-		- Configure File and Folder Path within Server Instantiation Configuration
-	*/
-	// Construct File Path
-	//filePath := ("./data/output/" + uuid + "/" + filename)
-
-	if server.config.serverStorage.storageType == ops.GCS {
-		log.Println("-----> Running a GCS Download")
-		context := context.Background()
-		client, err := storage.NewClient(context)
-		if err != nil {
-			err := errors.New("Requested Download URL Path Not Found Error")
-			ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-			return
-		}
-		defer client.Close()
-		/*opts := &storage.SignedURLOptions{
-			Scheme:  storage.SigningSchemeV4,
-			Method:  "GET",
-			Expires: time.Now().Add(15 * time.Minute),
-		}*/
-		//u, err := client.Bucket(bucket).SignedURL(object, opts)
-		//if err != nil {
-		//        return "", fmt.Errorf("Bucket(%q).SignedURL: %v", bucket, err)
-		//}
-
-	}
-
+//}
+/*
 	if server.config.serverStorage.storageType == ops.LCL {
 		log.Println("-----> Running a LCL Download")
 		filePath := (server.config.serverStorage.outputPath + "/" + uuid + "/" + filename)
@@ -115,3 +116,4 @@ func (server *Server) ConvertedFile(ctx *gin.Context) {
 	}
 
 }
+*/
