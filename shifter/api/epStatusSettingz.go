@@ -35,7 +35,7 @@ const LCL string = "LCL"
 // @Router /status/settingz [get]
 func (server *Server) Settingz(ctx *gin.Context) {
 	// Construct API Endpoint Response
-	r := Response_Status_Settings{}
+	r := ResponseStatusSettings{}
 
 	// Server Settings
 	r.RunningPort = server.config.serverPort
