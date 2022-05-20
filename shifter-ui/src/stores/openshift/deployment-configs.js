@@ -2,7 +2,9 @@ import { shifterConfig } from "@/main";
 import axios from "axios";
 import { defineStore } from "pinia";
 
+import { useConfigurationsLoading } from "../configurations/loading";
 import { useConfigurationsClusters } from "../configurations/clusters";
+const configurationsLoading = useConfigurationsLoading();
 const configurationsClusters = useConfigurationsClusters();
 
 export const useOSDeploymentConfigs = defineStore(
@@ -11,7 +13,6 @@ export const useOSDeploymentConfigs = defineStore(
     state: () => {
       return {
         osDeploymentConfigs: [],
-        fetching: false,
       };
     },
 
@@ -41,21 +42,31 @@ export const useOSDeploymentConfigs = defineStore(
           url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
           headers: {},
           data: { ...configurationsClusters.getCluster(clusterId) },
+          timeout: 1000,
         };
-        this.fetching = true;
         try {
-          const response = await axios(config);
-          try {
-            this.osDeploymentConfigs = response.data.deploymentConfigs.items;
-          } catch (err) {
-            this.osDeploymentConfigs = [];
-            console.error("Error", err);
-            return err;
-          }
+          configurationsLoading.startLoading(
+            "Loading...",
+            "Fetching OpenShift Deployment Configurations"
+          );
+          this.osDeploymentConfigs = [];
+          this.osDeploymentConfigs = await axios(config)
+            .then((response) => {
+              // handle success
+              console.log(response);
+              configurationsLoading.endLoading();
+              return response.data.deploymentConfigs.items;
+            })
+            .catch((err) => {
+              console.error("Error", err);
+              configurationsLoading.endLoading(err);
+              return err;
+            });
         } catch (err) {
           this.osDeploymentConfigs = [];
+          console.error("Error", err);
+          configurationsLoading.endLoading(err);
         }
-        this.fetching = false;
       },
     },
   }

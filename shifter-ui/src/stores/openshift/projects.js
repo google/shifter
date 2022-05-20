@@ -2,7 +2,9 @@ import { shifterConfig } from "@/main";
 import axios from "axios";
 import { defineStore } from "pinia";
 
+import { useConfigurationsLoading } from "../configurations/loading";
 import { useConfigurationsClusters } from "../configurations/clusters";
+const configurationsLoading = useConfigurationsLoading();
 const configurationsClusters = useConfigurationsClusters();
 
 export const useOSProjects = defineStore("openshift-projects", {
@@ -32,21 +34,31 @@ export const useOSProjects = defineStore("openshift-projects", {
         url: shifterConfig.API_BASE_URL + "/openshift/projects/",
         headers: {},
         data: { ...configurationsClusters.getCluster(clusterId) },
+        timeout: 1000,
       };
-      this.fetching = true;
       try {
-        const response = await axios(config);
-        try {
-          this.osProjects = response.data.projects.items;
-        } catch (err) {
-          this.osProjects = [];
-          console.error("Error", err);
-          return err;
-        }
+        configurationsLoading.startLoading(
+          "Loading...",
+          "Fetching OpenShift Namespaces & Projects"
+        );
+        this.osProjects = [];
+        this.osProjects = await axios(config)
+          .then((response) => {
+            // handle success
+            console.log(response);
+            configurationsLoading.endLoading();
+            return response.data.projects.items;
+          })
+          .catch((err) => {
+            console.error("Error", err);
+            configurationsLoading.endLoading(err);
+            return err;
+          });
       } catch (err) {
         this.osProjects = [];
+        console.error("Error", err);
+        configurationsLoading.endLoading(err);
       }
-      this.fetching = false;
     },
   },
 });

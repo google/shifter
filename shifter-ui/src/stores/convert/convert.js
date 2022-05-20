@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 
+import { useConfigurationsLoading } from "../configurations/loading";
 import { useOSProjects } from "../openshift/projects";
 import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
 
@@ -9,10 +10,11 @@ const configurationsClusters = useConfigurationsClusters();
 import { shifterConfig } from "@/main";
 import axios from "axios";
 
+const configurationsLoading = useConfigurationsLoading();
 const oSProjects = useOSProjects();
 const oSDeploymentConfigs = useOSDeploymentConfigs();
 
-export const useConvertObjects = defineStore("configurations-convert-object", {
+export const useConvertObjects = defineStore("convert-objects", {
   state: () => {
     return {
       cluster: {},
@@ -107,17 +109,26 @@ export const useConvertObjects = defineStore("configurations-convert-object", {
             .shifter,
           items: JSON.parse(JSON.stringify([...this.all])),
         },
+        timeout: 1000,
       };
       try {
-        const response = await axios(config);
-        try {
-          console.log(response);
-        } catch (err) {
-          console.error("Error", err);
-          return err;
-        }
+        configurationsLoading.startLoading(
+          "Shifting...",
+          "Standby while we convert the workloads."
+        );
+        await axios(config)
+          .then(function (response) {
+            // handle success
+            console.log(response);
+          })
+          .catch((err) => {
+            console.error("Error", err);
+            configurationsLoading.endLoading();
+            return err;
+          });
       } catch (err) {
         console.error("Error", err);
+        configurationsLoading.endLoading();
       }
     },
   },
