@@ -15,6 +15,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
@@ -29,6 +30,13 @@ import (
 func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
 	uuid := uuid.New().String()
+	suid := ops.CreateSUID("")
+	suid.Meta()
+	suidtwo, err := ops.ResolveSUID(suid.OutLongname)
+	if err != nil {
+		fmt.Println(err)
+	}
+	suidtwo.Meta()
 
 	convert := Convert{}
 	// using BindJson method to serialize body with struct

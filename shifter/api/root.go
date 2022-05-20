@@ -77,9 +77,9 @@ func (server *Server) setupRouter() {
 
 			sd := s.Group("/downloads")
 			{
-				sd.POST("/", server.Download)
+				sd.POST("/", server.Downloads)
+				sd.POST("/:uuid", server.Download)
 			}
-
 		}
 
 		// Status V1 API Endpoints
