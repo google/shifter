@@ -15,7 +15,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
@@ -24,20 +23,12 @@ import (
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
-	uuid := uuid.New().String()
+	//uuid := uuid.New().String()
 	suid := ops.CreateSUID("")
-	suid.Meta()
-	suidtwo, err := ops.ResolveSUID(suid.OutLongname)
-	if err != nil {
-		fmt.Println(err)
-	}
-	suidtwo.Meta()
-
 	convert := Convert{}
 	// using BindJson method to serialize body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
@@ -70,7 +61,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 				//StorageType: "GCS",
 				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				StorageType:   server.config.serverStorage.storageType,
-				SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+				SourcePath:    (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,
 				ContentLength: conObj.Payload.Len(),
@@ -81,7 +72,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 
 	// Construct API Endpoint Response
 	r := ResponseConvert{
-		UUID:    uuid,
+		SUID:    suid,
 		Message: "Converted..." + string(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
