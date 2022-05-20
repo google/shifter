@@ -27,7 +27,6 @@ import (
 const seperator string = "#!#"
 
 type SUID struct {
-<<<<<<< HEAD
 	UUID          string    `json:"link"`
 	Name          string    `json:"name"`
 	TimeStamp     time.Time `json:"timestamp"`
@@ -37,16 +36,6 @@ type SUID struct {
 	// Private
 	longname string
 	nameHash string
-=======
-	UUID        string    `json:"link"`
-	Name        string    `json:"name"`
-	TimeStamp   time.Time `json:"timestamp"`
-	DisplayName string    `json:"displayName"`
-	// Private
-	longname    string
-	nameHash    string
-	OutLongname string
->>>>>>> 85e899b (Landed the encoding of conversion objects metadata into foldername)
 }
 
 func (s *SUID) name() string {
@@ -93,7 +82,6 @@ func CreateSUID(customName string) SUID {
 		seperator, suid.UUID, seperator, suid.Name)
 
 	suid.hash()
-<<<<<<< HEAD
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.nameHash
 	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
@@ -108,21 +96,6 @@ func ResolveSUID(downloadId string) (SUID, error) {
 	}
 	suid.nameHash = downloadId
 	decoded, err := base64.StdEncoding.DecodeString(suid.nameHash)
-=======
-
-	suid.OutLongname = suid.nameHash
-	return suid
-}
-
-func ResolveSUID(hash string) (SUID, error) {
-	// Create New SUID Object
-	suid := SUID{}
-	if hash == "" {
-		return suid, errors.New("Filename Hash must be provided when Resolving SUID")
-	}
-	suid.nameHash = hash
-	decoded, err := base64.StdEncoding.DecodeString(hash)
->>>>>>> 85e899b (Landed the encoding of conversion objects metadata into foldername)
 	if err != nil {
 		return suid, err
 	}
@@ -135,13 +108,9 @@ func ResolveSUID(hash string) (SUID, error) {
 	suid.TimeStamp = t
 	suid.UUID = items[1]
 	suid.Name = items[2]
-<<<<<<< HEAD
 	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.DirectoryName
-=======
-
->>>>>>> 85e899b (Landed the encoding of conversion objects metadata into foldername)
 	return suid, nil
 
 }
