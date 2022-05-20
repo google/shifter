@@ -27,14 +27,15 @@ import (
 const seperator string = "#!#"
 
 type SUID struct {
-	UUID        string    `json:"link"`
-	Name        string    `json:"name"`
-	TimeStamp   time.Time `json:"timestamp"`
-	DisplayName string    `json:"displayName"`
+	UUID          string    `json:"link"`
+	Name          string    `json:"name"`
+	TimeStamp     time.Time `json:"timestamp"`
+	DisplayName   string    `json:"displayName"`
+	DirectoryName string    `json:"directoryName"`
+	DownloadId    string    `json:"downloadId"`
 	// Private
-	longname    string
-	nameHash    string
-	OutLongname string
+	longname string
+	nameHash string
 }
 
 func (s *SUID) name() string {
@@ -81,8 +82,9 @@ func CreateSUID(customName string) SUID {
 		seperator, suid.UUID, seperator, suid.Name)
 
 	suid.hash()
-
-	suid.OutLongname = suid.nameHash
+	suid.DirectoryName = suid.nameHash
+	suid.DownloadId = suid.nameHash
+	suid.DisplayName = suid.Name
 	return suid
 }
 
@@ -106,7 +108,9 @@ func ResolveSUID(hash string) (SUID, error) {
 	suid.TimeStamp = t
 	suid.UUID = items[1]
 	suid.Name = items[2]
-
+	suid.DisplayName = suid.Name
+	suid.DirectoryName = hash
+	suid.DownloadId = suid.DirectoryName
 	return suid, nil
 
 }

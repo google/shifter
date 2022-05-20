@@ -13,8 +13,9 @@ limitations under the License.
 
 package api
 
-type ResponseConvert struct {
-	UUID    string `json:"uuid"`
-	Message string `json:"message"`
-}
+import ops "shifter/ops"
 
+type ResponseConvert struct {
+	SUID    ops.SUID `json:"suid"`
+	Message string   `json:"message"`
+}
