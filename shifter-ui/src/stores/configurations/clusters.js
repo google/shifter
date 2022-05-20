@@ -55,10 +55,7 @@ export const useConfigurationsClusters = defineStore(
 
     getters: {
       getActiveClusters(state) {
-        const activeClusters = state.clusters.filter(
-          (cluster) => cluster.enabled
-        );
-        return activeClusters;
+        return state.clusters.filter((cluster) => cluster.enabled);
       },
       getAllClusters(state) {
         return state.clusters;

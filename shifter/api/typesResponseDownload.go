@@ -13,7 +13,14 @@ limitations under the License.
 
 package api
 
+import ops "shifter/ops"
+
 type ResponseDownload struct {
-	UUID    string `json:"uuid"`
-	Message string `json:"message"`
+	SUID    ops.SUID `json:"suid"`
+	Message string   `json:"message"`
+}
+
+type ResponseDownloads struct {
+	Items   []*ops.SUID `json:"items"`
+	Message string      `json:"message"`
 }

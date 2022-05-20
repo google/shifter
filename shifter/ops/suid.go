@@ -88,14 +88,14 @@ func CreateSUID(customName string) SUID {
 	return suid
 }
 
-func ResolveSUID(hash string) (SUID, error) {
+func ResolveSUID(downloadId string) (SUID, error) {
 	// Create New SUID Object
 	suid := SUID{}
-	if hash == "" {
-		return suid, errors.New("Filename Hash must be provided when Resolving SUID")
+	if downloadId == "" {
+		return suid, errors.New("Download ID or Filename Hash must be provided when Resolving SUID")
 	}
-	suid.nameHash = hash
-	decoded, err := base64.StdEncoding.DecodeString(hash)
+	suid.nameHash = downloadId
+	decoded, err := base64.StdEncoding.DecodeString(suid.nameHash)
 	if err != nil {
 		return suid, err
 	}
@@ -109,7 +109,7 @@ func ResolveSUID(hash string) (SUID, error) {
 	suid.UUID = items[1]
 	suid.Name = items[2]
 	suid.DisplayName = suid.Name
-	suid.DirectoryName = hash
+	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.DirectoryName
 	return suid, nil
 
