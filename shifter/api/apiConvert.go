@@ -19,6 +19,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"path/filepath"
 	generator "shifter/generators"
 	lib "shifter/lib"
 	os "shifter/openshift"
