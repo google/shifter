@@ -77,8 +77,8 @@ func (server *Server) setupRouter() {
 
 			sd := s.Group("/downloads")
 			{
-				sd.POST("/", server.Downloads)
-				sd.POST("/:uuid", server.Download)
+				sd.GET("/", server.Downloads)
+				sd.GET("/:downloadId", server.Download)
 			}
 		}
 

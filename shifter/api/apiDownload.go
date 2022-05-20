@@ -14,27 +14,31 @@ limitations under the License.
 package api
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
+	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Get All Downloadable Objects
 func (server *Server) Downloads(ctx *gin.Context) {
-	downloads := Downloads{}
+	fmt.Println("... Download[s]")
+	//downloads := Downloads{}
 
 	// TODO --> Get Dir/Bucket Listing of Objects
 	// TODO --> Process Dir/Bucket Listing of Objects to Download Structs
 
 	// using BindJson method to serialize body with struct
-	if err := ctx.BindJSON(&downloads); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+	//if err := ctx.BindJSON(&downloads); err != nil {
+	//	ctx.AbortWithError(http.StatusBadRequest, err)
+	//	return
+	//}
 
 	// Construct API Endpoint Response
-	r := ResponseDownload{
-		UUID:    "", //uuid,
+	r := ResponseDownloads{
+		Items:   []*ops.SUID{},
 		Message: "Downloads...",
 	}
 	ctx.JSON(http.StatusOK, r)
@@ -42,17 +46,35 @@ func (server *Server) Downloads(ctx *gin.Context) {
 
 // Get A Specific Downloadable Object
 func (server *Server) Download(ctx *gin.Context) {
-	download := Download{}
-	// using BindJson method to serialize body with struct
-	if err := ctx.BindJSON(&download); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
+	fmt.Println("... Download")
+
+	// Validate Project Name has been Provided
+	downloadId := ctx.Param("downloadId")
+	if downloadId == "" {
+		// UUID param required & not found.
+		err := errors.New("Download ID supplied")
+		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
 	}
 
+	suid, err := ops.ResolveSUID(downloadId)
+	if err != nil {
+		err := errors.New("Unable to resolve or find Download ID")
+		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+	}
+
+	suid.Meta()
+
+	//download := Download{}
+	// using BindJson method to serialize body with struct
+	//if err := ctx.BindJSON(&download); err != nil {
+	//	ctx.AbortWithError(http.StatusBadRequest, err)
+	//	return
+	//}
 	// Construct API Endpoint Response
-	r := ResponseDownload{
-		UUID:    "", //uuid,
+	r := ResponseDownloads{
+		Items:   []*ops.SUID{},
 		Message: "Downloads...",
 	}
 	ctx.JSON(http.StatusOK, r)
+
 }
