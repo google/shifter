@@ -1,8 +1,6 @@
 package v3_11
 
 import (
-	"fmt"
-
 	osNativeProject "github.com/openshift/api/apps/v1"
 )
 
@@ -11,9 +9,6 @@ func (a *DeploymentConfig) Get(projectName string, deploymentConfigName string) 
 	if err != nil {
 		return &osNativeProject.DeploymentConfig{}, err
 	}
-	fmt.Println(projectName)
-	fmt.Println(deploymentConfigName)
-	fmt.Println(req)
 	deploymentConfig := &osNativeProject.DeploymentConfig{}
 
 	_, err = a.Client.Do(req, &deploymentConfig)
