@@ -8,6 +8,7 @@ import { useConfigurationsClusters } from "../configurations/clusters";
 const configurationsClusters = useConfigurationsClusters();
 
 import { shifterConfig } from "@/main";
+import { notifyAxiosError, shifterConversionSuccess } from "@/notifications";
 import axios from "axios";
 
 const configurationsLoading = useConfigurationsLoading();
@@ -109,7 +110,7 @@ export const useConvertObjects = defineStore("convert-objects", {
             .shifter,
           items: JSON.parse(JSON.stringify([...this.all])),
         },
-        timeout: 1000,
+        timeout: 10000,
       };
       try {
         configurationsLoading.startLoading(
@@ -119,15 +120,18 @@ export const useConvertObjects = defineStore("convert-objects", {
         await axios(config)
           .then(function (response) {
             // handle success
+
             console.log(response);
+            shifterConversionSuccess("Converted OpenShift objects.");
+            configurationsLoading.endLoading();
           })
           .catch((err) => {
-            console.error("Error", err);
+            notifyAxiosError(err, "Error Converting Workloads", 6000);
             configurationsLoading.endLoading();
             return err;
           });
       } catch (err) {
-        console.error("Error", err);
+        notifyAxiosError(err, "Error Converting Workloads", 6000);
         configurationsLoading.endLoading();
       }
     },
