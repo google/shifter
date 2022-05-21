@@ -43,11 +43,7 @@ export const useConfigurationsLoading = defineStore("configurations-loading", {
       // Commence Loading
       this.loading = true;
     },
-    endLoading(error = null) {
-      if (error !== null) {
-        alert("Error Occured");
-        // TODO Handle Error from Splash Trigger Notifcation
-      }
+    endLoading() {
       setTimeout(() => {
         // End Loading Splash
         this.loading = false;

@@ -1,4 +1,6 @@
 import { shifterConfig } from "@/main";
+import { notifyAxiosError } from "@/notifications";
+
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -34,7 +36,7 @@ export const useOSProjects = defineStore("openshift-projects", {
         url: shifterConfig.API_BASE_URL + "/openshift/projects/",
         headers: {},
         data: { ...configurationsClusters.getCluster(clusterId) },
-        timeout: 1000,
+        timeout: 2000,
       };
       try {
         configurationsLoading.startLoading(
@@ -50,14 +52,21 @@ export const useOSProjects = defineStore("openshift-projects", {
             return response.data.projects.items;
           })
           .catch((err) => {
-            console.error("Error", err);
-            configurationsLoading.endLoading(err);
+            notifyAxiosError(
+              err,
+              "Problem Loading OpenShift Projects & Namespaces",
+              6000
+            );
+            configurationsLoading.endLoading();
             return err;
           });
       } catch (err) {
         this.osProjects = [];
-        console.error("Error", err);
-        configurationsLoading.endLoading(err);
+        notifyAxiosError(
+          err,
+          "Problem Loading OpenShift Projects & Namespaces",
+          6000
+        );
       }
     },
   },
