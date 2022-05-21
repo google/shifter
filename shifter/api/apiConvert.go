@@ -28,9 +28,7 @@ import (
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
-	var openshift os.Openshift
-
-	// Create API Unique RUN ID
+		// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
 	//body:=Body{}
@@ -41,11 +39,13 @@ func (server *Server) Convert(ctx *gin.Context) {
 		return
 	}
 
+	var openshift os.Openshift
+
+	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
+	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
+
 	// Process Each Item
 	for _, item := range convert.Items {
-		openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
-		openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
-
 		// Confirm Project/Namespace Exists
 		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
