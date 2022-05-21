@@ -43,6 +43,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 
 	// Process Each Item
 	for _, item := range convert.Items {
+		openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
+		openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
+
 		// Confirm Project/Namespace Exists
 		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
