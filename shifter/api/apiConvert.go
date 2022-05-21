@@ -19,6 +19,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"path/filepath"
 	generator "shifter/generators"
 	lib "shifter/lib"
 	os "shifter/openshift"
@@ -47,9 +48,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
 
 	// Process Each Item
-	// Confirm Project/Namespace Exists
-	deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
-
+	for _, item := range convert.Items {
 		// Confirm Project/Namespace Exists
 		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
@@ -76,7 +75,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 			}
 			fileObj.WriteFile()
 		}
-		fileObj.WriteFile()
 	}
 
 	// Zip / Package Converted Objects
