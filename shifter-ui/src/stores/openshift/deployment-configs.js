@@ -1,4 +1,6 @@
 import { shifterConfig } from "@/main";
+import { notifyAxiosError } from "@/notifications";
+
 import axios from "axios";
 import { defineStore } from "pinia";
 
@@ -42,7 +44,7 @@ export const useOSDeploymentConfigs = defineStore(
           url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
           headers: {},
           data: { ...configurationsClusters.getCluster(clusterId) },
-          timeout: 1000,
+          timeout: 2000,
         };
         try {
           configurationsLoading.startLoading(
@@ -58,14 +60,22 @@ export const useOSDeploymentConfigs = defineStore(
               return response.data.deploymentConfigs.items;
             })
             .catch((err) => {
-              console.error("Error", err);
-              configurationsLoading.endLoading(err);
+              notifyAxiosError(
+                err,
+                "Problem Loading OpenShift Deployment Configurations",
+                6000
+              );
+              configurationsLoading.endLoading();
               return err;
             });
         } catch (err) {
           this.osDeploymentConfigs = [];
-          console.error("Error", err);
-          configurationsLoading.endLoading(err);
+          notifyAxiosError(
+            err,
+            "Problem Loading OpenShift Deployment Configurations",
+            6000
+          );
+          configurationsLoading.endLoading();
         }
       },
     },
