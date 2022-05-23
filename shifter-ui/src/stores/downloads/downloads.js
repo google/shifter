@@ -1,9 +1,15 @@
 // Shifter Import Config
 import { shifterConfig } from "@/main";
+// Notifications Imports
+import { notifyAxiosError } from "@/notifications";
 // Axios Imports
 import axios from "axios";
 // Pinia Store Imports
 import { defineStore } from "pinia";
+// External Pinia Store Imports
+import { useConfigurationsLoading } from "../configurations/loading";
+// Instansitate Pinia Store Objects
+const storeConfigLoading = useConfigurationsLoading();
 
 // Pinia Store Definition
 export const useDownloadsObjects = defineStore(
@@ -30,6 +36,7 @@ export const useDownloadsObjects = defineStore(
 
     actions: {
       async get(downloadId) {
+        this.$reset();
         var url = shifterConfig.API_BASE_URL + "/shifter/downloads/";
         // If Specific Download ID is Requested
         if (downloadId !== null) {
@@ -43,15 +50,25 @@ export const useDownloadsObjects = defineStore(
           data: {},
         };
         try {
-          const response = await axios(config);
-          try {
-            console.log(response);
-          } catch (err) {
-            console.error("Error", err);
-            return err;
-          }
+          storeConfigLoading.startLoading(
+            "Searching...",
+            "Standby while we locate your converted files."
+          );
+          return await axios(config)
+            .then(function (response) {
+              // handle success
+              storeConfigLoading.endLoading();
+              return response;
+            })
+            .catch((err) => {
+              notifyAxiosError(err, "Error Locating Downloads", 6000);
+              storeConfigLoading.endLoading();
+              return err;
+            });
         } catch (err) {
-          console.error("Error", err);
+          notifyAxiosError(err, "Error Locating Downloads", 6000);
+          storeConfigLoading.endLoading();
+          return err;
         }
       },
     },
