@@ -1,16 +1,21 @@
+// Shifter Import Config
 import { shifterConfig } from "@/main";
+// Notifications Imports
 import { notifyAxiosError } from "@/notifications";
-
+// Axios Imports
 import axios from "axios";
+// Pinia Store Imports
 import { defineStore } from "pinia";
-
-import { useConfigurationsLoading } from "../configurations/loading";
+// External Pinia Store Imports
 import { useConfigurationsClusters } from "../configurations/clusters";
-const configurationsLoading = useConfigurationsLoading();
-const configurationsClusters = useConfigurationsClusters();
+import { useConfigurationsLoading } from "../configurations/loading";
+// Instansitate Pinia Store Objects
+const storeConfigClusters = useConfigurationsClusters();
+const storeConfigLoading = useConfigurationsLoading();
 
+// Pinia Store Definition
 export const useOSDeploymentConfigs = defineStore(
-  "openshift-deploymentConfigs",
+  "shifter-api-v1-openshift-deploymentConfigs",
   {
     state: () => {
       return {
@@ -43,11 +48,11 @@ export const useOSDeploymentConfigs = defineStore(
           method: "post",
           url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
           headers: {},
-          data: { ...configurationsClusters.getCluster(clusterId) },
+          data: { ...storeConfigClusters.getCluster(clusterId) },
           timeout: 2000,
         };
         try {
-          configurationsLoading.startLoading(
+          storeConfigLoading.startLoading(
             "Loading...",
             "Fetching OpenShift Deployment Configurations"
           );
@@ -56,7 +61,7 @@ export const useOSDeploymentConfigs = defineStore(
             .then((response) => {
               // handle success
               console.log(response);
-              configurationsLoading.endLoading();
+              storeConfigLoading.endLoading();
               return response.data.deploymentConfigs.items;
             })
             .catch((err) => {
@@ -65,7 +70,7 @@ export const useOSDeploymentConfigs = defineStore(
                 "Problem Loading OpenShift Deployment Configurations",
                 6000
               );
-              configurationsLoading.endLoading();
+              storeConfigLoading.endLoading();
               return err;
             });
         } catch (err) {
@@ -75,7 +80,8 @@ export const useOSDeploymentConfigs = defineStore(
             "Problem Loading OpenShift Deployment Configurations",
             6000
           );
-          configurationsLoading.endLoading();
+          storeConfigLoading.endLoading();
+          return err;
         }
       },
     },
