@@ -33,6 +33,8 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 
 	// Create OpenShift Client
 	var openshift os.Openshift
+	openshift.Endpoint = sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl
+	openshift.AuthToken = sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken
 
 	// Get List of OpenShift Projects
 	deploymentconfigs := openshift.GetAllDeploymentConfigs(projectName)

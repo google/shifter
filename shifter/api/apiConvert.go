@@ -15,12 +15,12 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
 	os "shifter/openshift"
 	ops "shifter/ops"
-
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +28,7 @@ import (
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
-		// Create API Unique RUN ID
+	// Create API Unique RUN ID
 	uuid := uuid.New().String()
 
 	//body:=Body{}
@@ -40,7 +40,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 	}
 
 	var openshift os.Openshift
-
 	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
 
