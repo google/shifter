@@ -1,9 +1,11 @@
+// Pinia Store Imports
 import { defineStore } from "pinia";
-
+// Store Contants
 const defaultTitle = "Loading...";
 const defaultSubTitle = "Shifter is working on your request.";
 
-export const useConfigurationsLoading = defineStore("configurations-loading", {
+// Pinia Store Definition
+export const useConfigurationsLoading = defineStore("shifter-config-loading", {
   state: () => {
     return {
       loading: false,

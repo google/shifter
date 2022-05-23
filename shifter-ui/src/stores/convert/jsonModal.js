@@ -1,6 +1,8 @@
+// Pinia Store Imports
 import { defineStore } from "pinia";
 
-export const useJSONModal = defineStore("configurations-convert-json-modal", {
+// Pinia Store Definition
+export const useJSONModal = defineStore("shifter-config-convert-json-modal", {
   state: () => {
     return {
       content: {},

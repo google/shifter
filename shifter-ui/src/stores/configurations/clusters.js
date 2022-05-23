@@ -1,7 +1,9 @@
+// Pinia Store Imports
 import { defineStore } from "pinia";
 
+// Pinia Store Definition
 export const useConfigurationsClusters = defineStore(
-  "configurations-clusters",
+  "shifter-config-clusters",
   {
     state: () => {
       return {
