@@ -211,8 +211,24 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConvertObjects, { convertStep: "convert" }),
+    ...mapActions(useConvertObjects, { convert: "convert" }),
     ...mapActions(useConvertObjects, { setCluster: "setCluster" }),
+
+    convertStep() {
+      var router = this.$router;
+      this.convert().then((payload) => {
+        if (payload.status === 200) {
+          router.push({
+            name: "download",
+            params: { downloadId: payload.data.suid.downloadId },
+          });
+        } else {
+          router.push({
+            name: "downloads",
+          });
+        }
+      });
+    },
 
     nextStep() {
       if (this.currentStep < this.maxSteps) {
