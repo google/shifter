@@ -24,10 +24,15 @@ type Openshift struct {
 	Endpoint  string
 	AuthToken string
 <<<<<<< HEAD
+<<<<<<< HEAD
 	Username  string
 	Password  string
 =======
 >>>>>>> 6f965c1 (Moving to native go client)
+=======
+	Username string
+	Password string
+>>>>>>> def3249 (Fixing cluster config from the api)
 }
 
 func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
@@ -38,7 +43,11 @@ func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
 	}
 
 	config.AuthInfos["cluster-auth"] = &clientcmdapi.AuthInfo{
+<<<<<<< HEAD
 		Token:    cluster.AuthToken,
+=======
+		Token: cluster.AuthToken,
+>>>>>>> def3249 (Fixing cluster config from the api)
 		Username: cluster.Username,
 		Password: cluster.Password,
 	}
