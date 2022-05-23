@@ -1,5 +1,8 @@
+// Shifter Import Config
 import { shifterConfig } from "@/main";
+// Axios Imports
 import axios from "axios";
+// Pinia Store Imports
 import { defineStore } from "pinia";
 
 // API Endpoint Configuration
@@ -10,8 +13,9 @@ const config = {
   data: null,
 };
 
+// Pinia Store Definition
 export const useShifterV1StatusSettingz = defineStore(
-  "shifter-v1-status-settingz",
+  "shifter-api-v1-status-settingz",
   {
     state: () => {
       return {
