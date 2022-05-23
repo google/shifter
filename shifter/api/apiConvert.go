@@ -24,7 +24,6 @@ import (
 	lib "shifter/lib"
 	os "shifter/openshift"
 	ops "shifter/ops"
-
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
