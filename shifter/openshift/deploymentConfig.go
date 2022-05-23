@@ -35,7 +35,7 @@ func (c Openshift) GetAllDeploymentConfigs(namespace string) *v1.DeploymentConfi
 	return depCfgLst
 }
 
-func (c Openshift) GetDeploymentConfig(name string, namespace string) *v1.DeploymentConfig {
+func (c Openshift) GetDeploymentConfig(namespace string, name string) *v1.DeploymentConfig {
 	app, err := appsv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)

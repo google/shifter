@@ -23,7 +23,6 @@ import (
 	lib "shifter/lib"
 	os "shifter/openshift"
 	ops "shifter/ops"
-
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +42,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 	}
 
 	var openshift os.Openshift
-
 	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
 

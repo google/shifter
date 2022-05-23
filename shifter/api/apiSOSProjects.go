@@ -41,6 +41,8 @@ func (server *Server) SOSGetProjects(ctx *gin.Context) {
 
 	// Create OpenShift Client
 	var openshift os.Openshift
+	openshift.Endpoint = sOSProjects.Shifter.ClusterConfig.BaseUrl
+	openshift.AuthToken = sOSProjects.Shifter.ClusterConfig.BearerToken
 
 	// Get List of OpenShift Projects
 	projects := openshift.GetAllProjects()
