@@ -122,7 +122,7 @@ export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
           "Shifting...",
           "Standby while we convert the workloads."
         );
-        await axios(config)
+        return await axios(config)
           .then(function (response) {
             // handle success
             shifterConversionSuccess("Converted OpenShift objects.");
