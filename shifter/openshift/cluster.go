@@ -23,8 +23,8 @@ import (
 type Openshift struct {
 	Endpoint  string
 	AuthToken string
-	Username string
-	Password string
+	Username  string
+	Password  string
 }
 
 func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
@@ -35,7 +35,7 @@ func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
 	}
 
 	config.AuthInfos["cluster-auth"] = &clientcmdapi.AuthInfo{
-		Token: cluster.AuthToken,
+		Token:    cluster.AuthToken,
 		Username: cluster.Username,
 		Password: cluster.Password,
 	}
