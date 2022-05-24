@@ -15,7 +15,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
