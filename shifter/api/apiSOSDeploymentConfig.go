@@ -6,12 +6,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-
-	os "shifter/openshift/v3_11"
 
 	"github.com/gin-gonic/gin"
+	osNative "github.com/openshift/api/apps/v1"
+	os "shifter/openshift"
 )
+
+type SOSDeploymentConfig struct {
+	Shifter          Shifter                   `json:"shifter"`
+	DeploymentConfig osNative.DeploymentConfig `json:"deploymentConfig"`
+}
 
 func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 
@@ -45,21 +49,13 @@ func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 	}
 
 	// Create OpenShift Client
-	openshift := os.NewClient(http.DefaultClient)
-	// Configure Authorization
-	openshift.AuthOptions = &os.AuthOptions{BearerToken: sOSDeploymentConfig.Shifter.ClusterConfig.BearerToken}
-	openshift.BaseURL, err = url.Parse(sOSDeploymentConfig.Shifter.ClusterConfig.BaseUrl)
-	if err != nil {
-		panic(err)
-	}
+	var openshift os.Openshift
+	openshift.Endpoint = sOSDeploymentConfig.Shifter.ClusterConfig.BaseUrl
+	openshift.AuthToken = sOSDeploymentConfig.Shifter.ClusterConfig.BearerToken
 
-	// Get List of OpenShift Projects
-	deploymentconfig, err := openshift.Apis.DeploymentConfig.Get(projectName, deploymentConfigName)
-	if err != nil {
-		fmt.Println(err)
-	}
+	deploymentconfig := openshift.GetDeploymentConfig(projectName, deploymentConfigName)
 
-	// Add Project to the Response
+	// Add DeploymentConfig to the Response
 	sOSDeploymentConfig.DeploymentConfig = *deploymentconfig
 
 	// Return JSON API Response

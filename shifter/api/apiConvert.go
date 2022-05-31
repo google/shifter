@@ -16,10 +16,9 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"net/url"
 	generator "shifter/generators"
 	lib "shifter/lib"
-	os "shifter/openshift/v3_11"
+	os "shifter/openshift"
 	ops "shifter/ops"
 	"shifter/processor"
 
@@ -39,32 +38,14 @@ func (server *Server) Convert(ctx *gin.Context) {
 		return
 	}
 
+	var openshift os.Openshift
+	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
+	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
+
 	// Process Each Item
 	for _, item := range convert.Items {
-		// Create OpenShift Client
-		openshift := os.NewClient(http.DefaultClient)
-		// Configure Authorization
-		openshift.AuthOptions = &os.AuthOptions{
-			BearerToken: convert.Shifter.ClusterConfig.BearerToken,
-		}
-		// Configure Base URL
-		var err error
-		openshift.BaseURL, err = url.Parse(convert.Shifter.ClusterConfig.BaseUrl)
-		if err != nil {
-			panic(err)
-		}
-
 		// Confirm Project/Namespace Exists
-		_, err = openshift.Apis.Project.Get(item.Namespace.ObjectMeta.Name)
-		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
-		}
-
-		// Confirm Project/Namespace Exists
-		deploymentConfig, err := openshift.Apis.DeploymentConfig.Get(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
-		if err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
-		}
+		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
 		u, err := json.Marshal(deploymentConfig)
 		if err != nil {
@@ -81,7 +62,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 			fileObj := &ops.FileObject{
 				//StorageType: "GCS",
 				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
-				StorageType: server.config.serverStorage.storageType,
+				StorageType:   server.config.serverStorage.storageType,
 				SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,
