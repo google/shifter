@@ -84,7 +84,7 @@ func CreateSUID(customName string) SUID {
 	suid.hash()
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.nameHash
-	suid.DisplayName = suid.Name
+	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
 	return suid
 }
 
@@ -108,7 +108,7 @@ func ResolveSUID(downloadId string) (SUID, error) {
 	suid.TimeStamp = t
 	suid.UUID = items[1]
 	suid.Name = items[2]
-	suid.DisplayName = suid.Name
+	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.DirectoryName
 	return suid, nil
