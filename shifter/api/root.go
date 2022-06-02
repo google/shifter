@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -79,6 +80,7 @@ func (server *Server) setupRouter() {
 			{
 				sd.GET("/", server.Downloads)
 				sd.GET("/:downloadId", server.Download)
+				sd.GET("/:downloadId/file", server.DownloadFile)
 			}
 		}
 

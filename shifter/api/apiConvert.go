@@ -14,12 +14,17 @@ limitations under the License.
 package api
 
 import (
+	"archive/zip"
 	"encoding/json"
+	"errors"
+	"io"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	generator "shifter/generators"
 	lib "shifter/lib"
-	os "shifter/openshift/v3_11"
+	osh "shifter/openshift/v3_11"
 	ops "shifter/ops"
 	"shifter/processor"
 
@@ -40,9 +45,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Process Each Item
 	for _, item := range convert.Items {
 		// Create OpenShift Client
-		openshift := os.NewClient(http.DefaultClient)
+		openshift := osh.NewClient(http.DefaultClient)
 		// Configure Authorization
-		openshift.AuthOptions = &os.AuthOptions{
+		openshift.AuthOptions = &osh.AuthOptions{
 			BearerToken: convert.Shifter.ClusterConfig.BearerToken,
 		}
 		// Configure Base URL
@@ -89,10 +94,63 @@ func (server *Server) Convert(ctx *gin.Context) {
 		}
 	}
 
+	// Zip / Package Converted Objects
+	err := server.PackageConversionObjects(suid)
+	if err != nil {
+		ctx.AbortWithError(http.StatusBadRequest, err)
+	}
+
 	// Construct API Endpoint Response
 	r := ResponseConvert{
 		SUID:    suid,
 		Message: "Converted..." + string(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
+}
+
+func (server *Server) PackageConversionObjects(suid ops.SUID) error {
+
+	file, err := os.Create(server.config.serverStorage.outputPath + "/" + suid.DownloadId + ".zip")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	w := zip.NewWriter(file)
+	defer w.Close()
+
+	walker := func(path string, info os.FileInfo, err error) error {
+		//fmt.Printf("Crawling: %#v\n", path)
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		// Ensure that `path` is not absolute; it should not start with "/".
+		// This snippet happens to work because I don't use
+		// absolute paths, but ensure your real-world code
+		// transforms path into a zip-root relative path.
+		f, err := w.Create(path)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	err = filepath.Walk(server.config.serverStorage.sourcePath+"/"+suid.DirectoryName+"/", walker)
+	if err != nil {
+		return errors.New("Unable to resolve or find Download ID")
+	}
+	return nil
 }
