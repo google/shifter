@@ -35,7 +35,7 @@ export const useDownloadsObjects = defineStore(
     },
 
     actions: {
-      async get(downloadId) {
+      async get(downloadId = null) {
         this.$reset();
         var url = shifterConfig.API_BASE_URL + "/shifter/downloads/";
         // If Specific Download ID is Requested
@@ -45,6 +45,7 @@ export const useDownloadsObjects = defineStore(
 
         const config = {
           method: "get",
+          responseType: "json",
           url: url,
           headers: {},
           data: {},
@@ -68,6 +69,52 @@ export const useDownloadsObjects = defineStore(
         } catch (err) {
           notifyAxiosError(err, "Error Locating Downloads", 6000);
           storeConfigLoading.endLoading();
+          return err;
+        }
+      },
+
+      async getFile(
+        downloadId = null,
+        fileName = "Shifter Conversion Package"
+      ) {
+        var url =
+          shifterConfig.API_BASE_URL +
+          "/shifter/downloads/" +
+          downloadId +
+          "/file";
+
+        const config = {
+          method: "get",
+          responseType: "blob",
+          url: url,
+          headers: {},
+          data: {},
+        };
+        try {
+          /*storeConfigLoading.startLoading(
+            "Searching...",
+            "Standby while we do your converted files."
+          );*/
+          return await axios(config)
+            .then(function (response) {
+              // handle success
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute("download", fileName + ".zip"); //or any other extension
+              document.body.appendChild(link);
+              link.click();
+
+              return response;
+            })
+            .catch((err) => {
+              notifyAxiosError(err, "Error Download Requested File", 6000);
+              //storeConfigLoading.endLoading();
+              return err;
+            });
+        } catch (err) {
+          notifyAxiosError(err, "Error Download Requested File", 6000);
+          //storeConfigLoading.endLoading();
           return err;
         }
       },

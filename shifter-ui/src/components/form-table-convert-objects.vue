@@ -1,5 +1,21 @@
 <template>
   <div class="container flex-row mx-auto justify-center">
+    <div class="container flex-row mx-auto bg-shifter-black">
+      <div>
+        <a
+          v-show="ifPreviousItems"
+          @click="previousItems()"
+          class="rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
+          >Previous</a
+        >{{ itemsFrom }}-{{ itemsTo }} of {{ itemsTotal }}
+        <a
+          v-show="ifNextItems"
+          @click="nextItems()"
+          class="rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
+          >Next</a
+        >
+      </div>
+    </div>
     <table class="container table-auto">
       <thead class="uppercase text-shifter-red-soft bg-shifter-black text-lg">
         <tr>
@@ -10,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="dc in all" :key="dc.metadata.uid">
+        <tr v-for="dc in items" :key="dc.metadata.uid">
           <td>
             {{ dc.metadata.namespace }}
           </td>
@@ -57,10 +73,27 @@ import { useJSONModal } from "../stores/convert/jsonModal";
 import { mapActions, mapState } from "pinia";
 
 export default {
+  data() {
+    return {
+      pagination: {
+        from: 1,
+        to: 0,
+        max: 8,
+      },
+    };
+  },
+
   methods: {
     ...mapActions(useConvertObjects, { dcRemove: "remove" }),
     ...mapActions(useConvertObjects, { dcAdd: "add" }),
     ...mapActions(useJSONModal, { openModal: "openModal" }),
+
+    nextItems() {
+      this.pagination.from = this.pagination.from + this.itemsMax;
+    },
+    previousItems() {
+      this.pagination.from = this.pagination.from - this.itemsMax;
+    },
   },
 
   computed: {
@@ -70,6 +103,42 @@ export default {
     ...mapState(useOSDeploymentConfigs, { all: "all" }),
     loadedDeploymentConfigs() {
       return this.osDeploymentConfigs;
+    },
+
+    items() {
+      return this.all.slice(this.itemsFrom - 1, this.itemsTo);
+    },
+
+    itemsMax() {
+      return this.pagination.max;
+    },
+
+    itemsFrom() {
+      return this.pagination.from;
+    },
+
+    itemsTo() {
+      if (this.all.length <= this.itemsFrom + this.itemsMax) {
+        return this.all.length;
+      }
+      return this.itemsFrom + this.itemsMax - 1;
+    },
+
+    itemsTotal() {
+      return this.all.length;
+    },
+
+    ifPreviousItems() {
+      if (this.itemsFrom >= this.itemsMax && this.itemsFrom >= 0) {
+        return true;
+      }
+      return false;
+    },
+    ifNextItems() {
+      if (this.itemsTotal > this.itemsTo) {
+        return true;
+      }
+      return false;
     },
   },
 };

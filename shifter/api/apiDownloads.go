@@ -14,7 +14,6 @@ limitations under the License.
 package api
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	ops "shifter/ops"
@@ -40,29 +39,6 @@ func (server *Server) Downloads(ctx *gin.Context) {
 	r := ResponseDownloads{
 		Items:   []*ops.SUID{},
 		Message: "Downloads...",
-	}
-	ctx.JSON(http.StatusOK, r)
-}
-
-// Get A Specific Downloadable Object
-func (server *Server) Download(ctx *gin.Context) {
-	// Validate Project Name has been Provided
-	downloadId := ctx.Param("downloadId")
-	if downloadId == "" {
-		// UUID param required & not found.
-		err := errors.New("Download ID Not supplied")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-	}
-
-	suid, err := ops.ResolveSUID(downloadId)
-	if err != nil {
-		err := errors.New("Unable to resolve or find Download ID")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
-	}
-
-	r := ResponseDownload{
-		SUID:    suid,
-		Message: "File Available for Download",
 	}
 	ctx.JSON(http.StatusOK, r)
 }
