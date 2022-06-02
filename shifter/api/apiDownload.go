@@ -15,34 +15,11 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 )
-
-// Get All Downloadable Objects
-func (server *Server) Downloads(ctx *gin.Context) {
-	fmt.Println("... Download[s]")
-	//downloads := Downloads{}
-
-	// TODO --> Get Dir/Bucket Listing of Objects
-	// TODO --> Process Dir/Bucket Listing of Objects to Download Structs
-
-	// using BindJson method to serialize body with struct
-	//if err := ctx.BindJSON(&downloads); err != nil {
-	//	ctx.AbortWithError(http.StatusBadRequest, err)
-	//	return
-	//}
-
-	// Construct API Endpoint Response
-	r := ResponseDownloads{
-		Items:   []*ops.SUID{},
-		Message: "Downloads...",
-	}
-	ctx.JSON(http.StatusOK, r)
-}
 
 // Get A Specific Downloadable Object
 func (server *Server) Download(ctx *gin.Context) {
