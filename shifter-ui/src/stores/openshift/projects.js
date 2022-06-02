@@ -52,7 +52,6 @@ export const useOSProjects = defineStore("shifter-api-v1-openshift-projects", {
         this.osProjects = await axios(config)
           .then((response) => {
             // handle success
-            console.log(response);
             storeConfigLoading.endLoading();
             return response.data.projects.items;
           })

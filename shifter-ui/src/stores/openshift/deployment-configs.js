@@ -60,7 +60,6 @@ export const useOSDeploymentConfigs = defineStore(
           this.osDeploymentConfigs = await axios(config)
             .then((response) => {
               // handle success
-              console.log(response);
               storeConfigLoading.endLoading();
               return response.data.deploymentConfigs.items;
             })

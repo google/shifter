@@ -10,17 +10,20 @@
             Download Conversion Files
           </div>
           <div class="flex justify-center text-baseline m-2">
-            Select OpenShift cluster from which you would like to convert
-            workloads
+            {{ displayName }}
           </div>
         </div>
         <div
           v-show="singleItem"
           class="container flex mx-auto justify-center my-4"
         >
-          <p>Single Item: {{ singleItem }}</p>
-          <p>Download ID: {{ downloadId }}</p>
-          {{ downloads }}
+          <div class="container flex mx-auto justify-center my-4">
+            <a
+              class="uppercase rounded px-6 py-2 bg-shifter-red-soft hover:bg-shifter-red animate-pulse"
+              :onclick="download"
+              >Download Files</a
+            >
+          </div>
         </div>
         <div
           v-show="!singleItem"
@@ -43,7 +46,10 @@ import { mapState, mapActions } from "pinia";
 
 export default {
   data() {
-    return {};
+    return {
+      defaultFileName: "Shifter Conversion Package",
+      downloadData: null,
+    };
   },
   computed: {
     ...mapState(useDownloadsObjects, {
@@ -58,13 +64,32 @@ export default {
         return this.$route.params.downloadId;
       } else return null;
     },
+    displayName() {
+      if (
+        this.downloadData !== undefined &&
+        this.downloadData !== null &&
+        this.downloadData.suid !== undefined &&
+        this.downloadData.suid !== null &&
+        this.downloadData.suid.displayName !== undefined &&
+        this.downloadData.suid.displayName !== null
+      ) {
+        return this.downloadData.suid.displayName;
+      } else return this.defaultFileName;
+    },
   },
   methods: {
     ...mapActions(useDownloadsObjects, { getDownloads: "get" }),
+    ...mapActions(useDownloadsObjects, { getFile: "getFile" }),
+
+    download() {
+      this.getFile(this.downloadId, this.displayName);
+    },
   },
 
   created() {
-    this.getDownloads(this.downloadId);
+    this.getDownloads(this.downloadId).then((response) => {
+      this.downloadData = response.data;
+    });
   },
 };
 </script>
