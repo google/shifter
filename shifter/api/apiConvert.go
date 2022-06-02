@@ -19,10 +19,11 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
+	"os"
 	"path/filepath"
 	generator "shifter/generators"
 	lib "shifter/lib"
-	os "shifter/openshift"
 	ops "shifter/ops"
 	"shifter/processor"
 
@@ -48,6 +49,19 @@ func (server *Server) Convert(ctx *gin.Context) {
 
 	// Process Each Item
 	for _, item := range convert.Items {
+		// Create OpenShift Client
+		openshift := osh.NewClient(http.DefaultClient)
+		// Configure Authorization
+		openshift.AuthOptions = &osh.AuthOptions{
+			BearerToken: convert.Shifter.ClusterConfig.BearerToken,
+		}
+		// Configure Base URL
+		var err error
+		openshift.BaseURL, err = url.Parse(convert.Shifter.ClusterConfig.BaseUrl)
+		if err != nil {
+			panic(err)
+		}
+
 		// Confirm Project/Namespace Exists
 		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
 
