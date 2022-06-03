@@ -47,7 +47,7 @@
               <a
                 v-if="isSelected(dc)"
                 @click="dcRemove(dc)"
-                class="rounded bg-shifter-red-soft px-6 my-1"
+                class="rounded border border-shifter-red-soft bg-shifter-red-soft px-6 my-1"
                 >Remove</a
               >
               <a
