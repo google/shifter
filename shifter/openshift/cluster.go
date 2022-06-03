@@ -14,18 +14,12 @@ limitations under the license.
 package openshift
 
 import (
+	"log"
+
 	restclientcmdapi "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-	"log"
 )
-
-type Openshift struct {
-	Endpoint  string
-	AuthToken string
-	Username  string
-	Password  string
-}
 
 func (cluster *Openshift) clusterClient() *restclientcmdapi.Config {
 	config := clientcmdapi.NewConfig()

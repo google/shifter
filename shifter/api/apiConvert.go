@@ -33,19 +33,24 @@ func (server *Server) Convert(ctx *gin.Context) {
 	convert := Convert{}
 	// using BindJson method to serialize body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	var openshift os.Openshift
 	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
+	openshift.Username = convert.Shifter.ClusterConfig.Username
+	openshift.Password = convert.Shifter.ClusterConfig.Password
 
 	// Process Each Item
 	for _, item := range convert.Items {
 
 		// Confirm Project/Namespace Exists
-		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
+		deploymentConfig, err := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		}
 
 		u, err := json.Marshal(deploymentConfig)
 		if err != nil {
@@ -73,7 +78,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Zip / Package Converted Objects
 	err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 	}
 
 	// Construct API Endpoint Response

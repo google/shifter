@@ -50,6 +50,20 @@ export const useConfigurationsClusters = defineStore(
               },
             },
           },
+          {
+            id: 3,
+            enabled: true,
+            shifter: {
+              clusterConfig: {
+                connectionName:
+                  "OKD Shifter PRD Server v3.11 Username & Password",
+                username: "shifter",
+                password: "P4@FpHbMn&YqFEfn",
+                baseUrl: "https://console.okd.shifter.cloud:8443",
+                bearerToken: "",
+              },
+            },
+          },
         ],
         fetching: false,
       };
