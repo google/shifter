@@ -18,17 +18,6 @@ import (
 	"net/http"
 )
 
-// @BasePath /api/v1
-
-// Healthz godoc
-// @Summary Shifter Server Healthz.
-// @Schemes
-// @Description Shifter Server API Endpoint for Operational Health Checks.
-// @Tags example
-// @Accept json
-// @Produce json
-// @Success 200 {blob} Blob
-// @Router /status/healthz [get]
 func (server *Server) Healthz(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := ResponseStatusHealthz{}
