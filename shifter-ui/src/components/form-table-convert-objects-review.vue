@@ -5,7 +5,7 @@
         <tr>
           <th>Namespace/Project</th>
           <th>Deployment Name</th>
-          <th>View</th>
+          <!--<th>View</th>-->
           <th>Select</th>
         </tr>
       </thead>
@@ -17,19 +17,19 @@
           <td>
             {{ dc.deploymentConfig.metadata.name }}
           </td>
-          <td>
+          <!--<td>
             <div class="flex justify-center">
               <a
                 class="rounded bg-shifter-red-soft px-6 my-1 hover:bg-shifter-red hover:animate-pulse"
                 >View</a
               >
             </div>
-          </td>
+          </td>-->
           <td>
             <div class="flex justify-center">
               <a
                 @click="dcRemove(dc)"
-                class="rounded bg-shifter-red-soft px-6 my-1"
+                class="rounded border border-shifter-red-soft bg-shifter-red-soft px-6 my-1"
                 >Remove</a
               >
             </div>
