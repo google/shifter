@@ -15,36 +15,41 @@ package openshift
 
 import (
 	"context"
+	"log"
+
 	v1 "github.com/openshift/api/project/v1"
 	projectv1 "github.com/openshift/client-go/project/clientset/versioned/typed/project/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
 )
 
-func (c Openshift) GetAllProjects() *v1.ProjectList {
+func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
 	projCfg, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.ProjectList{}, err
 	}
 
 	projectList, err := projCfg.Projects().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.ProjectList{}, err
 	}
 
-	return projectList
+	return projectList, nil
 }
 
-func (c Openshift) GetProject(name string) *v1.Project {
+func (c Openshift) GetProject(name string) (*v1.Project, error) {
 	projCfg, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.Project{}, err
 	}
 
 	project, err := projCfg.Projects().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.Project{}, err
 	}
 
-	return project
+	return project, nil
 }
