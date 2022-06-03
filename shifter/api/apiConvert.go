@@ -15,6 +15,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
@@ -59,8 +60,6 @@ func (server *Server) Convert(ctx *gin.Context) {
 		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
 		for _, conObj := range convertedObjects {
 			fileObj := &ops.FileObject{
-				//StorageType: "GCS",
-				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				StorageType:   server.config.serverStorage.storageType,
 				SourcePath:    (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
@@ -80,7 +79,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := ResponseConvert{
 		SUID:    suid,
-		Message: "Converted..." + string(len(convert.Items)) + " Objects",
+		Message: "Converted..." + fmt.Sprint(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
 }
