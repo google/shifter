@@ -22,17 +22,6 @@ import (
 const GCS string = "GCS"
 const LCL string = "LCL"
 
-// @BasePath /api/v1
-
-// Settings godoc
-// @Summary Shifter Server Settings.
-// @Schemes
-// @Description Shifter Server API Endpoint for Operational Settings.
-// @Tags example
-// @Accept json
-// @Produce json
-// @Success 200 {blob} Blob
-// @Router /status/settingz [get]
 func (server *Server) Settingz(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := ResponseStatusSettings{}
