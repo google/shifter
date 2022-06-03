@@ -15,36 +15,42 @@ package openshift
 
 import (
 	"context"
+	"log"
+
 	v1 "github.com/openshift/api/route/v1"
 	routev1 "github.com/openshift/client-go/route/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
 )
 
-func (c Openshift) GetAllRoutes(namespace string) *v1.RouteList {
+func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
 	routeCfg, err := routev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.RouteList{}, err
 	}
 
 	routeList, err := routeCfg.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.RouteList{}, err
 	}
 
-	return routeList
+	return routeList, nil
+
 }
 
-func (c Openshift) GetRoute(name string, namespace string) *v1.Route {
+func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
 	routeCfg, err := routev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.Route{}, err
 	}
 
 	route, err := routeCfg.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.Route{}, err
 	}
 
-	return route
+	return route, nil
 }

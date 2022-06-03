@@ -37,9 +37,17 @@ func (server *Server) SOSGetProjects(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSProjects.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSProjects.Shifter.ClusterConfig.BearerToken
+	openshift.Username = sOSProjects.Shifter.ClusterConfig.Username
+	openshift.Password = sOSProjects.Shifter.ClusterConfig.Password
+
+	fmt.Println(sOSProjects.Shifter.ClusterConfig.Username)
+	fmt.Println(sOSProjects.Shifter.ClusterConfig.Password)
 
 	// Get List of OpenShift Projects
-	projects := openshift.GetAllProjects()
+	projects, err := openshift.GetAllProjects()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
 
 	// Add Projects to the Response
 	sOSProjects.Projects = *projects
