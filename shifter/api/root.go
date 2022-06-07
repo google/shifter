@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -75,14 +76,13 @@ func (server *Server) setupRouter() {
 				sc.POST("/", server.Convert)
 			}
 
+			sd := s.Group("/downloads")
+			{
+				sd.GET("/", server.Downloads)
+				sd.GET("/:downloadId", server.Download)
+				sd.GET("/:downloadId/file", server.DownloadFile)
+			}
 		}
-
-		// Download V1 API Endpoints
-		/*d := v1.Group("/download")
-		{
-			d.GET("/:uuid/:filename", server.ConvertedFile) // Download Single Converted File
-			d.GET("/:uuid/", server.ConvertedFilesArchive)  // Download All Converted Files (Archive)
-		}*/
 
 		// Status V1 API Endpoints
 		st := v1.Group("/status")

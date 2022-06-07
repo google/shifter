@@ -1,7 +1,9 @@
+// Pinia Store Imports
 import { defineStore } from "pinia";
 
+// Pinia Store Definition
 export const useConfigurationsClusters = defineStore(
-  "configurations-clusters",
+  "shifter-config-clusters",
   {
     state: () => {
       return {
@@ -48,6 +50,20 @@ export const useConfigurationsClusters = defineStore(
               },
             },
           },
+          {
+            id: 3,
+            enabled: true,
+            shifter: {
+              clusterConfig: {
+                connectionName:
+                  "OKD Shifter PRD Server v3.11 Username & Password",
+                username: "shifter",
+                password: "P4@FpHbMn&YqFEfn",
+                baseUrl: "https://console.okd.shifter.cloud:8443",
+                bearerToken: "",
+              },
+            },
+          },
         ],
         fetching: false,
       };
@@ -55,10 +71,7 @@ export const useConfigurationsClusters = defineStore(
 
     getters: {
       getActiveClusters(state) {
-        const activeClusters = state.clusters.filter(
-          (cluster) => cluster.enabled
-        );
-        return activeClusters;
+        return state.clusters.filter((cluster) => cluster.enabled);
       },
       getAllClusters(state) {
         return state.clusters;

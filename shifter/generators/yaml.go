@@ -17,9 +17,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
 	"shifter/lib"
-	"strconv"
 
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 )
@@ -27,11 +25,8 @@ import (
 func (generator *Generator) Yaml(name string, objects []lib.K8sobject) []lib.Converted {
 	var converted []lib.Converted
 
-	for k, v := range objects {
-		no := strconv.Itoa(k)
+	for _, v := range objects {
 		kind := fmt.Sprintf("%v", v.Kind)
-
-		log.Println("Generating file", no, " - ", name)
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 

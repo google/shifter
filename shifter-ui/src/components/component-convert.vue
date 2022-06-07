@@ -107,6 +107,27 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
       </div>
       <!-- END STEP 3 OBJECT REVIEW -->
 
+      <!-- STEP 4 REVIEW -->
+      <div
+        v-show="currentStep == 4"
+        class="container flex-row mx-auto justify-center py-12"
+      >
+        <div class="container flex-row justify-center items-center">
+          <div class="flex justify-center bold text-4xl m-2">Convert</div>
+          <div class="flex justify-center text-baseline m-2">
+            Convert your selected workloads for GKE & Anthos.
+          </div>
+        </div>
+        <div class="container flex mx-auto justify-center my-4">
+          <a
+            class="uppercase rounded px-6 py-2 bg-shifter-red-soft hover:bg-shifter-red animate-pulse"
+            :onclick="convertStep"
+            >Convert</a
+          >
+        </div>
+      </div>
+      <!-- END STEP 4 REVIEW -->
+
       <div class="container flex mx-auto justify-end px-10 gap-4">
         <a
           v-show="currentStep > 1"
@@ -119,12 +140,6 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
           :onclick="nextStep"
           >Next</a
-        >
-        <a
-          v-show="currentStep === maxSteps"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
-          :onclick="convertStep"
-          >Convert</a
         >
       </div>
     </div>
@@ -149,27 +164,27 @@ export default {
       convertSteps: [
         {
           id: 1,
-          title: "Cluster Selection",
+          title: "OpenShift Cluster",
           enabled: true,
         },
         {
           id: 2,
-          title: "Object Selection",
+          title: "Selections",
           enabled: true,
         },
         {
           id: 3,
-          title: "Review",
+          title: "Options",
           enabled: true,
         },
         {
           id: 4,
-          title: "Shift Workflows",
-          enabled: false,
+          title: "Convert",
+          enabled: true,
         },
         {
           id: 5,
-          title: "Summary",
+          title: "Results",
           enabled: false,
         },
       ],
@@ -196,8 +211,24 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConvertObjects, { convertStep: "convert" }),
+    ...mapActions(useConvertObjects, { convert: "convert" }),
     ...mapActions(useConvertObjects, { setCluster: "setCluster" }),
+
+    convertStep() {
+      var router = this.$router;
+      this.convert().then((payload) => {
+        if (payload.status === 200) {
+          router.push({
+            name: "download",
+            params: { downloadId: payload.data.suid.downloadId },
+          });
+        } else {
+          router.push({
+            name: "downloads",
+          });
+        }
+      });
+    },
 
     nextStep() {
       if (this.currentStep < this.maxSteps) {

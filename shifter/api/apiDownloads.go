@@ -14,33 +14,31 @@ limitations under the License.
 package api
 
 import (
+	"fmt"
 	"net/http"
+	ops "shifter/ops"
 
 	"github.com/gin-gonic/gin"
 )
 
-const GCS string = "GCS"
-const LCL string = "LCL"
+// Get All Downloadable Objects
+func (server *Server) Downloads(ctx *gin.Context) {
+	fmt.Println("... Download[s]")
+	//downloads := Downloads{}
 
-func (server *Server) Settingz(ctx *gin.Context) {
+	// TODO --> Get Dir/Bucket Listing of Objects
+	// TODO --> Process Dir/Bucket Listing of Objects to Download Structs
+
+	// using BindJson method to serialize body with struct
+	//if err := ctx.BindJSON(&downloads); err != nil {
+	//	ctx.AbortWithError(http.StatusBadRequest, err)
+	//	return
+	//}
+
 	// Construct API Endpoint Response
-	r := ResponseStatusSettings{}
-
-	// Server Settings
-	r.RunningPort = server.config.serverPort
-	r.RunningHost = server.config.serverAddress
-
-	// Storage Settings
-	r.StorageType = server.config.serverStorage.storageType
-	r.StorageDescription = server.config.serverStorage.description
-	r.StorageSourcePath = server.config.serverStorage.sourcePath
-	r.StorageOutputPath = server.config.serverStorage.outputPath
-
-	// General Meta Data
-	r.Timestamp = ""
-	r.Version = 0
-	r.Status = http.StatusOK
-	r.Message = "Shifter Server Settings."
-	// Return JSON API Response
+	r := ResponseDownloads{
+		Items:   []*ops.SUID{},
+		Message: "Downloads...",
+	}
 	ctx.JSON(http.StatusOK, r)
 }

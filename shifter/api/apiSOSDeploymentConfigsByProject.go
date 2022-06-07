@@ -17,7 +17,7 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	if projectName == "" {
 		// UUID param required & not found.
 		err := errors.New("OpenShift Project Name must be supplied")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		log.Fatal(err.Error())
 		return
 	}
@@ -35,9 +35,14 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken
+	openshift.Username = sOSDeploymentConfigs.Shifter.ClusterConfig.Username
+	openshift.Password = sOSDeploymentConfigs.Shifter.ClusterConfig.Password
 
 	// Get List of OpenShift Projects
-	deploymentconfigs := openshift.GetAllDeploymentConfigs(projectName)
+	deploymentconfigs, err := openshift.GetAllDeploymentConfigs(projectName)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
 	// Add Projects to the Response
 	sOSDeploymentConfigs.DeploymentConfigs = *deploymentconfigs
 	// Return JSON API Response

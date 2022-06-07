@@ -7,15 +7,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	osNative "github.com/openshift/api/apps/v1"
 	os "shifter/openshift"
-)
 
-type SOSDeploymentConfig struct {
-	Shifter          Shifter                   `json:"shifter"`
-	DeploymentConfig osNative.DeploymentConfig `json:"deploymentConfig"`
-}
+	"github.com/gin-gonic/gin"
+)
 
 func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 
@@ -24,7 +19,7 @@ func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 	if projectName == "" {
 		// UUID param required & not found.
 		err := errors.New("OpenShift Project Name must be supplied")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		log.Fatal(err.Error())
 		return
 	}
@@ -34,7 +29,7 @@ func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 	if projectName == "" {
 		// UUID param required & not found.
 		err := errors.New("OpenShift Deployment Config Name must be supplied")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		log.Fatal(err.Error())
 		return
 	}
@@ -52,8 +47,13 @@ func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSDeploymentConfig.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSDeploymentConfig.Shifter.ClusterConfig.BearerToken
+	openshift.Username = sOSDeploymentConfig.Shifter.ClusterConfig.Username
+	openshift.Password = sOSDeploymentConfig.Shifter.ClusterConfig.Password
 
-	deploymentconfig := openshift.GetDeploymentConfig(projectName, deploymentConfigName)
+	deploymentconfig, err := openshift.GetDeploymentConfig(projectName, deploymentConfigName)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
 
 	// Add DeploymentConfig to the Response
 	sOSDeploymentConfig.DeploymentConfig = *deploymentconfig

@@ -13,17 +13,15 @@ limitations under the License.
 
 package api
 
-import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-)
-
-func (server *Server) Healthz(ctx *gin.Context) {
-	// Construct API Endpoint Response
-	r := ResponseStatusHealthz{}
-	r.Timestamp = ""
-	r.Status = http.StatusOK
-	r.Message = "Shifter Server is reachable."
-	// Return JSON API Response
-	ctx.JSON(http.StatusOK, r)
+type ResponseStatusSettings struct {
+	Timestamp          string `json:"timestamp"`
+	RunningPort        string `json:"runningPort"`
+	RunningHost        string `json:"runningHost"`
+	StorageType        string `json:"storageType"`
+	StorageDescription string `json:"storageDescription"`
+	StorageSourcePath  string `json:"storageSourcePath"`
+	StorageOutputPath  string `json:"storageOutputPath"`
+	Version            int    `json:"version"`
+	Status             int    `json:"status"`
+	Message            string `json:"message"`
 }

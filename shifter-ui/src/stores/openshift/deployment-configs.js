@@ -1,17 +1,25 @@
+// Shifter Import Config
 import { shifterConfig } from "@/main";
+// Notifications Imports
+import { notifyAxiosError } from "@/notifications";
+// Axios Imports
 import axios from "axios";
+// Pinia Store Imports
 import { defineStore } from "pinia";
-
+// External Pinia Store Imports
 import { useConfigurationsClusters } from "../configurations/clusters";
-const configurationsClusters = useConfigurationsClusters();
+import { useConfigurationsLoading } from "../configurations/loading";
+// Instansitate Pinia Store Objects
+const storeConfigClusters = useConfigurationsClusters();
+const storeConfigLoading = useConfigurationsLoading();
 
+// Pinia Store Definition
 export const useOSDeploymentConfigs = defineStore(
-  "openshift-deploymentConfigs",
+  "shifter-api-v1-openshift-deploymentConfigs",
   {
     state: () => {
       return {
         osDeploymentConfigs: [],
-        fetching: false,
       };
     },
 
@@ -40,22 +48,40 @@ export const useOSDeploymentConfigs = defineStore(
           method: "post",
           url: shifterConfig.API_BASE_URL + "/openshift/deploymentconfigs/",
           headers: {},
-          data: { ...configurationsClusters.getCluster(clusterId) },
+          data: { ...storeConfigClusters.getCluster(clusterId) },
+          timeout: 2000,
         };
-        this.fetching = true;
         try {
-          const response = await axios(config);
-          try {
-            this.osDeploymentConfigs = response.data.deploymentConfigs.items;
-          } catch (err) {
-            this.osDeploymentConfigs = [];
-            console.error("Error", err);
-            return err;
-          }
+          storeConfigLoading.startLoading(
+            "Loading...",
+            "Fetching OpenShift Deployment Configurations"
+          );
+          this.osDeploymentConfigs = [];
+          this.osDeploymentConfigs = await axios(config)
+            .then((response) => {
+              // handle success
+              storeConfigLoading.endLoading();
+              return response.data.deploymentConfigs.items;
+            })
+            .catch((err) => {
+              notifyAxiosError(
+                err,
+                "Problem Loading OpenShift Deployment Configurations",
+                6000
+              );
+              storeConfigLoading.endLoading();
+              return err;
+            });
         } catch (err) {
           this.osDeploymentConfigs = [];
+          notifyAxiosError(
+            err,
+            "Problem Loading OpenShift Deployment Configurations",
+            6000
+          );
+          storeConfigLoading.endLoading();
+          return err;
         }
-        this.fetching = false;
       },
     },
   }

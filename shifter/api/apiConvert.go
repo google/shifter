@@ -15,6 +15,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	generator "shifter/generators"
 	lib "shifter/lib"
@@ -23,29 +24,33 @@ import (
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
-	uuid := uuid.New().String()
-
-	//body:=Body{}
+	//uuid := uuid.New().String()
+	suid := ops.CreateSUID("")
 	convert := Convert{}
 	// using BindJson method to serialize body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	var openshift os.Openshift
 	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
+	openshift.Username = convert.Shifter.ClusterConfig.Username
+	openshift.Password = convert.Shifter.ClusterConfig.Password
 
 	// Process Each Item
 	for _, item := range convert.Items {
+
 		// Confirm Project/Namespace Exists
-		deploymentConfig := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
+		deploymentConfig, err := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		}
 
 		u, err := json.Marshal(deploymentConfig)
 		if err != nil {
@@ -60,10 +65,8 @@ func (server *Server) Convert(ctx *gin.Context) {
 		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
 		for _, conObj := range convertedObjects {
 			fileObj := &ops.FileObject{
-				//StorageType: "GCS",
-				//SourcePath:  ("gs://shifter-lz-002-sample-files/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				StorageType:   server.config.serverStorage.storageType,
-				SourcePath:    (server.config.serverStorage.sourcePath + "/" + uuid + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+				SourcePath:    (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,
 				ContentLength: conObj.Payload.Len(),
@@ -72,10 +75,16 @@ func (server *Server) Convert(ctx *gin.Context) {
 		}
 	}
 
+	// Zip / Package Converted Objects
+	err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
+
 	// Construct API Endpoint Response
 	r := ResponseConvert{
-		UUID:    uuid,
-		Message: "Converted..." + string(len(convert.Items)) + " Objects",
+		SUID:    suid,
+		Message: "Converted..." + fmt.Sprint(len(convert.Items)) + " Objects",
 	}
 	ctx.JSON(http.StatusOK, r)
 }

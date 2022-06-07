@@ -1,11 +1,20 @@
+// Shifter Import Config
 import { shifterConfig } from "@/main";
+// Notifications Imports
+import { notifyAxiosError } from "@/notifications";
+// Axios Imports
 import axios from "axios";
+// Pinia Store Imports
 import { defineStore } from "pinia";
-
+// External Pinia Store Imports
 import { useConfigurationsClusters } from "../configurations/clusters";
-const configurationsClusters = useConfigurationsClusters();
+import { useConfigurationsLoading } from "../configurations/loading";
+// Instansitate Pinia Store Objects
+const storeConfigClusters = useConfigurationsClusters();
+const storeConfigLoading = useConfigurationsLoading();
 
-export const useOSProjects = defineStore("openshift-projects", {
+// Pinia Store Definition
+export const useOSProjects = defineStore("shifter-api-v1-openshift-projects", {
   state: () => {
     return {
       osProjects: [],
@@ -31,22 +40,39 @@ export const useOSProjects = defineStore("openshift-projects", {
         method: "post",
         url: shifterConfig.API_BASE_URL + "/openshift/projects/",
         headers: {},
-        data: { ...configurationsClusters.getCluster(clusterId) },
+        data: { ...storeConfigClusters.getCluster(clusterId) },
+        timeout: 2000,
       };
-      this.fetching = true;
       try {
-        const response = await axios(config);
-        try {
-          this.osProjects = response.data.projects.items;
-        } catch (err) {
-          this.osProjects = [];
-          console.error("Error", err);
-          return err;
-        }
+        storeConfigLoading.startLoading(
+          "Loading...",
+          "Fetching OpenShift Namespaces & Projects"
+        );
+        this.osProjects = [];
+        this.osProjects = await axios(config)
+          .then((response) => {
+            // handle success
+            storeConfigLoading.endLoading();
+            return response.data.projects.items;
+          })
+          .catch((err) => {
+            notifyAxiosError(
+              err,
+              "Problem Loading OpenShift Projects & Namespaces",
+              6000
+            );
+            storeConfigLoading.endLoading();
+            return err;
+          });
       } catch (err) {
         this.osProjects = [];
+        notifyAxiosError(
+          err,
+          "Problem Loading OpenShift Projects & Namespaces",
+          6000
+        );
+        return err;
       }
-      this.fetching = false;
     },
   },
 });

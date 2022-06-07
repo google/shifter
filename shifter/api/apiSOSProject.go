@@ -17,17 +17,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	osNativeProject "github.com/openshift/api/project/v1"
 	"log"
 	"net/http"
 	os "shifter/openshift"
-)
 
-type SOSProject struct {
-	Shifter Shifter                 `json:"shifter"`
-	Project osNativeProject.Project `json:"project"`
-}
+	"github.com/gin-gonic/gin"
+)
 
 func (server *Server) SOSGetProject(ctx *gin.Context) {
 
@@ -36,7 +31,7 @@ func (server *Server) SOSGetProject(ctx *gin.Context) {
 	if projectName == "" {
 		// UUID param required & not found.
 		err := errors.New("OpenShift Project Name must be supplied")
-		ctx.JSON(http.StatusMisdirectedRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		log.Fatal(err.Error())
 		return
 	}
@@ -54,9 +49,14 @@ func (server *Server) SOSGetProject(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSProject.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSProject.Shifter.ClusterConfig.BearerToken
+	openshift.Username = sOSProject.Shifter.ClusterConfig.Username
+	openshift.Password = sOSProject.Shifter.ClusterConfig.Password
 
 	// Get List of OpenShift Projects
-	project := openshift.GetProject(projectName)
+	project, err := openshift.GetProject(projectName)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
 
 	// Add Project to the Response
 	sOSProject.Project = *project

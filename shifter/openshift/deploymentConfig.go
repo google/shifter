@@ -15,36 +15,41 @@ package openshift
 
 import (
 	"context"
+	"log"
+
 	v1 "github.com/openshift/api/apps/v1"
 	appsv1 "github.com/openshift/client-go/apps/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
 )
 
-func (c Openshift) GetAllDeploymentConfigs(namespace string) *v1.DeploymentConfigList {
+func (c Openshift) GetAllDeploymentConfigs(namespace string) (*v1.DeploymentConfigList, error) {
 	app, err := appsv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.DeploymentConfigList{}, err
 	}
 
 	depCfgLst, err := app.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.DeploymentConfigList{}, err
 	}
 
-	return depCfgLst
+	return depCfgLst, nil
 }
 
-func (c Openshift) GetDeploymentConfig(namespace string, name string) *v1.DeploymentConfig {
+func (c Openshift) GetDeploymentConfig(namespace string, name string) (*v1.DeploymentConfig, error) {
 	app, err := appsv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.DeploymentConfig{}, err
 	}
 
 	depCfg, err := app.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.DeploymentConfig{}, err
 	}
 
-	return depCfg
+	return depCfg, nil
 }

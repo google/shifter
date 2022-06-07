@@ -15,36 +15,41 @@ package openshift
 
 import (
 	"context"
+	"log"
+
 	v1 "github.com/openshift/api/template/v1"
 	templatev1 "github.com/openshift/client-go/template/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
 )
 
-func (c Openshift) GetAllTemplates(namespace string) *v1.TemplateList {
+func (c Openshift) GetAllTemplates(namespace string) (*v1.TemplateList, error) {
 	tplCfg, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.TemplateList{}, err
 	}
 
 	templates, err := tplCfg.TemplateV1().Templates(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.TemplateList{}, err
 	}
 
-	return templates
+	return templates, nil
 }
 
-func (c Openshift) GetTemplate(name string, namespace string) *v1.Template {
+func (c Openshift) GetTemplate(name string, namespace string) (*v1.Template, error) {
 	tplCfg, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
+		return &v1.Template{}, err
 	}
 
 	template, err := tplCfg.TemplateV1().Templates(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
+		return &v1.Template{}, err
 	}
 
-	return template
+	return template, nil
 }

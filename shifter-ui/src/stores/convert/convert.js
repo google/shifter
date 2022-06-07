@@ -1,18 +1,24 @@
-import { defineStore } from "pinia";
-
-import { useOSProjects } from "../openshift/projects";
-import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
-
-import { useConfigurationsClusters } from "../configurations/clusters";
-const configurationsClusters = useConfigurationsClusters();
-
+// Shifter Import Config
 import { shifterConfig } from "@/main";
+// Notifications Imports
+import { notifyAxiosError, shifterConversionSuccess } from "@/notifications";
+// Axios Imports
 import axios from "axios";
+// Pinia Store Imports
+import { defineStore } from "pinia";
+// External Pinia Store Imports
+import { useConfigurationsClusters } from "../configurations/clusters";
+import { useConfigurationsLoading } from "../configurations/loading";
+import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
+import { useOSProjects } from "../openshift/projects";
+// Instansitate Pinia Store Objects
+const storeConfigClusters = useConfigurationsClusters();
+const storeConfigLoading = useConfigurationsLoading();
+const storeOSDeploymentConfigs = useOSDeploymentConfigs();
+const storeOSProjects = useOSProjects();
 
-const oSProjects = useOSProjects();
-const oSDeploymentConfigs = useOSDeploymentConfigs();
-
-export const useConvertObjects = defineStore("configurations-convert-object", {
+// Pinia Store Definition
+export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
   state: () => {
     return {
       cluster: {},
@@ -51,22 +57,24 @@ export const useConvertObjects = defineStore("configurations-convert-object", {
       if (this.cluster.id !== clusterId || this.cluster.id === undefined) {
         // TODO <<-- Subscribe to this action in project refresh
         // Refresh OpenShift Projects
-        oSProjects.fetch(clusterId);
+        storeOSProjects.fetch(clusterId);
         // Refresh OpenShift Deployment Configs
-        oSDeploymentConfigs.fetch(clusterId);
+        storeOSDeploymentConfigs.fetch(clusterId);
         // When the Cluster is Changed. Reset the State and Update Cluster
         this.$reset();
         // Set Cluster from Cluster ID
         this.cluster = {
-          ...configurationsClusters.getCluster(clusterId),
+          ...storeConfigClusters.getCluster(clusterId),
         };
       }
     },
     async add(deploymentconfig) {
       try {
         const newConversionItem = {
-          namespace: oSProjects.getByName(deploymentconfig.metadata.namespace),
-          deploymentConfig: oSDeploymentConfigs.getByUid(
+          namespace: storeOSProjects.getByName(
+            deploymentconfig.metadata.namespace
+          ),
+          deploymentConfig: storeOSDeploymentConfigs.getByUid(
             deploymentconfig.metadata.uid
           ),
         };
@@ -107,17 +115,29 @@ export const useConvertObjects = defineStore("configurations-convert-object", {
             .shifter,
           items: JSON.parse(JSON.stringify([...this.all])),
         },
+        timeout: 10000,
       };
       try {
-        const response = await axios(config);
-        try {
-          console.log(response);
-        } catch (err) {
-          console.error("Error", err);
-          return err;
-        }
+        storeConfigLoading.startLoading(
+          "Shifting...",
+          "Standby while we convert the workloads."
+        );
+        return await axios(config)
+          .then(function (response) {
+            // handle success
+            shifterConversionSuccess("Converted OpenShift objects.");
+            storeConfigLoading.endLoading();
+            return response;
+          })
+          .catch((err) => {
+            notifyAxiosError(err, "Error Converting Workloads", 6000);
+            storeConfigLoading.endLoading();
+            return err;
+          });
       } catch (err) {
-        console.error("Error", err);
+        notifyAxiosError(err, "Error Converting Workloads", 6000);
+        storeConfigLoading.endLoading();
+        return err;
       }
     },
   },
