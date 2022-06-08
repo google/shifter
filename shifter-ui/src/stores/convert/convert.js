@@ -9,12 +9,12 @@ import { defineStore } from "pinia";
 // External Pinia Store Imports
 import { useConfigurationsClusters } from "../configurations/clusters";
 import { useConfigurationsLoading } from "../configurations/loading";
-import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
+//import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
 import { useOSProjects } from "../openshift/projects";
 // Instansitate Pinia Store Objects
 const storeConfigClusters = useConfigurationsClusters();
 const storeConfigLoading = useConfigurationsLoading();
-const storeOSDeploymentConfigs = useOSDeploymentConfigs();
+//const storeOSDeploymentConfigs = useOSDeploymentConfigs();
 const storeOSProjects = useOSProjects();
 
 // Pinia Store Definition
@@ -58,8 +58,6 @@ export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
         // TODO <<-- Subscribe to this action in project refresh
         // Refresh OpenShift Projects
         storeOSProjects.fetch(clusterId);
-        // Refresh OpenShift Deployment Configs
-        storeOSDeploymentConfigs.fetch(clusterId);
         // When the Cluster is Changed. Reset the State and Update Cluster
         this.$reset();
         // Set Cluster from Cluster ID
@@ -74,10 +72,9 @@ export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
           namespace: storeOSProjects.getByName(
             deploymentconfig.metadata.namespace
           ),
-          deploymentConfig: storeOSDeploymentConfigs.getByUid(
-            deploymentconfig.metadata.uid
-          ),
+          deploymentConfig: deploymentconfig,
         };
+
         this.conversionItems.push(newConversionItem);
       } catch (error) {
         console.log(error);
@@ -123,9 +120,11 @@ export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
           "Standby while we convert the workloads."
         );
         return await axios(config)
-          .then(function (response) {
+          .then((response) => {
             // handle success
             shifterConversionSuccess("Converted OpenShift objects.");
+            // Clear Conversion State on Successful Conversion
+            this.$reset();
             storeConfigLoading.endLoading();
             return response;
           })
