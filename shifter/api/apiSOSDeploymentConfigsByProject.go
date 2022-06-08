@@ -12,7 +12,6 @@ import (
 )
 
 func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
-
 	projectName := ctx.Param("projectName")
 	if projectName == "" {
 		// UUID param required & not found.
@@ -35,8 +34,6 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken
-	openshift.Username = sOSDeploymentConfigs.Shifter.ClusterConfig.Username
-	openshift.Password = sOSDeploymentConfigs.Shifter.ClusterConfig.Password
 
 	// Get List of OpenShift Projects
 	deploymentconfigs, err := openshift.GetAllDeploymentConfigs(projectName)

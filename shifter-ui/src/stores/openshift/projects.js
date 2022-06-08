@@ -23,6 +23,9 @@ export const useOSProjects = defineStore("shifter-api-v1-openshift-projects", {
   },
 
   getters: {
+    all(state) {
+      return state.osProjects;
+    },
     getByName(state) {
       return (name) =>
         state.osProjects.find((project) => project.metadata.name === name);
