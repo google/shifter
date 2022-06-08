@@ -25,8 +25,6 @@ func (server *Server) SOSGetDeploymentConfigs(ctx *gin.Context) {
 	var openshift os.Openshift
 	openshift.Endpoint = sOSDeploymentConfigs.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = sOSDeploymentConfigs.Shifter.ClusterConfig.BearerToken
-	openshift.Username = sOSDeploymentConfigs.Shifter.ClusterConfig.Username
-	openshift.Password = sOSDeploymentConfigs.Shifter.ClusterConfig.Password
 
 	deploymentconfigs, err := openshift.GetAllDeploymentConfigs("default")
 	if err != nil {
