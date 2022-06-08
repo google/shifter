@@ -34,13 +34,13 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
         />
 
         <!-- Config Maps -->
-        <!--<p class="text-md font-bold pb-2">OpenShift Config Maps</p>
+        <p class="text-md font-bold pb-2">OpenShift Config Maps</p>
 
         <ListConvertDeploymentConfigObjects
           class="pb-4"
           :namespace="namespace.metadata.name"
           :visible="isOpen"
-        />-->
+        />
 
         <!--<button
           class="rounded-full bg-indigo-600 text-white font-medium font-lg px-6 py-2 my-5 ml-9"
