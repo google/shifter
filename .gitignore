@@ -6,7 +6,6 @@
 *.swp
 .DS_Store
 **/.DS_Store
-shifter
 out/
 *.swp
 shifter_linux_*
@@ -16,4 +15,4 @@ shifter_win_*
 data**
 .vscode
 *.zip
-data**
+private.txt

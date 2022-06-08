@@ -23,13 +23,13 @@ import (
 )
 
 func (c Openshift) GetAllDeploymentConfigs(namespace string) (*v1.DeploymentConfigList, error) {
-	app, err := appsv1.NewForConfig(c.clusterClient())
+	cluster, err := appsv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.DeploymentConfigList{}, err
 	}
 
-	depCfgLst, err := app.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
+	depCfgLst, err := cluster.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
 		return &v1.DeploymentConfigList{}, err
@@ -39,13 +39,13 @@ func (c Openshift) GetAllDeploymentConfigs(namespace string) (*v1.DeploymentConf
 }
 
 func (c Openshift) GetDeploymentConfig(namespace string, name string) (*v1.DeploymentConfig, error) {
-	app, err := appsv1.NewForConfig(c.clusterClient())
+	cluster, err := appsv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.DeploymentConfig{}, err
 	}
 
-	depCfg, err := app.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	depCfg, err := cluster.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
 		return &v1.DeploymentConfig{}, err

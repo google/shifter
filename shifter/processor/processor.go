@@ -18,6 +18,8 @@ import (
 	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	osroutev1 "github.com/openshift/api/route/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	apiv1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -93,6 +95,27 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		return k
 		break
 
+	case "DaemonSet":
+		var daemonset appsv1.DaemonSet
+		var k lib.K8sobject
+		json.Unmarshal(input, &daemonset)
+		t := convertDaemonSetToDaemonSet(daemonset, flags)
+		k.Kind = kind
+		k.Object = &t
+
+		return k
+		break
+
+	case "Job":
+		var job batchv1.Job
+		var k lib.K8sobject
+		json.Unmarshal(input, &job)
+		t := convertJobToJob(job, flags)
+		k.Kind = kind
+		k.Object = &t
+
+		return k
+		break
 	}
 
 	return k

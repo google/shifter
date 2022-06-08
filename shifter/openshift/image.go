@@ -17,40 +17,39 @@ import (
 	"context"
 	"log"
 
-	v1 "github.com/openshift/api/route/v1"
-	routev1 "github.com/openshift/client-go/route/clientset/versioned"
+	v1 "github.com/openshift/api/image/v1"
+	imagev1 "github.com/openshift/client-go/image/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+func (c Openshift) GetAllImages(namespace string) (*v1.ImageList, error) {
+	cluster, err := imagev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.RouteList{}, err
+		return &v1.ImageList{}, err
 	}
 
-	routeList, err := cluster.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
+	images, err := cluster.ImageV1().Images().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.RouteList{}, err
+		return &v1.ImageList{}, err
 	}
 
-	return routeList, nil
-
+	return images, nil
 }
 
-func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+func (c Openshift) GetImage(name string, namespace string) (*v1.Image, error) {
+	cluster, err := imagev1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.Route{}, err
+		return &v1.Image{}, err
 	}
 
-	route, err := cluster.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	image, err := cluster.ImageV1().Images().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.Route{}, err
+		return &v1.Image{}, err
 	}
 
-	return route, nil
+	return image, nil
 }

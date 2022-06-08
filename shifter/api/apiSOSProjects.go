@@ -40,9 +40,6 @@ func (server *Server) SOSGetProjects(ctx *gin.Context) {
 	openshift.Username = sOSProjects.Shifter.ClusterConfig.Username
 	openshift.Password = sOSProjects.Shifter.ClusterConfig.Password
 
-	fmt.Println(sOSProjects.Shifter.ClusterConfig.Username)
-	fmt.Println(sOSProjects.Shifter.ClusterConfig.Password)
-
 	// Get List of OpenShift Projects
 	projects, err := openshift.GetAllProjects()
 	if err != nil {

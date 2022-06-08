@@ -26,7 +26,7 @@ func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 
 	// Validate DeploymentConfig Name has been Provided
 	deploymentConfigName := ctx.Param("deploymentConfigName")
-	if projectName == "" {
+	if deploymentConfigName == "" {
 		// UUID param required & not found.
 		err := errors.New("OpenShift Deployment Config Name must be supplied")
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
