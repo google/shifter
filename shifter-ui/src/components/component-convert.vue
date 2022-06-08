@@ -1,6 +1,7 @@
 <script setup>
 // Vue Component Imports
-import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
+import ListConvertNamespaceObjects from "./list-convert-namespace-objects.vue";
+//import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
 import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
 </script>
@@ -85,7 +86,8 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           </div>
         </div>
         <div class="container flex mx-auto justify-center my-4">
-          <FormTableConvertObjects />
+          <ListConvertNamespaceObjects />
+          <!--<FormTableConvertObjects />-->
         </div>
       </div>
       <!-- END STEP 2 OBJECT SELECTION -->
