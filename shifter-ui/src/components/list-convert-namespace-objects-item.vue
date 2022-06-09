@@ -15,10 +15,17 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
         @click="toggleOpen"
         class="accordion-header cursor-pointer transition flex space-x-5 items-center h-10"
       >
-        <i class="fas fa-plus"></i>
-        <h3 class="text-lg font-bold" @click="toggleOpen">
+        <h3 class="text-lg font-bold">
           {{ namespace.metadata.name }}
         </h3>
+        <button @click="toggleOpen">
+          <svg style="width: 24px; height: 24px" viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M11,6H13V14L16.5,10.5L17.92,11.92L12,17.84L6.08,11.92L7.5,10.5L11,14V6M12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20Z"
+            />
+          </svg>
+        </button>
       </div>
       <!-- Content -->
       <div class="accordion-content px-5 pt-0 overflow-hidden max-h-0">
@@ -34,13 +41,13 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
         />
 
         <!-- Config Maps -->
-        <p class="text-md font-bold pb-2">OpenShift Config Maps</p>
+        <!--<p class="text-md font-bold pb-2">OpenShift Config Maps</p>
 
         <ListConvertDeploymentConfigObjects
           class="pb-4"
           :namespace="namespace.metadata.name"
           :visible="isOpen"
-        />
+        />-->
 
         <!--<button
           class="rounded-full bg-indigo-600 text-white font-medium font-lg px-6 py-2 my-5 ml-9"
@@ -83,15 +90,15 @@ export default {
         accordionContent.style.maxHeight = `${
           accordionContent.scrollHeight + 32
         }px`;
-        header.querySelector(".fas").classList.remove("fa-plus");
-        header.querySelector(".fas").classList.add("fa-minus");
-        header.parentElement.classList.add("bg-indigo-50");
+        //header.querySelector(".fas").classList.remove("fa-plus");
+        //header.querySelector(".fas").classList.add("fa-minus");
+        //header.parentElement.classList.add("bg-indigo-50");
         this.isOpen = true;
       } else {
         accordionContent.style.maxHeight = `0px`;
-        header.querySelector(".fas").classList.add("fa-plus");
-        header.querySelector(".fas").classList.remove("fa-minus");
-        header.parentElement.classList.remove("bg-indigo-50");
+        //header.querySelector(".fas").classList.add("fa-plus");
+        //header.querySelector(".fas").classList.remove("fa-minus");
+        //header.parentElement.classList.remove("bg-indigo-50");
         this.isOpen = false;
       }
     },
