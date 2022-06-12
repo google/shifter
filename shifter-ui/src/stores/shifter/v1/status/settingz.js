@@ -7,7 +7,7 @@ import { defineStore } from "pinia";
 
 // API Endpoint Configuration
 const config = {
-  method: "post",
+  method: "get",
   url: shifterConfig.API_BASE_URL + "/status/settingz",
   headers: {},
   data: null,

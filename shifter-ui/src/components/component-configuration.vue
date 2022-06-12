@@ -2,6 +2,7 @@
 // Vue Component Imports
 import ClusterConfiguration from "../components/configutation-cluster-connections.vue";
 import ShifterServerSettingz from "../components/configuration-shifter-server-settingz.vue";
+import ModalOpenshiftDeploymentConfigJSON from "./modal-configuration-openshift-cluster-delete.vue";
 </script>
 
 <template>
@@ -33,6 +34,8 @@ import ShifterServerSettingz from "../components/configuration-shifter-server-se
         </div>
       </transition-group>
     </div>
+    <!-- Cluster Config Delete Modal -->
+    <ModalOpenshiftDeploymentConfigJSON />
   </div>
 </template>
 

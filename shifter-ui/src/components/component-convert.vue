@@ -4,7 +4,7 @@
 import OpenshiftNamespaceList from "./openshift-namespace-list.vue";
 //import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
-import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
+import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-deployment-config-json.vue";
 </script>
 <template>
   <div class="container flex mx-auto m-6 items-center">
@@ -148,7 +148,7 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
       </div>
     </div>
     <!-- Deployment Config JSON Modal -->
-    <FormTableJSONModal />
+    <ModalOpenshiftDeploymentConfigJSON />
   </div>
 </template>
 
@@ -156,7 +156,7 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
 // Pinia Store Imports
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
 import { useConvertObjects } from "../stores/convert/convert";
-import { useJSONModal } from "../stores/convert/jsonModal";
+import { useJSONModal } from "../stores/convert/modalJSON";
 // Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
 
