@@ -1,6 +1,7 @@
 <script setup>
 // Vue Component Imports
-import ListConvertNamespaceObjects from "./list-convert-namespace-objects.vue";
+//import ListConvertNamespaceObjects from "./list-convert-namespace-objects.vue";
+import OpenshiftNamespaceList from "./openshift-namespace-list.vue";
 //import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
 import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
@@ -86,7 +87,8 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           </div>
         </div>
         <div class="container flex mx-auto justify-center my-4">
-          <ListConvertNamespaceObjects />
+          <OpenshiftNamespaceList class="mx-4 w-full lg:w-1/2" />
+          <!--<ListConvertNamespaceObjects />-->
           <!--<FormTableConvertObjects />-->
         </div>
       </div>

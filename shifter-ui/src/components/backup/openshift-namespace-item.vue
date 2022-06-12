@@ -30,7 +30,7 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
       <!-- Content -->
       <div class="accordion-content px-5 pt-0 overflow-hidden max-h-0">
         <!-- Deployment Conig Maps -->
-        <p class="text-md font-bold pb-2">
+        <!--<p class="text-md font-bold pb-2">
           OpenShift Deployment Configurations
         </p>
 
@@ -38,22 +38,7 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
           class="pb-4"
           :namespace="namespace.metadata.name"
           :visible="isOpen"
-        />
-
-        <!-- Config Maps -->
-        <!--<p class="text-md font-bold pb-2">OpenShift Config Maps</p>
-
-        <ListConvertDeploymentConfigObjects
-          class="pb-4"
-          :namespace="namespace.metadata.name"
-          :visible="isOpen"
         />-->
-
-        <!--<button
-          class="rounded-full bg-indigo-600 text-white font-medium font-lg px-6 py-2 my-5 ml-9"
-        >
-          Learn more
-        </button>-->
       </div>
     </div>
   </div>
@@ -61,9 +46,9 @@ import ListConvertDeploymentConfigObjects from "./list-convert-deployment-config
 
 <script>
 // Pinia Store Imports
-import { useOSProjects } from "../stores/openshift/projects";
+//import { useOSProjects } from "../stores/openshift/projects";
 // Plugin & Package Imports
-import { mapState } from "pinia";
+/*import { mapState } from "pinia";
 
 export default {
   props: {
@@ -111,7 +96,5 @@ export default {
       return this.getByUid(this.uid);
     },
   },
-};
+};*/
 </script>
-
-getByUid
