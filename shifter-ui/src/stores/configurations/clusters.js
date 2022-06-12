@@ -7,6 +7,19 @@ export const useConfigurationsClusters = defineStore(
   {
     state: () => {
       return {
+        cluster: {
+          id: null,
+          enabled: true,
+          shifter: {
+            clusterConfig: {
+              connectionName: "",
+              username: "",
+              password: "",
+              baseUrl: "",
+              bearerToken: "",
+            },
+          },
+        },
         clusters: [
           {
             id: 0,
@@ -81,7 +94,24 @@ export const useConfigurationsClusters = defineStore(
           state.clusters.find((cluster) => cluster.id === clusterId);
       },
     },
-
-    actions: {},
+    actions: {
+      async deleteCluster(clusterId) {
+        if (this.clusters.length >= 1) {
+          var idx = this.clusters.findIndex((object) => {
+            if (clusterId !== undefined) {
+              return object.id === clusterId;
+            }
+          });
+          if (idx >= 0) {
+            this.clusters.splice(idx, 1);
+          }
+        }
+      },
+      async addCluster(cluster) {
+        // Set Next Available ID
+        cluster.id = this.clusters[this.clusters.length - 1].id + 1;
+        this.clusters.append(cluster);
+      },
+    },
   }
 );
