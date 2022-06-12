@@ -2,7 +2,7 @@
 // Vue Component Imports
 import Title from "../components/form-title.vue";
 import TitleSection from "../components/form-title-section.vue";
-import FormClusterManagement from "../components/form-cluster-management.vue";
+import ConfigurationOpenshiftClusterList from "../components/configuration-openshift-cluster-list.vue";
 </script>
 
 <template>
@@ -17,6 +17,6 @@ import FormClusterManagement from "../components/form-cluster-management.vue";
       <template #title>Cluster Connections</template>
       <template #subtitle>Create, Edit or Delete Cluster Connections</template>
     </TitleSection>
-    <FormClusterManagement class="bg-dummy-green" />
+    <ConfigurationOpenshiftClusterList />
   </div>
 </template>
