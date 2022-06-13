@@ -5,7 +5,7 @@
  ___/ / / / / / __/ /_/  __/ /\
 /____/_/ /_/_/_/  \__/\___/_/\
 \
-](/docs/logo-shifter.svg "Shifter Logo")
+](/docs/logo-shifter.png "Shifter Logo")
 
 # Openshift to Kubernetes converter
 
