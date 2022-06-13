@@ -117,6 +117,7 @@
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.connectionName"
+              v-model.trim.lazy="shifter.clusterConfig.connectionName"
             />
           </div>
         </div>
@@ -128,6 +129,7 @@
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.baseUrl"
+              v-model.trim.lazy="shifter.clusterConfig.baseUrl"
             />
           </div>
         </div>
@@ -139,6 +141,7 @@
               id="exampleFormControlTextarea1"
               rows="3"
               :placeholder="clusterconfig.shifter.clusterConfig.bearerToken"
+              v-model.trim.lazy="shifter.clusterConfig.bearerToken"
             ></textarea>
           </div>
         </div>
@@ -163,9 +166,14 @@
 </template>
 
 <script>
+// Notifications Imports
+import {
+  shifterConfigurationUpdateSuccess,
+  shifterConfigurationUpdateError,
+} from "@/notifications";
 // Pinia Store Imports
 import { useModalClusterDelete } from "../stores/configurations/modalClusterDelete";
-//import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import { useConfigurationsClusters } from "../stores/configurations/clusters";
 // Plugin & Package Imports
 import { mapActions } from "pinia";
 export default {
@@ -179,21 +187,41 @@ export default {
     return {
       visibleEditConfig: false,
       visibleConfig: false,
+      shifter: {
+        id: null,
+        enabled: true,
+        clusterConfig: {
+          connectionName: null,
+          baseUrl: null,
+          bearerToken: null,
+        },
+      },
     };
   },
 
   methods: {
+    ...mapActions(useConfigurationsClusters, { addCluster: "addCluster" }),
     ...mapActions(useModalClusterDelete, { openModal: "openModal" }),
-    deleteConfig(clusterConfig) {
-      this.openModal(clusterConfig);
+    deleteConfig(clusterconfig) {
+      this.openModal(clusterconfig);
     },
-
+    loadFormData() {
+      this.shifter.id = this.clusterconfig.id;
+      this.shifter.enabled = this.clusterconfig.enabled;
+      this.shifter.clusterConfig.connectionName =
+        this.clusterconfig.shifter.clusterConfig.connectionName;
+      this.shifter.clusterConfig.baseUrl =
+        this.clusterconfig.shifter.clusterConfig.baseUrl;
+      this.shifter.clusterConfig.bearerToken =
+        this.clusterconfig.shifter.clusterConfig.bearerToken;
+    },
     toggleEditConfig() {
       if (this.visibleEditConfig === true) {
         // If Visible Hide
         this.visibleEditConfig = false;
         return;
       }
+      this.loadFormData();
       this.visibleConfig = false; // Can't show both at the same time
       // Make Visible
       this.visibleEditConfig = true;
@@ -213,7 +241,19 @@ export default {
       this.toggleEditConfig();
     },
     commitEdit() {
-      alert(this.clusterconfig);
+      this.addCluster(this.shifter)
+        .then(() => {
+          shifterConfigurationUpdateSuccess(
+            "Openshift Cluster Configuration Updated"
+          );
+          this.cancelEdit();
+        })
+        .catch(() => {
+          shifterConfigurationUpdateError(
+            "Unable to Update or Create Openshift Cluster Configuration"
+          );
+          this.cancelEdit();
+        });
     },
   },
   computed: {},
