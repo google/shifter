@@ -8,7 +8,7 @@ export const useConfigurationsClusters = defineStore(
   {
     state: () => {
       return {
-        clusters: useStorage("clusters", []),
+        clusters: useStorage("shifter-config-clusters", []),
         /*clusters: [
           {
             id: 0,
