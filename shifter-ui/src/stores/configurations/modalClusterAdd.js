@@ -1,6 +1,5 @@
 // Pinia Store Imports
 import { defineStore } from "pinia";
-
 // Pinia Store Definition
 export const useModalClusterAdd = defineStore(
   "shifter-config-clusters-add-modal",

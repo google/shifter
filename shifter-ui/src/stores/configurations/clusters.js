@@ -1,13 +1,14 @@
+// @vueuse/core Imports
+import { useStorage } from "@vueuse/core";
 // Pinia Store Imports
 import { defineStore } from "pinia";
-
 // Pinia Store Definition
 export const useConfigurationsClusters = defineStore(
   "shifter-config-clusters",
   {
     state: () => {
       return {
-        clusters: [],
+        clusters: useStorage("clusters", []),
         /*clusters: [
           {
             id: 0,
