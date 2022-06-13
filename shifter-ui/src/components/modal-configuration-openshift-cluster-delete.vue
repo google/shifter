@@ -54,7 +54,7 @@ export default {
     }),
     ...mapActions(useModalClusterDelete, { closeModal: "closeModal" }),
     deleteClusterConfig() {
-      this.deleteCluster(0)
+      this.deleteCluster(this.getClusterId)
         .then(() => {
           shifterConfigurationUpdateSuccess(
             "Openshift Cluster Configuration Deleted"

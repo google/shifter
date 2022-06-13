@@ -99,11 +99,18 @@ export const useConfigurationsClusters = defineStore(
         if (this.clusters.length >= 1) {
           var idx = this.clusters.findIndex((object) => {
             if (clusterId !== undefined) {
+              console.log(object.id + " - " + clusterId);
               return object.id === clusterId;
             }
           });
           if (idx >= 0) {
+            alert(
+              "Deleting Item at Idx: " + idx + " and with ID: " + clusterId
+            );
             this.clusters.splice(idx, 1);
+            return;
+          } else {
+            throw TypeError("Failed to remove Cluster Configuration");
           }
         }
       },
