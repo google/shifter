@@ -1,6 +1,5 @@
 // Pinia Store Imports
 import { defineStore } from "pinia";
-
 // Pinia Store Definition
 export const useModalClusterDelete = defineStore(
   "shifter-config-clusters-delete-modal",
