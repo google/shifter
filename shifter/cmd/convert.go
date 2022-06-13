@@ -34,29 +34,32 @@ var convertCmd = &cobra.Command{
 	Short: "Convert Openshift Resources to Kubernetes native formats",
 	Long: `
 
-   _____ __    _ ______           
+   _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
- ___/ / / / / / __/ /_/  __/ /    
-/____/_/ /_/_/_/  \__/\___/_/     
-                                  
+ ___/ / / / / / __/ /_/  __/ /
+/____/_/ /_/_/_/  \__/\___/_/
+
 
 Convert OpenShift resources to kubernetes native formats
 
-Usage: shifter convert -i ./input.yaml -o ./output_dir -k kind -t kind
-Supply the input file or directory of files with the -i or --input-format flag
-Supply the output using the -o or --output-path flag, the directory will be created with the contents of the helm chart.
+Usage: shifter convert -k <KIND> -t <KIND> ./input.yaml ./output_dir
+Supply the input file or directory of files and the output, the directory will be created with the contents of the helm chart.
 `,
+	Args: cobra.MinimumNArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
-   _____ __    _ ______           
+   _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
- ___/ / / / / / __/ /_/  __/ /    
-/____/_/ /_/_/_/  \__/\___/_/     
-                                 
+ ___/ / / / / / __/ /_/  __/ /
+/____/_/ /_/_/_/  \__/\___/_/
+
 ----------------------------------------
 			`)
+
+		sourcePath = args[0]
+		outputPath = args[1]
 		log.Println("Converting", inputType, sourcePath, "to", generator, outputPath)
 		flags := ProcFlags(pFlags)
 		con := ops.NewConverter(inputType, sourcePath, generator, outputPath, flags)
@@ -69,11 +72,11 @@ func init() {
 	rootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().StringVarP(&inputType, "input-format", "i", "yaml", "Input format. One of: yaml|template")
 	convertCmd.Flags().StringVarP(&generator, "output-format", "t", "", "Output format. One of: yaml|helm")
-	convertCmd.Flags().StringVarP(&sourcePath, "source-path", "f", "", "Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) to convert (contents must be in OpenShift format)")
-	convertCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
+	//convertCmd.Flags().StringVarP(&sourcePath, "source-path", "f", "", "Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) to convert (contents must be in OpenShift format)")
+	//convertCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
 	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "", []string{}, "Flags passed to the processor")
-	convertCmd.MarkFlagRequired("source-path")
-	convertCmd.MarkFlagRequired("output-path")
+	//convertCmd.MarkFlagRequired("source-path")
+	//convertCmd.MarkFlagRequired("output-path")
 	//convertCmd.Flags().StringVarP(&filename, "filename", "f", "", "Path to the file or directory to convert (contents must be in OpenShift format)")
 	//convertCmd.Flags().StringVarP(&output, "output-path", "o", "", "Relative path to the output directory for the results on the conversion")
 	//convertCmd.MarkFlagRequired("filename")
