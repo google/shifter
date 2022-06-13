@@ -1,0 +1,87 @@
+<script setup>
+// Vue Component Imports
+</script>
+<template>
+  <div class="container">
+    <div class="flex flex-row items-center my-1">
+      <!-- Title -->
+      <div class="container flex">
+        <p class="text-sm italic mx-6">
+          {{ deploymentconfig.metadata.name }}
+        </p>
+      </div>
+      <!-- Actions -->
+      <div class="container flex flex-row-reverse gap-3 mx-6">
+        <div class="flex">
+          <svg
+            style="width: 24px; height: 24px"
+            viewBox="0 0 24 24"
+            @click="openModal(deploymentconfig)"
+          >
+            <path
+              fill="currentColor"
+              d="M12 4.5C7 4.5 2.7 7.6 1 12C2.7 16.4 7 19.5 12 19.5H13.1C13 19.2 13 18.9 13 18.5C13 17.9 13.1 17.4 13.2 16.8C12.8 16.9 12.4 17 12 17C9.2 17 7 14.8 7 12S9.2 7 12 7 17 9.2 17 12C17 12.3 17 12.6 16.9 12.9C17.6 12.7 18.3 12.5 19 12.5C20.2 12.5 21.3 12.8 22.3 13.5C22.6 13 22.8 12.5 23 12C21.3 7.6 17 4.5 12 4.5M12 9C10.3 9 9 10.3 9 12S10.3 15 12 15 15 13.7 15 12 13.7 9 12 9M19 21V19H15V17H19V15L22 18L19 21"
+            />
+          </svg>
+        </div>
+        <div class="flex">
+          <!-- Material Design - SVG - check-circle -->
+          <svg
+            style="width: 24px; height: 24px"
+            viewBox="0 0 24 24"
+            v-if="isSelected(deploymentconfig)"
+            @click="deploymentConfigRemove(deploymentconfig)"
+          >
+            <path
+              fill="currentColor"
+              d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"
+            />
+          </svg>
+          <!-- Material Design - SVG - check-circle-outline -->
+          <svg
+            style="width: 24px; height: 24px"
+            viewBox="0 0 24 24"
+            v-else
+            @click="deploymentConfigAdd(deploymentconfig)"
+          >
+            <path
+              fill="currentColor"
+              d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container bg-shifter-black-soft"></div>
+</template>
+
+<script>
+// Pinia Store Imports
+import { useJSONModal } from "../stores/convert/jsonModal";
+import { useConvertObjects } from "../stores/convert/convert";
+// Plugin & Package Imports
+import { mapActions, mapState } from "pinia";
+export default {
+  props: {
+    deploymentconfig: {
+      type: Object,
+      required: true,
+    },
+  },
+  data() {
+    return {};
+  },
+
+  methods: {
+    ...mapActions(useConvertObjects, { deploymentConfigRemove: "remove" }),
+    ...mapActions(useConvertObjects, { deploymentConfigAdd: "add" }),
+    ...mapActions(useJSONModal, { openModal: "openModal" }),
+  },
+  computed: {
+    ...mapState(useConvertObjects, {
+      isSelected: "isSelected",
+    }),
+  },
+};
+</script>
