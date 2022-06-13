@@ -63,11 +63,18 @@ If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
 ### Flags
 
 ```
-shifter convert
-    -f --source-path Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written
+shifter convert <flags> <input file or path> <output file or path>
+  
+Flags:
+
     -i --input-format Input format. One of yaml|template (Default: yaml)
-    -o --output-path Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
     -t --output-format Output format (generator to use) One of: yaml|helm
+
+  
+Input/Output:
+
+    Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written
+    Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
 ```
 
 #### Processor flags
@@ -91,11 +98,11 @@ You can chain multiple flags together example:
 
 - Running with Local Storage
 
-  `./shifter convert --input-format yaml --source-path ./input.yaml --output-path ./output --output-format yaml `
+  `./shifter convert --input-format yaml --output-format yaml ./input.yaml ./output --output-format yaml `
 
 - Running with GCP Bucket
 
-  `./shifter convert --input-format yaml --source-path gs://bucket/path --output-path gs://bucket/path --output-format yaml `
+  `./shifter convert --input-format yaml --output-format yaml gs://bucket/path gs://bucket/path`
 
 ### Template converter
 
