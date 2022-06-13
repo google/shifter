@@ -7,20 +7,8 @@ export const useConfigurationsClusters = defineStore(
   {
     state: () => {
       return {
-        cluster: {
-          id: null,
-          enabled: true,
-          shifter: {
-            clusterConfig: {
-              connectionName: "",
-              username: "",
-              password: "",
-              baseUrl: "",
-              bearerToken: "",
-            },
-          },
-        },
-        clusters: [
+        clusters: [],
+        /*clusters: [
           {
             id: 0,
             enabled: true,
@@ -77,17 +65,31 @@ export const useConfigurationsClusters = defineStore(
               },
             },
           },
-        ],
+        ],*/
         fetching: false,
       };
     },
 
     getters: {
+      getNextId(state) {
+        if (state.clusters.length >= 1) {
+          return this.clusters[this.clusters.length - 1].id + 1;
+        }
+        return 0;
+      },
       getActiveClusters(state) {
         return state.clusters.filter((cluster) => cluster.enabled);
       },
       getAllClusters(state) {
-        return state.clusters;
+        return state.clusters.sort((a, b) =>
+          a.shifter.clusterConfig.connectionName >
+          b.shifter.clusterConfig.connectionName
+            ? 1
+            : b.shifter.clusterConfig.connectionName >
+              a.shifter.clusterConfig.connectionName
+            ? -1
+            : 0
+        );
       },
       getCluster(state) {
         return (clusterId) =>
@@ -99,14 +101,10 @@ export const useConfigurationsClusters = defineStore(
         if (this.clusters.length >= 1) {
           var idx = this.clusters.findIndex((object) => {
             if (clusterId !== undefined) {
-              console.log(object.id + " - " + clusterId);
               return object.id === clusterId;
             }
           });
           if (idx >= 0) {
-            alert(
-              "Deleting Item at Idx: " + idx + " and with ID: " + clusterId
-            );
             this.clusters.splice(idx, 1);
             return;
           } else {
@@ -115,9 +113,23 @@ export const useConfigurationsClusters = defineStore(
         }
       },
       async addCluster(cluster) {
-        // Set Next Available ID
-        cluster.id = this.clusters[this.clusters.length - 1].id + 1;
-        this.clusters.append(cluster);
+        this.clusters.push({
+          id: this.getNextId,
+          enabled: cluster.enabled,
+          shifter: {
+            clusterConfig: {
+              connectionName: cluster.clusterConfig.connectionName,
+              username: "",
+              password: "",
+              baseUrl: cluster.clusterConfig.baseUrl,
+              bearerToken: cluster.clusterConfig.bearerToken,
+            },
+          },
+        });
+        // if Cluster ID already Exists then Clean up
+        if (cluster.id !== null) {
+          this.deleteCluster(cluster.id);
+        }
       },
     },
   }

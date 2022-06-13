@@ -7,9 +7,7 @@ import OpenshiftDeploymentConfigListItem from "./openshift-deploymentconfig-list
     <div class="flex flex-row items-center my-2">
       <!-- Title -->
       <div class="container flex">
-        <p class="text-baseline font-bold mx-6">
-          Deployment Configs ({{ itemCount }})
-        </p>
+        <p class="font-bold mx-6">Deployment Configs ({{ itemCount }})</p>
       </div>
       <!-- Actions -->
       <div class="container flex flex-row-reverse gap-3 mx-6">
