@@ -4,7 +4,7 @@
 import OpenshiftNamespaceList from "./openshift-namespace-list.vue";
 //import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
-import FormTableJSONModal from "../components/form-table-convert-json-modal.vue";
+import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-deployment-config-json.vue";
 </script>
 <template>
   <div class="container flex mx-auto m-6 items-center">
@@ -69,6 +69,19 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
               {{ cluster.shifter.clusterConfig.connectionName }}
             </option>
           </select>
+          <div class="flex">
+            <!-- Material Design - SVG - refresh-circle -->
+            <svg
+              style="width: 24px; height: 24px"
+              viewBox="0 0 24 24"
+              @click="changeCluster()"
+            >
+              <path
+                fill="currentColor"
+                d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2M18 11H13L14.81 9.19A3.94 3.94 0 0 0 12 8A4 4 0 1 0 15.86 13H17.91A6 6 0 1 1 12 6A5.91 5.91 0 0 1 16.22 7.78L18 6Z"
+              />
+            </svg>
+          </div>
         </div>
       </div>
       <!-- END STEP 1 CLUSTER SELECTION -->
@@ -140,7 +153,7 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
           >Previous</a
         >
         <a
-          v-show="currentStep < maxSteps"
+          v-show="stepValid"
           class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
           :onclick="nextStep"
           >Next</a
@@ -148,15 +161,16 @@ import FormTableJSONModal from "../components/form-table-convert-json-modal.vue"
       </div>
     </div>
     <!-- Deployment Config JSON Modal -->
-    <FormTableJSONModal />
+    <ModalOpenshiftDeploymentConfigJSON />
   </div>
 </template>
 
 <script>
 // Pinia Store Imports
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import { useOSProjects } from "../stores/openshift/projects";
 import { useConvertObjects } from "../stores/convert/convert";
-import { useJSONModal } from "../stores/convert/jsonModal";
+import { useJSONModal } from "../stores/convert/modalJSON";
 // Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
 
@@ -201,16 +215,33 @@ export default {
     ...mapState(useConfigurationsClusters, {
       getSelectedCluster: "getCluster",
     }),
+    ...mapState(useOSProjects, { all: "all" }),
     ...mapState(useJSONModal, {
       showJSONModal: "showJSONModal",
     }),
-    ...mapState(useConvertObjects, { dcSelected: "selected" }),
+    //...mapState(useConvertObjects, { dcSelected: "selected" }),
 
     activeSteps() {
       return this.convertSteps.filter((step) => step.enabled);
     },
     maxSteps() {
       return this.convertSteps.filter((step) => step.enabled).length;
+    },
+    stepValid() {
+      if (this.currentStep < this.maxSteps) {
+        if (this.currentStep === 1) {
+          // Check for Clusters
+          if (this.configurationClusters.length <= 0) {
+            return false;
+          }
+          // Check for Namespace Objects
+          console.log(this.all);
+          if (this.all.length <= 0) {
+            return false;
+          }
+        }
+      }
+      return true;
     },
   },
 

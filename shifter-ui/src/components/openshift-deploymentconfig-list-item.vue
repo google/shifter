@@ -12,7 +12,9 @@
       </div>
       <!-- Actions -->
       <div class="container flex flex-row-reverse gap-3 mx-6">
+        <!-- Action: Show Deployment Config -->
         <div class="flex">
+          <!-- Material Design - SVG - check-circle -->
           <svg
             style="width: 24px; height: 24px"
             viewBox="0 0 24 24"
@@ -24,6 +26,8 @@
             />
           </svg>
         </div>
+        <!-- End Action -->
+        <!-- Action: Select/Unselect Deployment Config -->
         <div class="flex">
           <!-- Material Design - SVG - check-circle -->
           <svg
@@ -50,6 +54,7 @@
             />
           </svg>
         </div>
+        <!-- End Action -->
       </div>
     </div>
   </div>
@@ -58,7 +63,7 @@
 
 <script>
 // Pinia Store Imports
-import { useJSONModal } from "../stores/convert/jsonModal";
+import { useJSONModal } from "../stores/convert/modalJSON";
 import { useConvertObjects } from "../stores/convert/convert";
 // Plugin & Package Imports
 import { mapActions, mapState } from "pinia";

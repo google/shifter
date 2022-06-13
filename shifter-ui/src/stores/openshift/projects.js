@@ -62,17 +62,17 @@ export const useOSProjects = defineStore("shifter-api-v1-openshift-projects", {
             notifyAxiosError(
               err,
               "Problem Loading OpenShift Projects & Namespaces",
-              6000
+              4000
             );
             storeConfigLoading.endLoading();
-            return err;
+            return [];
           });
       } catch (err) {
         this.osProjects = [];
         notifyAxiosError(
           err,
           "Problem Loading OpenShift Projects & Namespaces",
-          6000
+          4000
         );
         return err;
       }

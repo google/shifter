@@ -4,7 +4,7 @@ import OpenshiftDeploymentConfigList from "./openshift-deploymentconfig-list.vue
 </script>
 <template>
   <div
-    class="container mb-6 border rounded-t-xl rounded-b-md bg-shifter-black-soft overflow-hidden"
+    class="container mb-6 border rounded-xl bg-shifter-black-soft overflow-hidden"
   >
     <div class="flex flex-row items-center my-4">
       <!-- Title -->

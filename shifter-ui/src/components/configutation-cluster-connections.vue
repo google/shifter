@@ -18,5 +18,28 @@ import ConfigurationOpenshiftClusterList from "../components/configuration-opens
       <template #subtitle>Create, Edit or Delete Cluster Connections</template>
     </TitleSection>
     <ConfigurationOpenshiftClusterList />
+    <a
+      @click="openModal"
+      class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft px-2 py-2 text-center font-bold text-sm"
+      >Add New Cluster</a
+    >
   </div>
 </template>
+
+<script>
+// Pinia Store Imports
+import { useModalClusterAdd } from "../stores/configurations/modalClusterAdd";
+// Plugin & Package Imports
+import { mapActions } from "pinia";
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    ...mapActions(useModalClusterAdd, { openModal: "openModal" }),
+    AddConfig() {
+      this.openModal();
+    },
+  },
+};
+</script>

@@ -9,12 +9,11 @@ import { defineStore } from "pinia";
 // External Pinia Store Imports
 import { useConfigurationsClusters } from "../configurations/clusters";
 import { useConfigurationsLoading } from "../configurations/loading";
-//import { useOSDeploymentConfigs } from "../openshift/deployment-configs";
 import { useOSProjects } from "../openshift/projects";
 // Instansitate Pinia Store Objects
 const storeConfigClusters = useConfigurationsClusters();
 const storeConfigLoading = useConfigurationsLoading();
-//const storeOSDeploymentConfigs = useOSDeploymentConfigs();
+
 const storeOSProjects = useOSProjects();
 
 // Pinia Store Definition
@@ -54,17 +53,17 @@ export const useConvertObjects = defineStore("shifter-api-v1-convert-objects", {
 
   actions: {
     async setCluster(clusterId) {
-      if (this.cluster.id !== clusterId || this.cluster.id === undefined) {
-        // TODO <<-- Subscribe to this action in project refresh
-        // Refresh OpenShift Projects
-        storeOSProjects.fetch(clusterId);
-        // When the Cluster is Changed. Reset the State and Update Cluster
-        this.$reset();
-        // Set Cluster from Cluster ID
-        this.cluster = {
-          ...storeConfigClusters.getCluster(clusterId),
-        };
-      }
+      //if (this.cluster.id === undefined) {
+      // TODO <<-- Subscribe to this action in project refresh
+      // Refresh OpenShift Projects
+      storeOSProjects.fetch(clusterId);
+      // When the Cluster is Changed. Reset the State and Update Cluster
+      this.$reset();
+      // Set Cluster from Cluster ID
+      this.cluster = {
+        ...storeConfigClusters.getCluster(clusterId),
+      };
+      //}
     },
     async add(deploymentconfig) {
       try {

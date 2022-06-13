@@ -31,7 +31,7 @@
 
 <script>
 // Pinia Store Imports
-import { useJSONModal } from "../stores/convert/jsonModal";
+import { useJSONModal } from "../stores/convert/modalJSON";
 // Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
 
