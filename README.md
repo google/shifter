@@ -1,3 +1,6 @@
+# Shifter
+
+
 ![\
    _____ __    _ ______\
   / ___// /_  (_) __/ /____  _____\
@@ -6,7 +9,7 @@
 /____/_/ /_/_/_/  \__/\___/_/\
 \
 ](/docs/logo-shifter.png "Shifter Logo") 
-Shifter
+
 
 # Openshift to Kubernetes converter
 
