@@ -10,6 +10,7 @@ import OpenshiftNamespaceListItem from "./openshift-namespace-list-item.vue";
     </div>
     <div class="flex flex-col">
       <OpenshiftNamespaceListItem
+        :v-if="itemCount > 0"
         v-for="namespace in all"
         :key="namespace.metadata.uid"
         :uid="namespace.metadata.uid"
