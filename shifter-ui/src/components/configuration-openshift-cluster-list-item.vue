@@ -65,11 +65,11 @@
     >
       <div class="flex flex-col overflow-hidden">
         <div class="flex flex-row my-2">
-          <div class="w-2/6">Cluster Connection Name</div>
+          <div class="w-2/6 font-bold">Cluster Connection Name</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.connectionName"
               disabled
@@ -77,11 +77,11 @@
           </div>
         </div>
         <div class="flex flex-row my-2">
-          <div class="w-2/6">Base URL</div>
+          <div class="w-2/6 font-bold">Base URL</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.baseUrl"
               disabled
@@ -89,10 +89,10 @@
           </div>
         </div>
         <div class="flex flex-row my-2 grow-0">
-          <div class="w-2/6">Openshift User Bearer Token</div>
+          <div class="w-2/6 font-bold">Openshift User Bearer Token</div>
           <div class="w-3/6 overflow-x-auto">
             <textarea
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlTextarea1"
               rows="3"
               :placeholder="clusterconfig.shifter.clusterConfig.bearerToken"
@@ -110,7 +110,7 @@
     >
       <div class="flex flex-col overflow-hidden">
         <div class="flex flex-row my-2">
-          <div class="w-2/6">Cluster Connection Name</div>
+          <div class="w-2/6 font-bold">Cluster Connection Name</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
@@ -121,7 +121,7 @@
           </div>
         </div>
         <div class="flex flex-row my-2">
-          <div class="w-2/6">Base URL</div>
+          <div class="w-2/6 font-bold">Base URL</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
@@ -132,7 +132,7 @@
           </div>
         </div>
         <div class="flex flex-row my-2 grow-0">
-          <div class="w-2/6">Openshift User Bearer Token</div>
+          <div class="w-2/6 font-bold">Openshift User Bearer Token</div>
           <div class="w-3/6 overflow-x-auto">
             <textarea
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -147,10 +147,12 @@
         <div class="container flex mx-auto justify-end px-10 gap-4">
           <a
             class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+            @click="commitEdit"
             >Save</a
           >
           <a
             class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+            @click="cancelEdit"
             >Cancel</a
           >
         </div>
@@ -205,6 +207,13 @@ export default {
       this.visibleEditConfig = false; // Can't show both at the same time
       // Make Visible
       this.visibleConfig = true;
+    },
+
+    cancelEdit() {
+      this.toggleEditConfig();
+    },
+    commitEdit() {
+      alert(this.clusterconfig);
     },
   },
   computed: {},
