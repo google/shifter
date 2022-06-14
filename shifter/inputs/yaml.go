@@ -16,6 +16,8 @@ package input
 import (
 	"bytes"
 	"fmt"
+	gyaml "github.com/ghodss/yaml"
+	yaml "gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
 	"log"
@@ -23,9 +25,6 @@ import (
 	"shifter/lib"
 	"shifter/processor"
 	"strings"
-
-	gyaml "github.com/ghodss/yaml"
-	yaml "gopkg.in/yaml.v3"
 )
 
 type Spec struct {

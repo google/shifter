@@ -26,7 +26,7 @@ func (generator *Generator) Yaml(name string, objects []lib.K8sobject) []lib.Con
 	var converted []lib.Converted
 
 	for _, v := range objects {
-		kind := fmt.Sprintf("%v", v.Kind)
+		//kind := fmt.Sprintf("%v", v.Kind)
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 
@@ -38,7 +38,7 @@ func (generator *Generator) Yaml(name string, objects []lib.K8sobject) []lib.Con
 		writer.Flush()
 
 		var result lib.Converted
-		result.Name = kind
+		result.Name = name
 		result.Path = "/"
 		result.Payload = *buff
 

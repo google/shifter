@@ -14,42 +14,88 @@ limitations under the license.
 package processor
 
 import (
+	//"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	"golang.org/x/exp/maps"
-	v1beta1 "k8s.io/api/extensions/v1beta1"
+	io "istio.io/api/networking/v1beta1"
+	v1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
+	v1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
+	//"k8s.io/apimachinery/pkg/util/intstr"
+	//networkingv1beta1 "istio.io/api/networking/v1beta1"
 	"log"
 )
 
-func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1beta1.Ingress {
+func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string]string) v1beta1.VirtualService {
+	flagIstioGateway := flags["istio-gateway"]
+
+	vs := &v1beta1.VirtualService{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "networking.istio.io/v1alpha3",
+			Kind:       "VirtualService",
+		},
+		ObjectMeta: OSRoute.ObjectMeta,
+		Spec:       io.VirtualService{},
+	}
+
+	var (
+		vsSpec            io.VirtualService
+		vsHTTPRoute       io.HTTPRoute
+		vsHTTPMatchReq    io.HTTPMatchRequest
+		vsHTTPRouteDest   io.HTTPRouteDestination
+		vsDestination     io.Destination
+		vsDestStringMatch io.StringMatch
+		vsURIMatch        io.StringMatch_Prefix
+	)
+
+	vsSpec.Hosts = append(vsSpec.Hosts, OSRoute.Spec.Host)
+	vsSpec.Gateways = append(vsSpec.Gateways, flagIstioGateway)
+	// build the route
+	vsHTTPRoute.Name = OSRoute.ObjectMeta.Name
+
+	vsURIMatch.Prefix = "/"
+	vsDestStringMatch.MatchType = &vsURIMatch
+	vsHTTPMatchReq.Uri = &vsDestStringMatch
+
+	vsDestination.Host = OSRoute.Spec.To.Name
+	vsHTTPRouteDest.Destination = &vsDestination
+
+	vsHTTPRoute.Match = append(vsHTTPRoute.Match, &vsHTTPMatchReq)
+	vsHTTPRoute.Route = append(vsHTTPRoute.Route, &vsHTTPRouteDest)
+	vsSpec.Http = append(vsSpec.Http, &vsHTTPRoute)
+
+	vs.Spec = vsSpec
+
+	return *vs
+}
+
+func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1.Ingress {
 
 	flagIngressFacing := flags["ingress-facing"]
 
-	ingress := &v1beta1.Ingress{
+	ingress := &v1.Ingress{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "networking.k8s.io/v1beta1",
+			APIVersion: "networking.k8s.io/v1",
 			Kind:       "Ingress",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
-		Spec:       v1beta1.IngressSpec{},
+		Spec:       v1.IngressSpec{},
 	}
 
 	/*
 		Openshift routes can take different forms which need to be handled by different types of
 		ingress resources.
 	*/
-
 	var (
-		ingressSpec          v1beta1.IngressSpec
-		ingressRule          v1beta1.IngressRule
-		ingressRuleValue     v1beta1.IngressRuleValue
-		httpIngressRuleValue v1beta1.HTTPIngressRuleValue
-		ingressPath          v1beta1.HTTPIngressPath
+		ingressSpec           v1.IngressSpec
+		ingressRule           v1.IngressRule
+		ingressRuleValue      v1.IngressRuleValue
+		httpIngressRuleValue  v1.HTTPIngressRuleValue
+		ingressPath           v1.HTTPIngressPath
+		ingressServiceBackend v1.IngressServiceBackend
 	)
 
 	//Logic to convert a route to ingress
-
 	// Check if there is a host specified
 	if OSRoute.Spec.Host != "" {
 		ingressRule.Host = OSRoute.Spec.Host
@@ -61,16 +107,29 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1b
 	} else {
 		ingressPath.Path = "/"
 	}
+	//set the path type
+	var pathType v1.PathType
+	pathType = "ImplementationSpecific"
+	ingressPath.PathType = &pathType
 
-	ingressPath.Backend.ServicePort = intstr.FromString(OSRoute.Spec.To.Name)
-	ingressPath.Backend.ServiceName = OSRoute.Spec.To.Name
+	//Check if a port name has been provided otherwise use the default
+	if OSRoute.Spec.Port.TargetPort.IntValue() == 0 && OSRoute.Spec.Port.TargetPort.String() != "" {
+		ingressServiceBackend.Port.Name = OSRoute.Spec.Port.TargetPort.String()
+	} else if OSRoute.Spec.Port.TargetPort.IntValue() != 0 {
+		ingressServiceBackend.Port.Number = int32(OSRoute.Spec.Port.TargetPort.IntValue())
+	}
+	ingressServiceBackend.Name = OSRoute.Spec.To.Name
 
+	// build up the ingress spec
+	//Add the backend service
+	ingressPath.Backend.Service = &ingressServiceBackend
 	httpIngressRuleValue.Paths = append(httpIngressRuleValue.Paths, ingressPath)
 	ingressRuleValue.HTTP = &httpIngressRuleValue
 	ingressRule.IngressRuleValue = ingressRuleValue
 	ingressSpec.Rules = append(ingressSpec.Rules, ingressRule)
 	ingress.Spec = ingressSpec
 
+	// Process the flags
 	if flagIngressFacing == "internal" {
 		log.Println("Modifying ingress to internal loadbalancer")
 		annotation := make(map[string]string)
