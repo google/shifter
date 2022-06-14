@@ -18,6 +18,7 @@ import (
 	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	osroutev1 "github.com/openshift/api/route/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -45,17 +46,40 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		return k
 		break
 
-	case "Route":
-		var route osroutev1.Route
-		json.Unmarshal(input, &route)
-		t := convertRouteToIngress(route, flags)
+	case "Deployment":
+		var d appsv1.Deployment
+		json.Unmarshal(input, &d)
+		t := convertDeploymentToDeployment(d, flags)
 		var k lib.K8sobject
 
-		k.Kind = "Ingress"
+		k.Kind = "Deployment"
 		k.Object = &t
 
 		return k
 		break
+
+	case "Route":
+		var route osroutev1.Route
+		json.Unmarshal(input, &route)
+		if flags["istio-gateway"] != "" {
+			t := convertRouteToIstioVirtualService(route, flags)
+			var k lib.K8sobject
+
+			k.Kind = "Ingress"
+			k.Object = &t
+
+			return k
+			break
+		} else {
+			t := convertRouteToIngress(route, flags)
+			var k lib.K8sobject
+
+			k.Kind = "Ingress"
+			k.Object = &t
+
+			return k
+			break
+		}
 
 	case "Service":
 		var service apiv1.Service
@@ -85,6 +109,18 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 		var cfgMap apiv1.ConfigMap
 		json.Unmarshal(input, &cfgMap)
 		t := convertConfigMapToConfigMap(cfgMap, flags)
+		var k lib.K8sobject
+
+		k.Kind = kind
+		k.Object = &t
+
+		return k
+		break
+
+	case "ServiceAccount":
+		var sa apiv1.ServiceAccount
+		json.Unmarshal(input, &sa)
+		t := convertServiceAccountToServiceAccount(sa, flags)
 		var k lib.K8sobject
 
 		k.Kind = kind

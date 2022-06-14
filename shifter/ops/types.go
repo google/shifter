@@ -35,16 +35,11 @@ type Converter struct {
 }
 
 type FileObject struct {
-	UUID        string // Unique ID of the Run
-	StorageType string // GCS or LCL Storage
-	SourcePath  string // Bucket or Local Path
-	Ext         string // File Extention
-
-	//Root     string // Root Directory "/data" LCL Storage
-	//Bucket   string // Root Bucket Nmae GCS Storage
-	//Path     string // Sub Path ["raw", "output"]
-	Filename string // Filename
-
+	UUID          string       // Unique ID of the Run
+	StorageType   string       // GCS or LCL Storage
+	SourcePath    string       // Bucket or Local Path
+	Ext           string       // File Extention
+	Filename      string       // Filename
 	Content       bytes.Buffer // Content as Bytes Buffer
 	ContentLength int          // Content Length (len(bytes.buffer))
 }

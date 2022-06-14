@@ -40,9 +40,9 @@ func NewGenerator(outputType string, name string, input []lib.K8sobject, paramet
 
 	switch outputType {
 	case "yaml":
-		return generator.Yaml("", generator.Input.Object)
+		return generator.Yaml(name, generator.Input.Object)
 	case "helm":
-		return generator.Helm("", generator.Input.Object, generator.Input.Parameters)
+		return generator.Helm(name, generator.Input.Object, generator.Input.Parameters)
 	}
 
 	return nil
