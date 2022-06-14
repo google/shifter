@@ -1,0 +1,584 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: generic-sa
+  namespace: cat-prv-auth-dedicated-fr-pp
+---
+apiVersion: v1
+binaryData:
+  ibtestkeystore_new.jks: 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
+data:
+  orchub_application.properties: |
+    enableSwagger=true
+
+    # Hub SSL settings
+    orchestrator.security.keystore.path=/mnt/init/server_cert.p12
+    orchestrator.security.keystore.password=${TOMCAT_KEYSTORE_PASSWORD}
+    orchestrator.security.truststore.path=/mnt/init/cacerts.jks
+    orchestrator.security.truststore.password=${TRUSTSTORE_PASSWORD}
+
+    orchestrator.security.tls.version=1.2
+
+
+    #JWK endpoint
+    orchestrator.security.jwk.uri=https://iamauthcorppp.service.dev/token/jwk_uri
+
+    ##
+    # Downstream system settings
+    ##
+
+
+    # CAP API Connect config START
+    cap.apiconnect.host=https://authidsvcotherpp.service.dev
+    cap.header.client.id=47c0497e-001a-4ab2-9d4c-846acdb99ae0
+    cap.request.timeout=13000
+    # ForgeRock config START
+    fr.api.host=https://gwiamauthidhubpp.service.dev
+    fr.request.timeout=13000
+    # ForgeRock config END
+
+
+    # BankAnywhere config START
+    ba.enabled=true
+    ba.api.host=https://qaida63l.unix.anz:15443
+    ba.request.timeout=13000
+    # BankAnywhere config END
+
+    # ForgeRock config END
+
+    # IB config start
+    ib.api.host=https://authidsvcotherpp.service.dev
+    ib.request.timeout=13000
+
+
+    # CSP API connect config START
+    csp.api.host=https://authidsvcotherpp.service.dev
+    csp.request.timeout=13000
+    # CSP API connect config END
+
+    #OCV API CONNECT CONFIG START
+    ocv.apiconnect.host=https://authidsvcotherpp.service.dev
+    ocv.request.timeout=13000
+
+    #ADDE API CONNECT CONFIG START
+    audit.service.host=https://authidsvcotherpp.service.dev
+    audit.request.timeout=5000
+
+    #RISKASSESSMENT API CONNECT CONFIG START
+    riskassessment.service.host=https://qaida63l.unix.anz:14443
+    riskassessment.request.timeout=13000
+    #This flag is fallback option, if we want to enable coarse grain consents.
+    orchestrator.enableCapConsents=false
+  system_flags.json: "[\n\t{\n\t\t\"channel\": \"web-idhub\",\n\t\t\"profileFlags\":
+    {\n\t\t\t\"preferredName\": true,\n\t\t\t\"legalName\": true,\n\t\t\t\"phone\":
+    true,\n\t\t\t\"email\": true,\n\t\t\t\"address\": true,\n\t\t\t\"offersPromotions\":
+    true,\n\t\t\t\"password\": true,\n\t\t\t\"appPIN\": true,\n\t\t\t\"touchID\":
+    false,\n\t\t\t\"faceID\": false,\n\t\t\t\"voiceID\": false,\n\t\t\t\"manageDevices\":
+    true,\n\t\t\t\"manageDataSharing\": true,\n\t\t\t\"manageDataSharingV2\": true,\n\t\t\t\"jointAccountPermissionsV2\":
+    false,\n\t\t\t\"jointAccountNotificationsV2\": false,\n\t\t\t\"vulnerableDisclosure\":
+    false\n\t\t},\n\t\t\"pilotUsersUuidListFor\": {\n\t\t\t\"preferredName\": [],\n\t\t\t\"legalName\":
+    [],\n\t\t\t\"phone\": [],\n\t\t\t\"email\": [],\n\t\t\t\"address\": [],\n\t\t\t\"offersPromotions\":
+    [],\n\t\t\t\"password\": [],\n\t\t\t\"appPIN\": [],\n\t\t\t\"touchID\": [],\n\t\t\t\"faceID\":
+    [],\n\t\t\t\"voiceID\": [],\n\t\t\t\"manageDevices\": [],\n\t\t\t\"manageDataSharing\":
+    [],\n\t\t\t\"manageDataSharingV2\": [],\n\t\t\t\"jointAccountPermissionsV2\":
+    [],\n\t\t\t\"jointAccountNotificationsV2\": [],\n\t\t\t\"vulnerableDisclosure\":
+    []\n\t\t}\n\t},\n\t{\n\t\t\"channel\": \"mobile-idhub\",\n\t\t\"profileFlags\":
+    {\n\t\t\t\"preferredName\": true,\n\t\t\t\"legalName\": true,\n\t\t\t\"phone\":
+    true,\n\t\t\t\"email\": true,\n\t\t\t\"address\": true,\n\t\t\t\"offersPromotions\":
+    true,\n\t\t\t\"password\": true,\n\t\t\t\"appPIN\": true,\n\t\t\t\"touchID\":
+    true,\n\t\t\t\"faceID\": true,\n\t\t\t\"voiceID\": true,\n\t\t\t\"manageDevices\":
+    true,\n\t\t\t\"manageDataSharing\": true,\n\t\t\t\"manageDataSharingV2\": true,\n\t\t\t\"jointAccountPermissionsV2\":
+    false,\n\t\t\t\"jointAccountNotificationsV2\": false,\n\t\t\t\"vulnerableDisclosure\":
+    false\n\t\t},\n\t\t\"pilotUsersUuidListFor\": {\n\t\t\t\"preferredName\": [],\n\t\t\t\"legalName\":
+    [],\n\t\t\t\"phone\": [],\n\t\t\t\"email\": [],\n\t\t\t\"address\": [],\n\t\t\t\"offersPromotions\":
+    [],\n\t\t\t\"password\": [],\n\t\t\t\"appPIN\": [],\n\t\t\t\"touchID\": [],\n\t\t\t\"faceID\":
+    [],\n\t\t\t\"voiceID\": [],\n\t\t\t\"manageDevices\": [],\n\t\t\t\"manageDataSharing\":
+    [],\n\t\t\t\"manageDataSharingV2\": [],\n\t\t\t\"jointAccountPermissionsV2\":
+    [],\n\t\t\t\"jointAccountNotificationsV2\": [],\n\t\t\t\"vulnerableDisclosure\":
+    []\n\t\t}\n\t}\n]\n\n"
+  tomcat-users.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to You under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    -->
+    <tomcat-users xmlns="http://tomcat.apache.org/xml"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+                  version="1.0">
+    <!--
+      NOTE:  By default, no user is included in the "manager-gui" role required
+      to operate the "/manager/html" web application.  If you wish to use this app,
+      you must define such a user - the username and password are arbitrary. It is
+      strongly recommended that you do NOT use one of the users in the commented out
+      section below since they are intended for use with the examples web
+      application.
+    -->
+    <!--
+      NOTE:  The sample user and role entries below are intended for use with the
+      examples web application. They are wrapped in a comment and thus are ignored
+      when reading this file. If you wish to configure these users for use with the
+      examples web application, do not forget to remove the <!.. ..> that surrounds
+      them. You will also need to set the passwords to something appropriate.
+    -->
+    <role rolename="clientauth"/>
+    <user username="CN=qanda41l.unix.anz, OU=Technology, O=Australia and New Zealand Banking Group Ltd, L=Melbourne, ST=Victoria, C=AU" password="null" roles="clientauth"/>
+    <user username="CN=qanda42l.unix.anz, OU=Technology, O=Australia and New Zealand Banking Group Ltd, L=Melbourne, ST=Victoria, C=AU" password="null" roles="clientauth"/>
+    <user username="CN=qfria02l.unix.anz, OU=Technology, O=Australia and New Zealand Banking Group Ltd, L=Melbourne, ST=Victoria, C=AU" password="null" roles="clientauth"/>
+
+
+    </tomcat-users>
+kind: ConfigMap
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app-app-config-97htc2285b
+---
+apiVersion: v1
+data:
+  catalina-opts: |-
+    "-Djavax.net.ssl.trustStore=/mnt/init/cacerts.jks"
+    "-Djavax.net.ssl.trustStorePassword=$TRUSTSTORE_PASSWORD"
+    "-Dtomcat.connector.port=8443"
+    "-Dtomcat.connector.maxThreads=150"
+    "-Dtomcat.connector.maxHttpHeaderSize=8192"
+    "-Dtomcat.connector.sslEnabled=true"
+    "-Dtomcat.connector.scheme=https"
+    "-Dtomcat.connector.clientAuth=optional"
+    "-Dtomcat.connector.keystorePass=$TOMCAT_KEYSTORE_PASSWORD"
+    "-Dtomcat.connector.sslProtocol=TLSv1.2"
+    "-Dtomcat.connector.sslEnabledProtocols=TLSv1.2"
+    "-Dtomcat.connector.keystoreFile=/mnt/init/server_cert.p12"
+    "-Dtomcat.connector.keystoreType=PKCS12"
+    "-Dtomcat.connector.secure=true"
+    "-Dtomcat.connector.connectionTimeout=60000"
+    "-Dapp.springframework.loglevel=INFO"
+    "-Dapp.dsp.loglevel=INFO"
+    "-Dapp.root.loglevel=INFO"
+kind: ConfigMap
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app-catalina-options-6d9d6ctb79
+---
+apiVersion: v1
+data:
+  agent.config: "vault {\n   ca_path = \"/vault/config/cert.pem\"\n   address = \"https://vault.qa.dmz.service.test\"\n
+    \  namespace = \"ce-dopts-cat\"\n}\n\npid_file = \"/deployments/pid\"\nauto_auth
+    {\n    method \"kubernetes\"  {\n       type = \"kubernetes\"\n       mount_path
+    = \"auth/kubernetes/cpaasdmz/shared\"\n       namespace = \"ce-dopts-cat\"\n       config
+    = {\n          role = \"k8s_nonprod_read.shared.cat-prv-auth-dedicated-fr-pp\"\n
+    \         jwt = \"@/var/run/secrets/kubernetes.io/serviceaccount/token\"\n       }\n
+    \   }\n    sink \"file\" {\n      type = \"file\"\n      config = {\n        path
+    = \"/deployments/token\"\n      }\n    }\n}\n    \ntemplate {\n      source      =
+    \"/vault/config/envvariables.ctmpl\"\n      destination = \"/deployments/env.sh\"\n}\ntemplate
+    {\n      source      = \"/vault/config/server_cert.ctmpl\"\n      destination
+    = \"/mnt/init/server_cert.p12\"\n}\n    template {\n      source      = \"/vault/config/cacerts.ctmpl\"\n
+    \     destination = \"/mnt/init/cacerts.jks\"\n}\n\n"
+  cacerts.ctmpl: |
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/certs" }}{{ .Data.data.config.cacerts | base64Decode }}{{ end }}
+  cert.pem: "  \n-----BEGIN CERTIFICATE-----\n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\n-----END
+    CERTIFICATE-----\n"
+  envvariables.ctmpl: |
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export TOMCAT_KEYSTORE_PASSWORD={{ .Data.data.config.tomcatkeystorepassword }}{{ end }}
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export NEW_RELIC_LICENSE={{ .Data.data.config.newreliclicensetoken }}{{ end }}
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export NEW_RELIC_PROXY_PASSWORD={{ .Data.data.config.newrelicproxypassword }}{{ end }}
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export NEW_RELIC_PROXY_HOST={{ .Data.data.config.newrelicproxyhost }}{{ end }}
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export NEW_RELIC_PROXY_PORT={{ .Data.data.config.newrelicproxyport }}{{ end }}
+    {{ with secret "int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/env" }} export TRUSTSTORE_PASSWORD={{ .Data.data.config.truststorepassword }}{{ end }}
+  server_cert.ctmpl: "{{ with secret \"int/au/kv/data/corp/nonprod/shared/cat-prv-auth-dedicated-fr-pp/cat/cpaas/orchestrators/hso/cat-prv-auth-dedicated-fr-pp/certs\"
+    }}{{ .Data.data.config.server_cert | base64Decode }}{{ end }}    \n"
+kind: ConfigMap
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app-configmap-vault-mhffdmd6bt
+---
+apiVersion: v1
+data:
+  java-opts: |-
+    "-javaagent:/mnt/newrelic/newrelic.jar"
+    "-Dspring_config_location=$CONFIG_FILE"
+    "-Dnewrelic.config.app_name=hso-app cat-prv-auth-dedicated-fr-pp"
+    "-Dnewrelic.config.distributed_tracing.enabled=true"
+    "-Dnewrelic.config.license_key=$NEW_RELIC_LICENSE"
+    "-Dnewrelic.config.proxy_host=$NEW_RELIC_PROXY_HOST"
+    "-Dnewrelic.config.proxy_port=$NEW_RELIC_PROXY_PORT"
+    "-Dnewrelic.config.proxy_user=qaecorp\auanzidpxydsa"
+    "-Dnewrelic.config.proxy_password=$NEW_RELIC_PROXY_PASSWORD"
+    "-Dnewrelic.config.labels=Environment:cat-prv-auth-dedicated-fr-pp;Asset:Lciam;Region:globaltest"
+    "-Duser.timezone=UTC"
+    "-Dorg.forgerock.http.TrustTransactionHeader=true"
+    "-Djava.security.egd=file:/dev/./urandom"
+    "-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+    "-Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true"
+    "-Dorg.apache.catalina.connector.RECYCLE_FACADES=true"
+    "-Dorg.apache.catalina.connector.CoyoteAdapter.ALLOW_BACKSLASH=false"
+    "-Dorg.apache.coyote.USE_CUSTOM_STATUS_MSG_IN_HEADER=false"
+    "-Dorg.osgi.framework.bootdelegation=sun.*,com.sun.*,javax.xml.*,com.wily.*,META-INF.services,com.yourkit,com.singularity.*,com.jprofiler,com.jprofiler.*,org.apache.xerces,org.apache.xerces.*,org.apache.xalan,org.apache.xalan.*,com.sun.jndi.*,com.icl.saxon,com.icl.saxon.*,javax.servlet,javax.servlet.*,com.sun.xml.bind.*"
+    "-Xms4G"
+    "-Xmx4G"
+    "-XX:CompileThreshold=8000"
+    "-XX:G1HeapRegionSize=32m"
+    "-Dcom.sun.jndi.ldap.connect.pool.initsize=15"
+    "-Dspring.config.additional-location=/mnt/orchub_application.properties"
+kind: ConfigMap
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app-java-options-gbk74c85m7
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app
+spec:
+  ports:
+  - name: hso-app-web
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    build-initiator: garga9
+    collectord.io/index: au_cat_common_apps_anzid
+    collectord.io/logs-eventpattern: ^(\d{2}-\w{3}-\d{4}\s\d{2}:\d{2}:\d{2}.\d{3}|\w{3}\s\d{1,2}.\s\d{4}\s\d{2}:\d{2}:\d{2})
+    collectord.io/logs-override.1-match: service.hso.app
+    collectord.io/logs-override.1-type: anz_securityhub_hso_app_openshift
+    collectord.io/logs-override.2-match: service.request_access_log
+    collectord.io/logs-override.2-type: anz_securityhub_hso_request_access_openshift
+    collectord.io/logs-type: anz_securityhub_hso_openshift
+    collectord.io/output: splunk
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hso-app
+      env: cat-prv-auth-dedicated-fr-pp
+      release: 1.0.0
+      zone: cat-prv-auth-dedicated-fr-pp
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  template:
+    metadata:
+      annotations:
+        build-initiator: garga9
+        commiter-author: garga9
+        git-branch-name: release/REL_22.06.01_8.6.0
+        git-repo-name: fre-orchestrator-hub-services
+        pipeline-uuid: 6290ac34778d5615d6bb45ff
+        short-sha: a5bef98
+      labels:
+        app: hso-app
+        env: cat-prv-auth-dedicated-fr-pp
+        release: 1.0.0
+        zone: cat-prv-auth-dedicated-fr-pp
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - hso-app
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - env:
+        - name: CATALINA_OPTS
+          valueFrom:
+            configMapKeyRef:
+              key: catalina-opts
+              name: hso-app-catalina-options-6d9d6ctb79
+        - name: JAVA_OPTS
+          valueFrom:
+            configMapKeyRef:
+              key: java-opts
+              name: hso-app-java-options-gbk74c85m7
+        - name: CONFIG_FILE
+          value: /mnt/orchub_application.properties
+        image: dtrprod.docker.service.anz/cat-generic/hso-app:rel_22.03.03_v1.a1caa8f
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: health
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: hso-app
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: health
+            port: 8443
+            scheme: HTTPS
+          periodSeconds: 10
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 8G
+          requests:
+            cpu: "1"
+            memory: 8G
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 10002
+        volumeMounts:
+        - mountPath: /mnt/init
+          name: init
+          readOnly: true
+        - mountPath: /mnt/newrelic
+          name: newrelic
+          readOnly: false
+        - mountPath: /mnt/ibtestkeystore_new.jks
+          name: configuration
+          readOnly: true
+          subPath: ibtestkeystore_new.jks
+        - mountPath: /mnt/orchub_application.properties
+          name: configuration
+          readOnly: true
+          subPath: orchub_application.properties
+        - mountPath: /opt/fr/lib/tomcat/conf/tomcat-users.xml
+          name: configuration
+          readOnly: false
+          subPath: tomcat-users.xml
+        - mountPath: /mnt/system_flags.json
+          name: configuration
+          readOnly: false
+          subPath: system_flags.json
+        - mountPath: /deployments/env.sh
+          name: vault-agent-volume
+          subPath: env.sh
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - 'cp -R /app/newrelic/* /mnt/newrelic/ '
+        image: dtrprod.docker.service.anz/cat-base-images/cat-rhel-newrelic:fr_v750_v1
+        imagePullPolicy: Always
+        name: apm
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /mnt/newrelic
+          name: newrelic
+          readOnly: false
+      - args:
+        - agent
+        - -log-level=debug
+        - -config=/vault/config/agent.config
+        - -exit-after-auth
+        env:
+        - name: SKIP_SETCAP
+          value: "true"
+        - name: SKIP_CHOWN
+          value: "true"
+        image: dtrprod.docker.service.anz/cat-generic/vault:1.4.1
+        imagePullPolicy: IfNotPresent
+        name: vault-init
+        ports:
+        - containerPort: 8200
+          name: vaultport
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+        volumeMounts:
+        - mountPath: /vault/config
+          name: vault-config
+          readOnly: false
+        - mountPath: /deployments
+          name: vault-agent-volume
+          readOnly: false
+        - mountPath: /mnt/init
+          name: init
+          readOnly: false
+      serviceAccountName: generic-sa
+      volumes:
+      - configMap:
+          defaultMode: 367
+          name: hso-app-app-config-97htc2285b
+        name: configuration
+      - emptyDir: {}
+        name: newrelic
+      - configMap:
+          name: hso-app-configmap-vault-mhffdmd6bt
+        name: vault-config
+      - emptyDir: null
+        medium: Memory
+        name: vault-agent-volume
+      - emptyDir: {}
+        name: init
+---
+apiVersion: v1
+kind: Route
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    haproxy.router.openshift.io/balance: roundrobin
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app
+spec:
+  host: appauthidhubpp.service.dev
+  port:
+    targetPort: hso-app-web
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: hso-app
+---
+apiVersion: v1
+kind: Route
+metadata:
+  annotations:
+    build-initiator: garga9
+    commiter-author: garga9
+    git-branch-name: release/REL_22.06.01_8.6.0
+    git-repo-name: fre-orchestrator-hub-services
+    haproxy.router.openshift.io/balance: roundrobin
+    pipeline-uuid: 6290ac34778d5615d6bb45ff
+    short-sha: a5bef98
+  labels:
+    app: hso-app
+    env: cat-prv-auth-dedicated-fr-pp
+    release: 1.0.0
+    zone: cat-prv-auth-dedicated-fr-pp
+  name: hso-app-bvt
+spec:
+  host: appauthidhubpp.service.dev
+  port:
+    targetPort: hso-app-web
+  tls:
+    termination: passthrough
+  to:
+    kind: Service
+    name: hso-app

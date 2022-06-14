@@ -21,6 +21,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	apiv1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
 	"os"
@@ -46,6 +47,56 @@ func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8so
 
 		return k
 		break
+
+	//add deployments
+	case "Deployment":
+		var dp appsv1.Deployment
+		json.Unmarshal(input, &dp)
+		t := convertDeploymentToDeployment(dp, flags)
+		var k lib.K8sobject
+
+		k.Kind = "Deployment"
+		k.Object = &t
+
+		return k
+		break
+
+	case "Secret":
+		var sc apiv1.Secret
+		json.Unmarshal(input, &sc)
+		t := convertSecretToSecret(sc, flags)
+		var k lib.K8sobject
+
+		k.Kind = "Secret"
+		k.Object = &t
+
+		return k
+		break
+
+	case "ResourceQuota":
+		var qo apiv1.ResourceQuota
+		json.Unmarshal(input, &sc)
+		t := convertResourceQuotaToResourceQuota(qo, flags)
+		var k lib.K8sobject
+
+		k.Kind = "ResourceQuota"
+		k.Object = &t
+
+		return k
+		break
+
+	case "RoleBinding":
+		var rb corev1.RoleBinding
+		json.Unmarshal(input, &rb)
+		t := convertRoleBindingToRoleBinding(rb, flags)
+		var k lib.K8sobject
+
+		k.Kind = "RoleBinding"
+		k.Object = &t
+
+		return k
+		break
+	//add rolebindings
 
 	case "Route":
 		var route osroutev1.Route

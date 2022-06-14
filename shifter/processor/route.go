@@ -20,7 +20,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"log"
+	istio "github.com/istio/networking/v1alpha3"
 )
+
+func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string]string) {
+	virtualservice := &istio.VirtualService{}
+
+	if OSRoute.Spec.Host != "" {
+		virtualservice.Hosts.append(OSRoute.Spec.Host)
+	}
+}
 
 func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1beta1.Ingress {
 
