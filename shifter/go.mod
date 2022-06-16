@@ -16,6 +16,8 @@ require (
 	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
 	google.golang.org/api v0.66.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	istio.io/api v0.0.0-20220512181135-e8ec1e1d89de
+	istio.io/client-go v1.14.0
 	k8s.io/api v0.24.0
 	k8s.io/apimachinery v0.24.0
 	k8s.io/client-go v0.24.0

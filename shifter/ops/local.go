@@ -23,16 +23,17 @@ import (
 func (fileObj *FileObject) WriteLCLFile() {
 
 	if _, err := os.Stat(fileObj.SourcePath); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(fileObj.SourcePath), 0700) // Create your file
+		os.MkdirAll(filepath.Dir(fileObj.SourcePath), 0700) // Create output directory
 	}
 
 	// Create New File
-	f, err := os.Create(fileObj.SourcePath)
+	f, err := os.OpenFile(fileObj.SourcePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer f.Close()
+	f.WriteString("---\n")
 	// Write the Bytes Buffer to File
 	_, err = f.Write(fileObj.Content.Bytes())
 	if err != nil {
@@ -91,6 +92,7 @@ func ProcessLCLPath(path string) ([]*FileObject, error) {
 					StorageType: LCL,
 					SourcePath:  filePath,
 					Ext:         filepath.Ext(filePath),
+					Filename:    filepath.Base(filePath),
 				}
 				// Add File Object to Array of Files
 				files = append(files, fileObj)
