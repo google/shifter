@@ -23,13 +23,13 @@ import (
 )
 
 func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
-	projCfg, err := projectv1.NewForConfig(c.clusterClient())
+	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.ProjectList{}, err
 	}
 
-	projectList, err := projCfg.Projects().List(context.TODO(), metav1.ListOptions{})
+	projectList, err := cluster.Projects().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
 		return &v1.ProjectList{}, err
@@ -39,13 +39,13 @@ func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
 }
 
 func (c Openshift) GetProject(name string) (*v1.Project, error) {
-	projCfg, err := projectv1.NewForConfig(c.clusterClient())
+	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.Project{}, err
 	}
 
-	project, err := projCfg.Projects().Get(context.TODO(), name, metav1.GetOptions{})
+	project, err := cluster.Projects().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
 		return &v1.Project{}, err

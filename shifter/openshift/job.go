@@ -13,44 +13,44 @@ limitations under the license.
 
 package openshift
 
+// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
-	"log"
-
-	v1 "github.com/openshift/api/route/v1"
-	routev1 "github.com/openshift/client-go/route/clientset/versioned"
+	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"log"
 )
 
-func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+func (c Openshift) GetAllJobs(namespace string) (*v1.JobList, error) {
+	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.RouteList{}, err
+		return &v1.JobList{}, err
 	}
 
-	routeList, err := cluster.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
+	jobList, err := cluster.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.RouteList{}, err
+		return &v1.JobList{}, err
 	}
 
-	return routeList, nil
+	return jobList, nil
 
 }
 
-func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+func (c Openshift) GetJob(name string, namespace string) (*v1.Job, error) {
+	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.Route{}, err
+		return &v1.Job{}, err
 	}
 
-	route, err := cluster.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	job, err := cluster.BatchV1().Jobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.Route{}, err
+		return &v1.Job{}, err
 	}
 
-	return route, nil
+	return job, nil
 }

@@ -61,7 +61,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 		var generator generator.Generator
 		var objs []lib.K8sobject
 		obj := processor.Processor(u, "DeploymentConfig", nil)
-		objs = append(objs, obj)
+		for _, v := range obj {
+			objs = append(objs, v)
+		}
 		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
 		for _, conObj := range convertedObjects {
 			fileObj := &ops.FileObject{

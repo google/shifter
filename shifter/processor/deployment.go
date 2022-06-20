@@ -16,9 +16,11 @@ package processor
 import (
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"shifter/lib"
 )
 
-func convertDeploymentToDeployment(OSDeployment appsv1.Deployment, flags map[string]string) appsv1.Deployment {
+func convertDeploymentToDeployment(OSDeployment appsv1.Deployment, flags map[string]string) lib.K8sobject {
+
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Deployment",
@@ -28,5 +30,9 @@ func convertDeploymentToDeployment(OSDeployment appsv1.Deployment, flags map[str
 		Spec:       OSDeployment.Spec,
 	}
 
-	return *deployment
+	var k lib.K8sobject
+	k.Kind = "Deployment"
+	k.Object = deployment
+
+	return k
 }
