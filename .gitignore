@@ -1,0 +1,10 @@
+**/.terraform
+**/terraform.tfstate*
+**/*.tfstate
+**/.terraform.tfstate.lock.info
+**/.terraform.lock.hcl
+**/*.auto.tfvars
+**/*.code-workspace
+**/.DS_Store
+**/service-account-key.json
+**/openshift-install
