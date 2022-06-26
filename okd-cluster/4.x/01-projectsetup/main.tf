@@ -76,17 +76,18 @@ module "okd-sa" {
   iam_project_roles = {
     "${each.key}" = [
       "roles/owner",
-      "roles/dns.admin",
-      "roles/compute.viewer",
-      "roles/storage.admin",
-      "roles/compute.instanceAdmin",
-      "roles/compute.networkAdmin",
-      "roles/compute.securityAdmin",
-      "roles/iam.serviceAccountAdmin",
-      "roles/iam.serviceAccountUser",
-      "roles/iam.serviceAccountKeyAdmin",
-      "roles/servicemanagement.quotaViewer",
-      "roles/resourcemanager.projectIamAdmin",
+      # "roles/dns.admin",
+      # "roles/storage.admin",
+      # "roles/container.admin",
+      # "roles/compute.instanceAdmin",
+      # "roles/compute.instanceAdmin.v1",
+      # "roles/compute.networkAdmin",
+      # "roles/compute.securityAdmin",
+      # "roles/iam.serviceAccountUser",
+      # "roles/iam.serviceAccountAdmin",
+      # "roles/iam.serviceAccountKeyAdmin",
+      # "roles/servicemanagement.quotaViewer",
+      # "roles/resourcemanager.projectIamAdmin",
     ]
   }
   depends_on = [
