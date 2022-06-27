@@ -50,6 +50,7 @@ func (fileObj *FileObject) LoadLCLFile() {
 		log.Println(err)
 		return
 	}
+	log.Printf("Reading %v", fileObj.SourcePath)
 	defer file.Close()
 
 	fileinfo, err := file.Stat()
@@ -112,6 +113,7 @@ func ProcessLCLPath(path string) ([]*FileObject, error) {
 			StorageType: LCL,
 			SourcePath:  path,
 			Ext:         filepath.Ext(path),
+			Filename:    filepath.Base(path),
 		}
 		// Add File Object to Array of Files
 		files = append(files, fileObj)

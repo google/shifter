@@ -85,8 +85,11 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 		}
 		log.Print("Converting object " + o.Kind)
 		processedDocument := processor.Processor(jsonBody, o.Kind, flags)
-		if processedDocument.Kind != nil {
-			k8s = append(k8s, processedDocument)
+		for _, v := range processedDocument {
+			if v.Kind != nil {
+				k8s = append(k8s, v)
+			}
+
 		}
 	}
 
