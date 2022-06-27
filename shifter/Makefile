@@ -44,22 +44,22 @@ helmlint:
 	helm lint ./out
 
 yamlTest: fmt
-	go run . convert -t yaml -f ./_test/yaml/multidoc/os-nginx.yaml -o ./out/t1_yaml -i yaml
+	go run . convert -t yaml -i yaml ./_test/yaml/multidoc/os-nginx.yaml ./out/t1_yaml
 
 yamlMultiTest: fmt
-	go run . convert -t yaml -f ./_test/yaml/multifile/ -o ./out/t2_yaml_multifile/ -i yaml
+	go run . convert -t yaml -i yaml ./_test/yaml/multifile/ ./out/t2_yaml_multifile/
 
 yamlMultiOutputSingleTest: fmt
-	go run . convert -t yaml -f ./_test/yaml/multifile/ -o ./out/t3_yaml_multiotput/files.yaml -i yaml
+	go run . convert -t yaml -i yaml ./_test/yaml/multifile/ ./out/t3_yaml_multiotput/files.yaml
 
 yamlDCTest: fmt
-	go run . convert -t yaml -i yaml -f ./_test/yaml/deploymentconfig.yaml -o ./out/t4_deploymentconfig
+	go run . convert -t yaml -i yaml ./_test/yaml/deploymentconfig.yaml ./out/t4_deploymentconfig
 
 yamlQNSTest: fmt
-	go run . convert -t yaml -i yaml -f ./_test/yaml/quoted_nested_strings.yaml -o ./out/t5_quoted_nested_strings/quoted_nested_strings.yaml
+	go run . convert -t yaml -i yaml ./_test/yaml/quoted_nested_strings.yaml ./out/t5_quoted_nested_strings/quoted_nested_strings.yaml
 
 templateTest:
-	go run . convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/t6_helm
+	go run . convert -t helm -i template ./_test/os-nginx-template.yaml ./out/t6_helm
 
 #serverTest:
 #	go run . server -p 8081 -f ./data/source -o ./data/output

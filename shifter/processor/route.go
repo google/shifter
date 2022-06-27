@@ -24,14 +24,32 @@ import (
 	//"k8s.io/apimachinery/pkg/util/intstr"
 	//networkingv1beta1 "istio.io/api/networking/v1beta1"
 	"log"
+	"shifter/lib"
 )
 
-func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string]string) v1beta1.VirtualService {
+func createIstioIngressGateway(OSRoute osroutev1.Route, flags map[string]string) lib.K8sobject {
+	gw := &v1beta1.Gateway{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "networking.istio.io/v1beta1",
+			Kind:       "Gateway",
+		},
+		ObjectMeta: OSRoute.ObjectMeta,
+		Spec:       io.Gateway{},
+	}
+
+	var k lib.K8sobject
+	k.Kind = "Gateway"
+	k.Object = gw
+
+	return k
+}
+
+func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string]string) lib.K8sobject {
 	flagIstioGateway := flags["istio-gateway"]
 
 	vs := &v1beta1.VirtualService{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "networking.istio.io/v1alpha3",
+			APIVersion: "networking.istio.io/v1beta1",
 			Kind:       "VirtualService",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
@@ -66,10 +84,14 @@ func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string
 
 	vs.Spec = vsSpec
 
-	return *vs
+	var k lib.K8sobject
+	k.Kind = "VirtualService"
+	k.Object = vs
+
+	return k
 }
 
-func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1.Ingress {
+func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib.K8sobject {
 
 	flagIngressFacing := flags["ingress-facing"]
 
@@ -141,5 +163,9 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) v1.
 		}
 	}
 
-	return *ingress
+	var k lib.K8sobject
+	k.Kind = "Ingress"
+	k.Object = ingress
+
+	return k
 }
