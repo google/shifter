@@ -15,7 +15,6 @@ package input
 
 import (
 	"bytes"
-	"fmt"
 	gyaml "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v3"
 	"io"
@@ -53,7 +52,6 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 		if err == io.EOF {
 			break
 		}
-		//log.Println("Converting", doc["kind"], "from", fileName)
 
 		val, err := yaml.Marshal(doc)
 		if err != nil {
@@ -68,7 +66,9 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 		}
 
 		processedDocument := processor.Processor(jsonBody, doc["kind"], flags)
-		objects = append(objects, processedDocument)
+		for _, v := range processedDocument {
+			objects = append(objects, v)
+		}
 	}
 	return objects
 }
@@ -76,7 +76,7 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 func nestedQuotedStringHack(fileName string) {
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	str1 := string(input)
@@ -97,6 +97,6 @@ func nestedQuotedStringHack(fileName string) {
 
 	err = ioutil.WriteFile(fileName, []byte(output), 0644)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }

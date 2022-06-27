@@ -1,14 +1,14 @@
 /*
-Copyright 2019 Google LLC
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-    http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+copyright 2019 google llc
+licensed under the apache license, version 2.0 (the "license");
+you may not use this file except in compliance with the license.
+you may obtain a copy of the license at
+    http://www.apache.org/licenses/license-2.0
+unless required by applicable law or agreed to in writing, software
+distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied.
+see the license for the specific language governing permissions and
+limitations under the license.
 */
 
 package api
@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,23 +64,44 @@ func (server *Server) setupRouter() {
 	v1 := router.Group("/api/v1")
 	{
 		// Convert V1 API Endpoints
-		c := v1.Group("/convert")
+		o := v1.Group("/openshift")
 		{
-			c.POST("/yaml/yaml", server.Yaml2Yaml)
+			op := o.Group("/projects")
+			{
+				op.POST("/", server.SOSGetProjects)
+				op.POST("/:projectName", server.SOSGetProject)
+			}
+
+			dc := o.Group("/deploymentconfigs")
+			{
+				dc.POST("/", server.SOSGetDeploymentConfigs)
+				dc.POST("/:projectName", server.SOSGetDeploymentConfigsByProject)
+				dc.POST("/:projectName/:deploymentConfigName", server.SOSGetDeploymentConfig)
+			}
+
 		}
 
-		// Download V1 API Endpoints
-		d := v1.Group("/download")
+		// Convert V1 API Endpoints
+		s := v1.Group("/shifter")
 		{
-			d.GET("/:uuid/:filename", server.ConvertedFile) // Download Single Converted File
-			d.GET("/:uuid/", server.ConvertedFilesArchive)  // Download All Converted Files (Archive)
+			sc := s.Group("/convert")
+			{
+				sc.POST("/", server.Convert)
+			}
+
+			sd := s.Group("/downloads")
+			{
+				sd.GET("/", server.Downloads)
+				sd.GET("/:downloadId", server.Download)
+				sd.GET("/:downloadId/file", server.DownloadFile)
+			}
 		}
 
 		// Status V1 API Endpoints
-		s := v1.Group("/status")
+		st := v1.Group("/status")
 		{
-			s.GET("/healthz", server.Healthz)   // Operations Health Check
-			s.GET("/settingz", server.Settingz) // Server Settingz
+			st.GET("/healthz", server.Healthz)   // Operations Health Check
+			st.GET("/settingz", server.Settingz) // Server Settingz
 		}
 	}
 

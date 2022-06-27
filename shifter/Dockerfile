@@ -23,6 +23,7 @@ FROM gcr.io/distroless/base-debian11
 ARG serverPort=8080
 ENV env_serverPort=$serverPort
 
-COPY --from=build /shifter /
+WORKDIR /shifter
+COPY --from=build /shifter ./
 EXPOSE 8080
 CMD ["/shifter"]

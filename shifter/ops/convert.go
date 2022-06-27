@@ -92,24 +92,26 @@ func (converter *Converter) ConvertFiles() {
 		switch converter.InputType {
 		case "yaml":
 			sourceFile := inputs.Yaml(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
+			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, nil)
 		case "template":
 			sourceFile, values := inputs.Template(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, "test", sourceFile, values)
+			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
 		}
 
 		//outputFileName := fmt.Sprint(idx)
 		for k := range r {
 			fileObj := &FileObject{
-				StorageType:   file.StorageType,
-				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
-				Filename:      r[k].Name,
+				StorageType: file.StorageType,
+				//SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
+				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name),
+				Filename:      file.Filename,
 				Ext:           filepath.Ext(file.SourcePath),
 				Content:       r[k].Payload,
 				ContentLength: file.ContentLength,
 			}
 
 			// Write Converted File to Storage
+			log.Printf("Writing to file %v", fileObj.Filename)
 			fileObj.WriteFile()
 
 			// Add Converted File Object to Converter
