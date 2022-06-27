@@ -17,3 +17,11 @@ data**
 *.zip
 data**
 caramilk
+**/.terraform.tfstate.lock.info
+**/.terraform.lock.hcl
+**/*.auto.tfvars
+**/*.code-workspace
+**/service-account-key.json
+**/openshift-install
+**/openshift-install-linux.tar.gz
+**/install-config/
