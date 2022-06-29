@@ -80,8 +80,6 @@ echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Provision cluster function ends ----
 
 ## function to deploy bank of anthos manifest on the cluster 
 function deploy_manifest() {
-PROJECT="okd-tf-9ed4"
-MASTER="dev-cluster-cp-0"
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- deploy manifest function starts ------------" 2>&1 | tee ${LOG_FILE}
 echo "$(date +'%Y-%m-%d %H:%M:%S'):SSH into the master host to deploy manifest files" 2>&1 | tee ${LOG_FILE}
 gcloud compute ssh --project=$PROJECT --zone=$ZONE $SSH_USER@$MASTER > ${LOG_FILE} << EOF
