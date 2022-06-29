@@ -1,0 +1,48 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[masters]
+dev-cluster-cp-0
+
+[nodes]
+dev-cluster-cp-0 openshift_node_group_name='node-config-master'
+dev-cluster-dp-0 openshift_node_group_name='node-config-compute'
+dev-cluster-dp-1 openshift_node_group_name='node-config-compute'
+dev-cluster-in-0 openshift_node_group_name='node-config-infra'
+
+[etcd]
+dev-cluster-cp-0
+
+[OSEv3:vars]
+ansible_ssh_user=avinashjha
+ansible_become=true
+
+openshift_metrics_install_metrics=true
+openshift_logging_install_logging=true
+openshift_console_install=true
+
+openshift_deployment_type=origin
+openshift_install_examples=true
+
+openshift_release=v3.11
+
+
+openshift_master_default_subdomain=${master_subdomain}
+openshift_public_hostname=${public_hostname}
+
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+openshift_master_htpasswd_users={'shifter': '$2y$05$kGqdesfEeOJu9r71w3Ium.z8BGWCu03GBYPV5RjIcbbltopjbLV9y'}
+
+openshift_hosted_registry_selector='node-role.kubernetes.io/infra=true'
+openshift_logging_es_ops_nodeselector={"node-role.kubernetes.io/infra":"true"}
+openshift_logging_es_nodeselector={"node-role.kubernetes.io/infra":"true"}
+
+openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels': ['node-role.kubernetes.io/infra=true']}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true']}]
+
+openshift_cloudprovider_kind=gce
+openshift_gcp_project=${gcp_project}
+openshift_gcp_prefix=okd
+openshift_gcp_multizone=false
+openshift_gcp_network_name=dev-1-vpc
