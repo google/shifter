@@ -57,11 +57,12 @@ echo "$(date +'%Y-%m-%d %H:%M:%S'): Successfully copied ssh key and host file" 2
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Copy files function ends ------------" 2>&1 | tee ${LOG_FILE}
 }
 
-# function that runs the ansible playbook to deploy a OKD cluster
+# function to provision the  OKD cluster
 function provision_cluster() {
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Provision cluster function starts ------------" 2>&1 | tee ${LOG_FILE}
 echo "$(date +'%Y-%m-%d %H:%M:%S'):SSH into the bastion host and run ansible scripts" 2>&1 | tee ${LOG_FILE}
-gcloud compute ssh --project=$PROJECT --zone=$ZONE $SSH_USER@$BASTION_HOST > ${LOG_FILE} << EOF
+gcloud compute ssh --project=$PROJECT --zone=$ZONE $SSH_USER@$BASTION_HOST > ${LOG_FILE} << EOF 
+function run_ansible() {
 if [ -d openshift-ansible ] 
 then
   echo "$(date +'%Y-%m-%d %H:%M:%S'): Fork already cloned."
@@ -74,15 +75,22 @@ cd openshift-ansible
 git checkout $OKD_VERSION
 ansible-playbook -i inventory/ansible-hosts playbooks/prerequisites.yml 
 ansible-playbook -i inventory/ansible-hosts playbooks/deploy_cluster.yml
-EOF 
+echo "$(date +'%Y-%m-%d %H:%M:%S'): Exiting from the bastion host."
+}
+run_ansible
+EOF
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Provision cluster function ends ------------" 2>&1 | tee ${LOG_FILE}
 }
 
-## function to deploy bank of anthos manifest on the cluster 
+
+## function to deploy manifest on the cluster 
 function deploy_manifest() {
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- deploy manifest function starts ------------" 2>&1 | tee ${LOG_FILE}
 echo "$(date +'%Y-%m-%d %H:%M:%S'):SSH into the master host to deploy manifest files" 2>&1 | tee ${LOG_FILE}
+
 gcloud compute ssh --project=$PROJECT --zone=$ZONE $SSH_USER@$MASTER > ${LOG_FILE} << EOF
+function deploy_boa() {
+echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Deploy BOA function starts ------------" 2>&1 | tee ${LOG_FILE}
 if [ -d bank-of-anthos ]
 then
   echo "$(date +'%Y-%m-%d %H:%M:%S'): Fork already cloned."
@@ -98,16 +106,18 @@ echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
 sleep 60s
 oc get pods
-
 echo "############################################################"
 echo "Endpoint"
 sleep 60s
 echo "############################################################"
 oc get service frontend | awk '{print $4}'
+echo "$(date +'%Y-%m-%d %H:%M:%S'): Exiting from the master node."
+echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Deploy BOA function Ends ------------" 2>&1 | tee ${LOG_FILE}
+} 
+deploy_boa
 EOF
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- deploy manifest function ends ------------" 2>&1 | tee ${LOG_FILE}
 }
-
 
 mkdir -p ${SSH_PATH} || true
 mkdir -p ${LOG_PATH} || true
