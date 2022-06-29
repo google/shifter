@@ -29,7 +29,7 @@ Automate the provisioning of OKD 3.11 cluster on GCP
 
 ## Deployment Steps
 
-### Creating a OKD Cluster
+### Creating OKD Cluster
 
 1. Script variables can be updated in the /script/variables.sh file. The list of variables are define below
 
@@ -49,7 +49,7 @@ LOG_FILE="${LOG_PATH}/okd-logs-$(date +'%Y-%m-%d-%H:%M:%S')"
 Realising we can set all the varibles for terraform from the bash script itself. 
 --TODO-- 
 
-### Deleting a OKD Cluster
+### Deleting OKD Cluster
 
 1. Delete the underlying terrafom resources 
 
