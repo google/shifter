@@ -1,17 +1,27 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
+copyright 2019 google llc
+licensed under the apache license, version 2.0 (the "license");
+you may not use this file except in compliance with the license.
+you may obtain a copy of the license at
+    http://www.apache.org/licenses/license-2.0
+unless required by applicable law or agreed to in writing, software
+distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied.
+see the license for the specific language governing permissions and
+limitations under the license.
 */
+
 package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
+	"log"
+	os "shifter/openshift"
 )
 
 // clusterExportCmd represents the clusterExport command
-var clusterExportCmd = &cobra.Command{
+var clusterConvertCmd = &cobra.Command{
 	Use:   "convert",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
@@ -21,20 +31,20 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("clusterExport called")
+		fmt.Println("clusterConvert called")
+		log.Println("Connecting to cluster: ", endpoint)
+
+		var openshift os.Openshift
+		openshift.Endpoint = endpoint
+		openshift.AuthToken = bearertoken
+		openshift.ConvertNSResources(namespace)
 	},
 }
 
 func init() {
-	clusterCmd.AddCommand(clusterExportCmd)
+	clusterCmd.AddCommand(clusterConvertCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// clusterExportCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// clusterExportCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clusterConvertCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Namespace or Project")
+	clusterConvertCmd.Flags().BoolVarP(&allnamespaces, "all-namespaces", "", false, "All Namespaces or Projects")
+	clusterConvertCmd.MarkFlagsMutuallyExclusive("namespace", "all-namespaces")
 }

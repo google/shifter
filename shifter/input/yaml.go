@@ -20,7 +20,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"os"
 	"shifter/lib"
 	"shifter/processor"
 	"strings"
@@ -45,7 +44,6 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 		if err != nil {
 			if err != io.EOF {
 				log.Println(err)
-				os.Exit(1)
 			}
 		}
 
@@ -56,13 +54,11 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 		val, err := yaml.Marshal(doc)
 		if err != nil {
 			log.Println(err)
-			os.Exit(1)
 		}
 
 		jsonBody, err := gyaml.YAMLToJSON(val)
 		if err != nil {
 			log.Println(err)
-			os.Exit(1)
 		}
 
 		processedDocument := processor.Processor(jsonBody, doc["kind"], flags)
