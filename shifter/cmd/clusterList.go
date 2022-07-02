@@ -1,6 +1,16 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+copyright 2019 google llc
+licensed under the apache license, version 2.0 (the "license");
+you may not use this file except in compliance with the license.
+you may obtain a copy of the license at
 
+	http://www.apache.org/licenses/license-2.0
+
+unless required by applicable law or agreed to in writing, software
+distributed under the license is distributed on an "as is" basis,
+without warranties or conditions of any kind, either express or implied.
+see the license for the specific language governing permissions and
+limitations under the license.
 */
 package cmd
 
@@ -8,10 +18,6 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	os "shifter/openshift"
-)
-
-var (
-	namespace string
 )
 
 // clusterListCmd represents the clusterList command
@@ -34,28 +40,20 @@ to quickly create a Cobra application.`,
 
 ----------------------------------------
 `)
-		log.Println("cluster list called")
-		log.Println(endpoint)
-		log.Println(bearertoken)
+		log.Println("Connecting to cluster: ", endpoint)
 
 		var openshift os.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		openshift.ListAllResources(namespace)
+		openshift.ListNSResources(csvoutput, namespace)
 	},
 }
 
 func init() {
 	clusterCmd.AddCommand(clusterListCmd)
 
-	clusterListCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Filter to namespace or project")
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// clusterListCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// clusterListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clusterListCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Namespace or Project")
+	clusterListCmd.Flags().BoolVarP(&allnamespaces, "all-namespaces", "", false, "All Namespaces/Projects")
+	clusterListCmd.Flags().BoolVarP(&csvoutput, "csv", "", false, "CSV Output")
+	clusterListCmd.MarkFlagsMutuallyExclusive("namespace", "all-namespaces")
 }

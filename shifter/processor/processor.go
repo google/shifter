@@ -35,16 +35,30 @@ func Processor(input []byte, kind interface{}, flags map[string]string) []lib.K8
 
 	switch kind {
 	case "DeploymentConfig":
-		var dc osappsv1.DeploymentConfig
-		json.Unmarshal(input, &dc)
-		processed := append(processed, convertDeploymentConfigToDeployment(dc, flags))
+		var object osappsv1.DeploymentConfig
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDeploymentConfigToDeployment(object, flags))
 		return processed
 		break
 
 	case "Deployment":
-		var d appsv1.Deployment
-		json.Unmarshal(input, &d)
-		processed := append(processed, convertDeploymentToDeployment(d, flags))
+		var object appsv1.Deployment
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDeploymentToDeployment(object, flags))
+		return processed
+		break
+
+	case "StatefulSet":
+		var object appsv1.StatefulSet
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertStatefulSetToStatefulSet(object, flags))
+		return processed
+		break
+
+	case "DaemonSet":
+		var object appsv1.DaemonSet
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDaemonSetToDaemonSet(object, flags))
 		return processed
 		break
 

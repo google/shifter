@@ -14,15 +14,12 @@ limitations under the license.
 package processor
 
 import (
-	//"fmt"
 	osroutev1 "github.com/openshift/api/route/v1"
 	"golang.org/x/exp/maps"
 	io "istio.io/api/networking/v1beta1"
 	v1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
 	v1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	//"k8s.io/apimachinery/pkg/util/intstr"
-	//networkingv1beta1 "istio.io/api/networking/v1beta1"
 	"log"
 	"shifter/lib"
 )
@@ -134,12 +131,15 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 	pathType = "ImplementationSpecific"
 	ingressPath.PathType = &pathType
 
+	//Check if a target port has been specified
+	if OSRoute.Spec.Port != nil {
 	//Check if a port name has been provided otherwise use the default
 	if OSRoute.Spec.Port.TargetPort.IntValue() == 0 && OSRoute.Spec.Port.TargetPort.String() != "" {
 		ingressServiceBackend.Port.Name = OSRoute.Spec.Port.TargetPort.String()
 	} else if OSRoute.Spec.Port.TargetPort.IntValue() != 0 {
 		ingressServiceBackend.Port.Number = int32(OSRoute.Spec.Port.TargetPort.IntValue())
 	}
+}
 	ingressServiceBackend.Name = OSRoute.Spec.To.Name
 
 	// build up the ingress spec

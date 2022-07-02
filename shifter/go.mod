@@ -8,14 +8,15 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/google/uuid v1.3.0
+	github.com/jedib0t/go-pretty/v6 v6.3.3
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/openshift/api v0.0.0-20220511093956-b017c00b66b6
 	github.com/openshift/client-go v0.0.0-20220512130520-80c0822dfe76
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.10.1
 	golang.org/x/exp v0.0.0-20220426173459-3bcf042a4bf5
 	google.golang.org/api v0.66.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 	istio.io/api v0.0.0-20220512181135-e8ec1e1d89de
 	istio.io/client-go v1.14.0
 	k8s.io/api v0.24.0
@@ -57,11 +58,13 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/afero v1.8.1 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

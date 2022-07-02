@@ -21,12 +21,13 @@ import (
 	"log"
 	"shifter/lib"
 	"strings"
+	"fmt"
 )
 
 func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) lib.K8sobject {
 
 	flagImageRepo := flags["image-repo"]
-
+	fmt.Println(OSDeploymentConfig)
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
