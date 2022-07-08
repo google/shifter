@@ -87,9 +87,12 @@ func Archive(srcPath string, fileName string) error {
 
 func Archive(sourcePath string, outputPath string, suid SUID) error {
 
+	if _, err := os.Stat(outputPath + "/"); os.IsNotExist(err) {
+		os.MkdirAll(filepath.Dir(outputPath+"/"), 0700) // Create output directory
+	}
 	file, err := os.Create(outputPath + "/" + suid.DownloadId + ".zip")
 	if err != nil {
-		panic(err)
+		return (err)
 	}
 	defer file.Close()
 
