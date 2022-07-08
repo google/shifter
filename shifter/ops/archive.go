@@ -16,7 +16,6 @@ package ops
 import (
 	"archive/zip"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -93,7 +92,6 @@ func Archive(sourcePath string, outputPath string, suid SUID) error {
 	}
 	file, err := os.Create(outputPath + "/" + suid.DownloadId + ".zip")
 	if err != nil {
-		fmt.Println(err)
 		return (err)
 	}
 	defer file.Close()
