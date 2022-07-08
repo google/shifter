@@ -15,6 +15,7 @@ package ops
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -23,6 +24,8 @@ import (
 func (fileObj *FileObject) WriteLCLFile() {
 
 	if _, err := os.Stat(fileObj.SourcePath); os.IsNotExist(err) {
+
+		fmt.Println(fileObj.SourcePath)
 		os.MkdirAll(filepath.Dir(fileObj.SourcePath), 0700) // Create output directory
 	}
 
