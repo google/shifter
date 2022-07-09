@@ -7,19 +7,35 @@ services:
     environment:
       SHIFTER_SERVER_ENDPOINT: "http://localhost:9091/api/v1"
     ports:
-      - 9090:8080
+      - 7761:8080
     links:
       - "shifter-server:shifter-server.local"
     networks:
       - shifter-network
+
   shifter-server:
     container_name: shifter_server_development
     domainname: shifter-server.local
     image: local.images.shifter.cloud/shifter:latest
     entrypoint: ["./shifter", "server"]
     ports:
-      - 9091:8080
+      - 7762:8080
     networks:
       - shifter-network
+
+  reverseproxy:
+    container_name: shifter_nginx
+    image: local.images.shifter.cloud/shifter-nginx:latest
+    ports:
+      - 9090:8080
+      - 9091:8081
+    restart: always
+    networks:
+      - shifter-network
+    command: [nginx, '-g', 'daemon off;']
+    depends_on:
+      - shifter-server
+      - shifter-ui
 networks:
   shifter-network:
+    external: true
