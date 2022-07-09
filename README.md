@@ -10,7 +10,7 @@
 
 # Openshift to Kubernetes converter
 
-Easily and quickly convert your RedHat OpenShift workloads to standard kubernetes for Anthos/GKE
+Easily and quickly convert your RedHat OpenShift workloads to standard Kubernetes for Anthos/GKE
 
 
 
@@ -35,7 +35,7 @@ git clone https://github.com/google/shifter
 cd shifter
 ```
 
-2) Then  make your code changes, modifications and add value.
+2) Then make your code changes, and modifications and add value.
 
 3) Then Build and Run 
 
