@@ -16,7 +16,7 @@ services:
     container_name: shifter_server_development
     domainname: shifter-server.local
     image: local.images.shifter.cloud/shifter:latest
-    entrypoint: ["/shifter", "server"]
+    entrypoint: ["./shifter", "server"]
     ports:
       - 9091:8080
     networks:
