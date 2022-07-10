@@ -9,11 +9,19 @@
 
 # Openshift to Kubernetes converter
 
-Easily and quickly convert your RedHat OpenShift workloads to standard kubernetes for Anthos/GKE
-
-
-
+Shifter is a tool which accelerates the migration from OpenShift 3.x / 4.x by translating the applications for Kubernetes, GKE & Anthos and supports migrating to Service Mesh with ASM + Istio Support.
+             
 ## Get Shifting
+
+### Components
+
+Shifter has two main components:
+
+##### shifter-ui
+
+
+##### shifter 
+
 
 ### Run The Latest Deployment Locally 
 
