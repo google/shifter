@@ -13,6 +13,16 @@ Shifter is a tool which accelerates the migration from OpenShift 3.x / 4.x by tr
              
 ## Get Shifting
 
+### Capabilities
+
+1.  Convert existing manifest files from OpenShift to Kubernetes.
+2.  Convert or extract manifest files from a running OpenShift cluster.
+3.  Convert OpenShift routes/networking to Google ILB/ELB or Istio/ASM virtual services + gateway creation.
+4.  Convert OpenShift templates to helm charts.
+5.  Convert ImageStreams to Images + Modify on the fly the Container Registry source.
+6.  Run locally via a CLI tool or deploy a web-based user interfact.
+7.  Use GCS Buckets as the source/destination.
+
 ### Components
 
 Shifter has two main components:
