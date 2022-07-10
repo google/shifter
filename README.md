@@ -40,7 +40,7 @@ git clone https://github.com/google/shifter
 cd shifter
 ```
 
-2) Then  make your code changes, modifications and add value.
+2) Then make your code changes, modifications and add value.
 
 3) Then Build and Run 
 
