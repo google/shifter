@@ -18,6 +18,7 @@ Easily and quickly convert your RedHat OpenShift workloads to standard kubernete
 
 ### Run The Latest Deployment Locally 
 
+1) Get the Source & Run Latest the latest Docker Release
 ```
 
 git clone https://github.com/google/shifter 
@@ -25,6 +26,10 @@ cd shifter
 docker-compose -f docker-compose.yml up
 
 ```
+
+2) Open your browser to [http://localhost:9090](http://localhost:9090)
+   
+   
 
 ### Run Your Development Version Locally 
 
@@ -42,3 +47,5 @@ cd shifter
 ```
 sh build-deploy-local.sh
 ```
+
+4) Open your browser to [http://localhost:9090](http://localhost:9090)
