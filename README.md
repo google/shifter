@@ -49,19 +49,6 @@ docker-compose -f docker-compose.yml up
 
 ```
 
-<<<<<<< HEAD
-### shifter 
-
-Provides the backend service required by the front-end application and also provides the CLI tooling if the front-end web interface is not required.
-
-Binaries provided in the Releases Page [https://github.com/google/shifter/releases](https://github.com/google/shifter/releases)
-
-##### Usage
-=======
-
-
->>>>>>> 09622a7 (Update Documentation)
-
 ## Google Cloud Deployment
 
 Deployment to other cloud providers should be possible but has not been tested.
