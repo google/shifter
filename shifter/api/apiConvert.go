@@ -17,7 +17,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	generator "shifter/generators"
+	"shifter/generator"
 	lib "shifter/lib"
 	os "shifter/openshift"
 	ops "shifter/ops"

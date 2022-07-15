@@ -17,8 +17,8 @@ import (
 	"github.com/google/uuid"
 	"log"
 	"path/filepath"
-	"shifter/generators"
-	inputs "shifter/inputs"
+	"shifter/generator"
+	"shifter/input"
 	"shifter/lib"
 )
 
@@ -91,10 +91,10 @@ func (converter *Converter) ConvertFiles() {
 		var r []lib.Converted
 		switch converter.InputType {
 		case "yaml":
-			sourceFile := inputs.Yaml(file.Content, converter.Flags)
+			sourceFile := input.Yaml(file.Content, converter.Flags)
 			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, nil)
 		case "template":
-			sourceFile, values := inputs.Template(file.Content, converter.Flags)
+			sourceFile, values := input.Template(file.Content, converter.Flags)
 			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
 		}
 

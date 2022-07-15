@@ -19,8 +19,11 @@ import (
 )
 
 var (
-	endpoint    string
-	bearertoken string
+	endpoint      string
+	bearertoken   string
+	namespace     string
+	allnamespaces bool
+	csvoutput     bool
 )
 
 var clusterCmd = &cobra.Command{

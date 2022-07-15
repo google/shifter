@@ -14,25 +14,24 @@ limitations under the license.
 package processor
 
 import (
-	appsv1 "k8s.io/api/apps/v1"
+	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"shifter/lib"
 )
 
-func convertDeploymentToDeployment(OSDeployment appsv1.Deployment, flags map[string]string) lib.K8sobject {
-
-	deployment := &appsv1.Deployment{
+func convertJobtoJob(OSJob v1.Job, flags map[string]string) lib.K8sobject {
+	job := &v1.Job{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Deployment",
-			APIVersion: "apps/v1",
+			Kind:       "Job",
+			APIVersion: "batch/v1",
 		},
-		ObjectMeta: OSDeployment.ObjectMeta,
-		Spec:       OSDeployment.Spec,
+		ObjectMeta: OSJob.ObjectMeta,
+		Spec:       OSJob.Spec,
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Deployment"
-	k.Object = deployment
+	k.Kind = "Job"
+	k.Object = job
 
 	return k
 }
