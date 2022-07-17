@@ -40,7 +40,7 @@ import (
 
 	"k8s.io/client-go/kubernetes/scheme"
 	"shifter/processor"
-	"shifter/ops"
+	//"shifter/ops"
 )
 
 type Openshift struct {
