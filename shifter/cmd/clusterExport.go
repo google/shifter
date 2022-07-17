@@ -17,7 +17,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"log"
-	os "shifter/openshift"
+	openshift "shifter/openshift"
 )
 
 // clusterListCmd represents the clusterList command
@@ -41,7 +41,7 @@ to quickly create a Cobra application.`,
 ----------------------------------------
 `)
 		log.Println("Connecting to cluster: ", endpoint)
-		var openshift os.Openshift
+		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
 		openshift.ExportNSResources(namespace)

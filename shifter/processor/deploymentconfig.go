@@ -14,6 +14,7 @@ limitations under the license.
 package processor
 
 import (
+	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
@@ -21,7 +22,6 @@ import (
 	"log"
 	"shifter/lib"
 	"strings"
-	"fmt"
 )
 
 func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) lib.K8sobject {

@@ -200,7 +200,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -224,7 +224,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -248,7 +248,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -272,7 +272,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -296,7 +296,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -320,7 +320,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -344,7 +344,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -365,10 +365,18 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		rl.Kind = "ConfigMap"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
+		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
+			k8sjson.SerializerOptions{
+				Yaml: false,
+				Pretty: true,
+				Strict: true,
+			},
+		)
+		err := serializer.Encode(&y, writer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -392,7 +400,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -416,7 +424,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml: false,
 				Pretty: true,
 				Strict: true,
 			},
@@ -438,14 +446,8 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
-		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
-			k8sjson.SerializerOptions{
-				Yaml:   false,
-				Pretty: true,
-				Strict: true,
-			},
-		)
-		err := serializer.Encode(&y, writer)
+		yaml := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme)
+		err := yaml.Encode(&y, writer)
 		if err != nil {
 			log.Println(err)
 		}
