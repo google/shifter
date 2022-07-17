@@ -10,7 +10,13 @@ import (
 	os "shifter/openshift"
 
 	"github.com/gin-gonic/gin"
+	osNative "github.com/openshift/api/apps/v1"
 )
+
+type SOSDeploymentConfig struct {
+	Shifter          Shifter                   `json:"shifter"`
+	DeploymentConfig osNative.DeploymentConfig `json:"deploymentConfig"`
+}
 
 func (server *Server) SOSGetDeploymentConfig(ctx *gin.Context) {
 

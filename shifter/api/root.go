@@ -23,6 +23,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Server struct {
+	router *gin.Engine
+	config ServerConfig
+}
+
 // Instanciate gin-gonic HTTP Server
 func InitServer(serverAddress string, serverPort string, sourcePath string, outputPath string) (*Server, error) {
 	server := &Server{}

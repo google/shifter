@@ -24,7 +24,25 @@ import (
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
+	osNativeDC "github.com/openshift/api/apps/v1"
+	osNativeProject "github.com/openshift/api/project/v1"
 )
+
+type Convert struct {
+	Shifter *Shifter       `json:"shifter"`
+	Items   []*ConvertItem `json:"items"`
+}
+
+type ResponseConvert struct {
+	SUID    ops.SUID `json:"suid"`
+	Message string   `json:"message"`
+}
+
+type ConvertItem struct {
+	Namespace        *osNativeProject.Project     `json:"namespace"`
+	DeploymentConfig *osNativeDC.DeploymentConfig `json:"deploymentConfig"`
+	// Options * ConvertOptions `json:"options"`
+}
 
 func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
