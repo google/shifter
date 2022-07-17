@@ -23,6 +23,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Server struct {
+	router *gin.Engine
+	config ServerConfig
+}
+
+type ServerConfig struct {
+	serverAddress   string
+	serverPort      string
+	storagePlatform string
+	//gcsBucket       string
+	serverStorage ServerStorage
+}
+
+type ServerStorage struct {
+	description string
+	storageType string
+	sourcePath  string
+	outputPath  string
+}
+
 // Instanciate gin-gonic HTTP Server
 func InitServer(serverAddress string, serverPort string, sourcePath string, outputPath string) (*Server, error) {
 	server := &Server{}
@@ -50,7 +70,7 @@ func (server *Server) setupRouter() {
 	// Configure CORS
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"OPTIONS","GET", "POST"},
+		AllowMethods:     []string{"OPTIONS", "GET", "POST"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,

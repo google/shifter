@@ -30,8 +30,14 @@ func (generator *Generator) Yaml(name string, objects []lib.K8sobject) []lib.Con
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 
-		yaml := k8sjson.NewYAMLSerializer(k8sjson.DefaultMetaFactory, nil, nil)
-		err := yaml.Encode(v.Object, writer)
+		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, nil, nil,
+			k8sjson.SerializerOptions{
+				Yaml:   true,
+				Pretty: true,
+				Strict: true,
+			},
+		)
+		err := serializer.Encode(v.Object, writer)
 		if err != nil {
 			fmt.Println(err)
 		}

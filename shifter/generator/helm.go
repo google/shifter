@@ -65,9 +65,9 @@ func (generator *Generator) Helm(name string, objects []lib.K8sobject, parameter
 
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
-		yaml := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
+		serializer := json.NewYAMLSerializer(json.DefaultMetaFactory, nil, nil)
 
-		err := yaml.Encode(v.Object, writer)
+		err := serializer.Encode(v.Object, writer)
 		if err != nil {
 			log.Println(err)
 		}

@@ -22,6 +22,28 @@ import (
 	"shifter/lib"
 )
 
+type LogObject struct {
+}
+
+type Converter struct {
+	UUID       string // Unique ID of the Run
+	InputType  string
+	SourcePath string
+	Generator  string
+	OutputPath string
+	Flags      map[string]string
+
+	SourceFiles []*FileObject
+	OutputFiles []*FileObject
+
+	Logs []*LogObject
+}
+
+type DownloadFile struct {
+	Link     string `json:"link"`
+	Filename string `json:"filename"`
+}
+
 // Input Types
 const YAML string = "YAML"
 const TEMPLATE string = "template"

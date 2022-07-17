@@ -21,6 +21,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Download struct {
+	Link        string `json:"link"`
+	Name        string `json:"name"`
+	Uuid        string `json:"uuid"`
+	DisplayName string `json:"displayName"`
+}
+
+type ResponseDownload struct {
+	SUID    ops.SUID `json:"suid"`
+	Message string   `json:"message"`
+}
+
 // Get A Specific Downloadable Object
 func (server *Server) Download(ctx *gin.Context) {
 	// Validate Project Name has been Provided
