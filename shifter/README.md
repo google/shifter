@@ -13,33 +13,45 @@ Shifter has extensible methods for inputs and generators.
 
 ## Processor
 
-Processors are the converts from openshift to kubernetes.
+The processor is the component that converts the OpenShift objects to GKE/Anthos compatible objects. 
 
----
+In OpenShift the following objects are some of the custom resources available to OpenShift and not to other distributions of Kubernetes:
 
-## Inputs
+* Projects
+* Templates
+* DeploymentConfigs
+* Routes
+* Builds
+* ImageStreams
 
-Inputs are readers for your existing Openshift application deployment methods
+The processor takes the specification of these objects and converts them into the best fit object in GKE/Anthos
+
+* Projects -> Merged with Namesapces
+* Templates -> Deployment, Helm Chart
+* DeploymentConfigs -> Deployment
+* Routes -> Ingress, Internal Load Balancer, External Load Balancer, Istio/ASM VirtualService
+* Builds -> CloudBuild manifest
+* ImageStream -> Image
+
+The processor is extensible to support further objects, we have a roadmap of items to support.
+
+## Input
+
+Inputs are readers for your existing Openshift application deployment methods,
 
 Currently supported inputs:
 
 - **Yaml**
 
-  Yaml input takes a standard OpenShift yaml file and changes certain api calls from OpenShfit specific to standard Kubernetes example: DeploymentConfig to Deployment
+  Yaml input takes a standard OpenShift yaml manifest file that you have stored on a filesystem or GCS bucket.
 
 - **Templates**
 
-  Template converter takes a Openshift template, converts it into kubernetes compatible resources and outputs given the format required.
+  Template converter takes a Openshift template yaml file, templates can be converted to a templated output format such as Helm Charts.
 
-- **Cluster**
+## Generator
 
-  Cluster converter takes the resources deployed to a Openshift Namespace, converts those resources into kubernetes compatible resources and outputs given the format required.
-
----
-
-## Generators
-
-Generators create new code based on your input to be used by standard Kubernetes distributions.
+Generators create the resulting output, shifter has been designed so that additional generators or outputters can be created. 
 
 Currently supported generators:
 
@@ -51,21 +63,7 @@ Currently supported generators:
 
   Create a standard yaml file for deployment, good for one off deployments such as inputting from yaml.
 
-If you are interested in contributing, see [DEVELOPMENT.md](./DEVELOPMENT.md)
-
-## Converter Usage
-
-### Flags
-
-```
-shifter convert
-    -f --source-path Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written
-    -i --input-format Input format. One of yaml|template (Default: yaml)
-    -o --output-path Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
-    -t --output-format Output format (generator to use) One of: yaml|helm
-```
-
-#### Processor flags
+## Processor flags
 
 Processor flags allow you to make changes to the way the processor handles certain objects.
 
@@ -78,7 +76,18 @@ This is achieved using key value pairs passed into the `--pflags` flag.
 
 You can chain multiple flags together example:
 
-``go run . convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/helm --pflags ingress-facing=internal --pflags image-repo=gcs://shifter-lz-002``
+``shifter convert -t helm -i template -f ./_test/os-nginx-template.yaml -o ./out/helm --pflags ingress-facing=internal --pflags image-repo=gcs://shifter-lz-002``
+
+## CLI Usage
+
+```
+shifter convert
+    -f --source-path Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written
+    -i --input-format Input format. One of yaml|template (Default: yaml)
+    -o --output-path Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
+    -t --output-format Output format (generator to use) One of: yaml|helm
+```
+
 
 ### Converter Examples:
 
@@ -108,9 +117,9 @@ You can chain multiple flags together example:
 
 Shifter also contains a under development Rest API Sever.
 
-## Server Usage
+### Server Usage
 
-### Flags
+#### Flags
 
 ```
 shifter server
@@ -121,7 +130,7 @@ shifter server
     -o --output-path Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
 ```
 
-### Server Examples:
+#### Server Examples:
 
 - Running with Local Storage
 

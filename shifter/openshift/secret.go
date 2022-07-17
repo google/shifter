@@ -13,44 +13,44 @@ limitations under the license.
 
 package openshift
 
+// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
-	"log"
-
-	v1 "github.com/openshift/api/build/v1"
-	os "github.com/openshift/client-go/build/clientset/versioned"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"log"
 )
 
-func (c Openshift) GetAllBuilds(namespace string) (*v1.BuildList, error) {
-	cluster, err := os.NewForConfig(c.clusterClient())
+func (c Openshift) GetAllSecrets(namespace string) (*v1.SecretList, error) {
+	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.BuildList{}, err
+		return &v1.SecretList{}, err
 	}
 
-	buildList, err := cluster.BuildV1().Builds(namespace).List(context.TODO(), metav1.ListOptions{})
+	secretList, err := cluster.CoreV1().Secrets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.BuildList{}, err
+		return &v1.SecretList{}, err
 	}
 
-	return buildList, nil
+	return secretList, nil
 
 }
 
-func (c Openshift) GetBuild(name string, namespace string) (*v1.Build, error) {
-	cluster, err := os.NewForConfig(c.clusterClient())
+func (c Openshift) GetSecret(name string, namespace string) (*v1.Secret, error) {
+	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
-		return &v1.Build{}, err
+		return &v1.Secret{}, err
 	}
 
-	build, err := cluster.BuildV1().Builds(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	secret, err := cluster.CoreV1().Secrets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return &v1.Build{}, err
+		return &v1.Secret{}, err
 	}
 
-	return build, nil
+	return secret, nil
 }

@@ -17,14 +17,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"shifter/generator"
+	generator "shifter/generator"
 	lib "shifter/lib"
 	os "shifter/openshift"
 	ops "shifter/ops"
 	"shifter/processor"
 
 	"github.com/gin-gonic/gin"
+	osNativeDC "github.com/openshift/api/apps/v1"
+	osNativeProject "github.com/openshift/api/project/v1"
 )
+
+type Shifter struct {
+	ClusterConfig *ClusterConfig `json:"clusterConfig"`
+}
+
+type Convert struct {
+	Shifter *Shifter       `json:"shifter"`
+	Items   []*ConvertItem `json:"items"`
+}
+
+type ResponseConvert struct {
+	SUID    ops.SUID `json:"suid"`
+	Message string   `json:"message"`
+}
+
+type ConvertItem struct {
+	Namespace        *osNativeProject.Project     `json:"namespace"`
+	DeploymentConfig *osNativeDC.DeploymentConfig `json:"deploymentConfig"`
+	// Options * ConvertOptions `json:"options"`
+}
+
+type ClusterConfig struct {
+	ConnectionName string `json:"connectionName"`
+	BaseUrl        string `json:"baseUrl"`
+	BearerToken    string `json:"bearerToken"`
+	Username       string `json:"username"`
+	Password       string `json:"password"`
+}
 
 func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
@@ -58,17 +88,17 @@ func (server *Server) Convert(ctx *gin.Context) {
 		}
 
 		// Handle the Conversion of the Manifests and File Writing
-		var generator generator.Generator
+		//var generator generator.Generator
 		var objs []lib.K8sobject
 		obj := processor.Processor(u, "DeploymentConfig", nil)
 		for _, v := range obj {
 			objs = append(objs, v)
 		}
-		convertedObjects := generator.Yaml(item.DeploymentConfig.ObjectMeta.Name, objs)
+		convertedObjects := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
 		for _, conObj := range convertedObjects {
 			fileObj := &ops.FileObject{
 				StorageType:   server.config.serverStorage.storageType,
-				SourcePath:    (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+				Path:          (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,
 				ContentLength: conObj.Payload.Len(),
