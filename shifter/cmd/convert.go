@@ -14,17 +14,16 @@ limitations under the license.
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"log"
 	ops "shifter/ops"
-
-	"github.com/spf13/cobra"
 )
 
 var (
-	inputType string
-	//filename   string
+	inputType  string
 	sourcePath string
 	outputPath string
+	useIstio   bool
 	generator  string
 	pFlags     []string
 )
@@ -34,34 +33,43 @@ var convertCmd = &cobra.Command{
 	Short: "Convert Openshift Resources to Kubernetes native formats",
 	Long: `
 
-   _____ __    _ ______           
+   _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
- ___/ / / / / / __/ /_/  __/ /    
-/____/_/ /_/_/_/  \__/\___/_/     
-                                  
+ ___/ / / / / / __/ /_/  __/ /
+/____/_/ /_/_/_/  \__/\___/_/
+
 
 Convert OpenShift resources to kubernetes native formats
 
-Usage: shifter convert -i ./input.yaml -o ./output_dir -k kind -t kind
-Supply the input file or directory of files with the -i or --input-format flag
-Supply the output using the -o or --output-path flag, the directory will be created with the contents of the helm chart.
+Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/file
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
-   _____ __    _ ______           
+   _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
- ___/ / / / / / __/ /_/  __/ /    
-/____/_/ /_/_/_/  \__/\___/_/     
-                                 
+ ___/ / / / / / __/ /_/  __/ /
+/____/_/ /_/_/_/  \__/\___/_/
+
 ----------------------------------------
 			`)
+
+		if len(args) != 2 {
+			log.Fatal("Please specify source and destination arguments.")
+		}
+		sourcePath = args[0]
+		outputPath = args[1]
+
 		log.Println("Converting", inputType, sourcePath, "to", generator, outputPath)
-		flags := ProcFlags(pFlags)
-		con := ops.NewConverter(inputType, sourcePath, generator, outputPath, flags)
+		procflags := ProcFlags(pFlags)
+		if useIstio == true {
+			procflags["istio"] = "true"
+		}
+
+		con := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
 		con.ConvertFiles()
-		//ops.Convert(inputType, filename, generator, output, flags)
+		log.Println("Conversion Complete")
 	},
 }
 
@@ -69,12 +77,8 @@ func init() {
 	rootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().StringVarP(&inputType, "input-format", "i", "yaml", "Input format. One of: yaml|template")
 	convertCmd.Flags().StringVarP(&generator, "output-format", "t", "", "Output format. One of: yaml|helm")
-	convertCmd.Flags().StringVarP(&sourcePath, "source-path", "f", "", "Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) to convert (contents must be in OpenShift format)")
-	convertCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written")
-	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "", []string{}, "Flags passed to the processor")
-	convertCmd.MarkFlagRequired("source-path")
-	convertCmd.MarkFlagRequired("output-path")
-	//convertCmd.Flags().StringVarP(&filename, "filename", "f", "", "Path to the file or directory to convert (contents must be in OpenShift format)")
-	//convertCmd.Flags().StringVarP(&output, "output-path", "o", "", "Relative path to the output directory for the results on the conversion")
-	//convertCmd.MarkFlagRequired("filename")
+	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "p", []string{}, "Flags passed to the processor")
+	convertCmd.Flags().BoolVarP(&useIstio, "istio", "m", false, "Use istio for routes conversion")
+	convertCmd.MarkFlagRequired("input-format")
+	convertCmd.MarkFlagRequired("output-format")
 }

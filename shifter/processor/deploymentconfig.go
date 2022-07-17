@@ -19,13 +19,15 @@ import (
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
+	"shifter/lib"
 	"strings"
+	"fmt"
 )
 
-func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) appsv1.Deployment {
+func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) lib.K8sobject {
 
 	flagImageRepo := flags["image-repo"]
-
+	fmt.Println(OSDeploymentConfig)
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
@@ -75,6 +77,9 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 		}
 	}
 
-	// Return a full kubernetes structure, this needs to be marshalled into a usable yaml
-	return *deployment
+	var k lib.K8sobject
+	k.Kind = "Deployment"
+	k.Object = deployment
+
+	return k
 }

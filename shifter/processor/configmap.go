@@ -16,9 +16,10 @@ package processor
 import (
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"shifter/lib"
 )
 
-func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]string) apiv1.ConfigMap {
+func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]string) lib.K8sobject {
 	cfgMap := &apiv1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ConfigMap",
@@ -28,6 +29,9 @@ func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]s
 		Data:       OSConfigMap.Data,
 		BinaryData: OSConfigMap.BinaryData,
 	}
+	var k lib.K8sobject
+	k.Kind = "ConfigMap"
+	k.Object = cfgMap
 
-	return *cfgMap
+	return k
 }

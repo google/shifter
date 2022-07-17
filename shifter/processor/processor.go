@@ -18,6 +18,7 @@ import (
 	"fmt"
 	osappsv1 "github.com/openshift/api/apps/v1"
 	osroutev1 "github.com/openshift/api/route/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
@@ -28,74 +29,80 @@ import (
 func int32Ptr(i int32) *int32 { return &i }
 func int64Ptr(i int64) *int64 { return &i }
 
-func Processor(input []byte, kind interface{}, flags map[string]string) lib.K8sobject {
+func Processor(input []byte, kind interface{}, flags map[string]string) []lib.K8sobject {
 	// Use our K8sobject which is a generic json interface for kubernetes objects
-	var k lib.K8sobject
+	var processed []lib.K8sobject
 
 	switch kind {
 	case "DeploymentConfig":
-		var dc osappsv1.DeploymentConfig
-		json.Unmarshal(input, &dc)
-		t := convertDeploymentConfigToDeployment(dc, flags)
-		var k lib.K8sobject
+		var object osappsv1.DeploymentConfig
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDeploymentConfigToDeployment(object, flags))
+		return processed
+		break
 
-		k.Kind = "Deployment"
-		k.Object = &t
+	case "Deployment":
+		var object appsv1.Deployment
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDeploymentToDeployment(object, flags))
+		return processed
+		break
 
-		return k
+	case "StatefulSet":
+		var object appsv1.StatefulSet
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertStatefulSetToStatefulSet(object, flags))
+		return processed
+		break
+
+	case "DaemonSet":
+		var object appsv1.DaemonSet
+		json.Unmarshal(input, &object)
+		processed := append(processed, convertDaemonSetToDaemonSet(object, flags))
+		return processed
 		break
 
 	case "Route":
 		var route osroutev1.Route
 		json.Unmarshal(input, &route)
-		t := convertRouteToIngress(route, flags)
-		var k lib.K8sobject
 
-		k.Kind = "Ingress"
-		k.Object = &t
+		if flags["istio"] == "true" {
+			if flags["create-istio-gateway"] == "Y" {
+				processed = append(processed, createIstioIngressGateway(route, flags))
+			}
 
-		return k
-		break
+			processed = append(processed, convertRouteToIstioVirtualService(route, flags))
+			return processed
+			break
+		} else {
+			processed := append(processed, convertRouteToIngress(route, flags))
+			return processed
+			break
+		}
 
 	case "Service":
 		var service apiv1.Service
 		json.Unmarshal(input, &service)
-		t := convertServiceToService(service, flags)
-		var k lib.K8sobject
-
-		k.Kind = kind
-		k.Object = &t
-
-		return k
-		break
-
-	case "PersistentVolumeClaim":
-		var pvc apiv1.PersistentVolumeClaim
-		json.Unmarshal(input, &pvc)
-		t := convertPvcToPvc(pvc, flags)
-		var k lib.K8sobject
-
-		k.Kind = kind
-		k.Object = &t
-
-		return k
+		processed := append(processed, convertServiceToService(service, flags))
+		return processed
 		break
 
 	case "ConfigMap":
 		var cfgMap apiv1.ConfigMap
 		json.Unmarshal(input, &cfgMap)
-		t := convertConfigMapToConfigMap(cfgMap, flags)
-		var k lib.K8sobject
-
-		k.Kind = kind
-		k.Object = &t
-
-		return k
+		processed := append(processed, convertConfigMapToConfigMap(cfgMap, flags))
+		return processed
 		break
 
+	case "ServiceAccount":
+		var sa apiv1.ServiceAccount
+		json.Unmarshal(input, &sa)
+		processed := append(processed, convertServiceAccountToServiceAccount(sa, flags))
+		return processed
+		break
 	}
 
-	return k
+	return processed
 }
 
 func serializer(input runtime.Object) {

@@ -1,3 +1,11 @@
+.vscode/*
+*.exe
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.swp
+.DS_Store
+**/.DS_Store
 shifter
 out/
 *.swp
