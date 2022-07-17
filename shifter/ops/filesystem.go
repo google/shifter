@@ -14,9 +14,20 @@ limitations under the license.
 package ops
 
 import (
+	"bytes"
 	"log"
 	"strings"
 )
+
+type FileObject struct {
+	UUID          string       // Unique ID of the Run
+	StorageType   string       // GCS or LCL Storage
+	SourcePath    string       // Bucket or Local Path
+	Ext           string       // File Extention
+	Filename      string       // Filename
+	Content       bytes.Buffer // Content as Bytes Buffer
+	ContentLength int          // Content Length (len(bytes.buffer))
+}
 
 type JSONResponse struct {
 	Value1 string `json:"Filename"`

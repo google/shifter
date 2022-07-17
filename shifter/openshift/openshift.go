@@ -130,11 +130,7 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 
 	for _, obj := range resourcelist {
 		//obj := processor.Processor(obj.Payload.Bytes(), obj.Kind, nil)
-		fmt.Println(obj.Kind)
-		fmt.Println(obj.Name)
-		fmt.Println(obj.Payload.String())
-		test := obj.Payload
-		obj := processor.Processor(test.Bytes(), obj.Kind, flags)
+		obj := processor.Processor(obj.Payload.Bytes(), obj.Kind, flags)
 		fmt.Println(obj)
 	}
 
