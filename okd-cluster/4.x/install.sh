@@ -70,6 +70,7 @@ then
      echo "Basic Validation completed"
 else
       echo -e "$ERROR"
+      exit
 fi
 
 echo "############################################################"
