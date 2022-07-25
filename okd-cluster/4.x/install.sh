@@ -1,13 +1,14 @@
 #! /bin/bash
 
+
 ###################### Mandatory Vairables ##########################
 PROJECT_ID=""                    #e.g. : "pm-okd-11"
 CLUSTER_NAME=""                  #e.g. : "okd-41"
-OKD_VERSION=""                   #e.g. : "4.10"
-BILLING_ACCOUNT_ID=""            #e.g. : "0090FE-ED3D81-AF8E3B"
-PARENT=""                        #e.g. : "organizations/384628256961"
-DOMAIN=""                        #e.g. : "pm-gcp.com."
-SSH_KEY_PATH=""                  #e.g. : usr/local/google/home/parasmamgain/.ssh/id_ed25519.pub
+OKD_VERSION=""                   #e.g. : "4.10" or "4.9"
+BILLING_ACCOUNT_ID=""            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
+PARENT=""                        #e.g. : "organizations/111222333444"
+DOMAIN=""                        #e.g. : "google.com."
+SSH_KEY_PATH=""                  #e.g. : usr/local/google/home/username/.ssh/id_ed25519.pub
 # More details on redhat pull secret can be found here https://console.redhat.com/openshift/install/pull-secret
 REDHAT_PULL_SECRET='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
 PROJECT_CREATE="false"           #make this as true if you want to create a new project under the PARENT
@@ -19,7 +20,57 @@ SA_JSON_FILENAME="service-account-key.json"
 PROJECTID_LIST='["'${PROJECT_ID}'"]'
 OKD_INSTALLABALE_VERSION=""
 
-#####################################################################
+###################################################################
+echo "############################################################"
+echo "Validating Mandatory Variables"
+echo "############################################################"
+ERROR=""
+if [ -z "$PROJECT_ID" ]
+then
+      ERROR="PROJECT_ID should not be empty"
+fi
+
+if [ -z "$CLUSTER_NAME" ]
+then
+      ERROR="$ERROR""\nCLUSTER_NAME should not be empty"
+fi
+
+if [ "$OKD_VERSION" != "4.9" ] && [ "$OKD_VERSION" != "4.10" ]
+then
+      ERROR="$ERROR""\nOKD_VERSION should be 4.9 or 4.10"
+fi
+
+if [ -z "$BILLING_ACCOUNT_ID" ]
+then
+      ERROR="$ERROR""\nBILLING_ACCOUNT_ID should not be empty"
+fi
+
+if [ -z "$PARENT" ]
+then
+      ERROR="$ERROR""\nPARENT should not be empty"
+fi
+
+if [ -z "$DOMAIN" ]
+then
+      ERROR="$ERROR""\nDOMAIN should not be empty"
+fi
+
+if [ -z "$REDHAT_PULL_SECRET" ]
+then
+      ERROR="$ERROR""\nREDHAT_PULL_SECRET should not be empty"
+fi
+
+if [ -z "$PROJECT_CREATE" ]
+then
+      ERROR="$ERROR""\nPROJECT_CREATE should not be empty"
+fi
+
+if [ -z "$ERROR" ]
+then
+     echo "Basic Validation completed"
+else
+      echo -e "$ERROR"
+fi
 
 echo "############################################################"
 echo "Configuring project and setting up project pre-requisite..."
@@ -29,6 +80,11 @@ echo "############################################################"
 terraform -chdir=01-projectsetup init
 terraform -chdir=01-projectsetup plan -var "projectid_list=${PROJECTID_LIST}" -var "cluster_name=${CLUSTER_NAME}" -var "billing_account_id=${BILLING_ACCOUNT_ID}" -var "parent=${PARENT}" -var "redhat_pull_secret=${REDHAT_PULL_SECRET}" -var "domain=${DOMAIN}" -var "ssh_key_path=${SSH_KEY_PATH}" -var "project_create=${PROJECT_CREATE}"
 terraform -chdir=01-projectsetup apply -var "projectid_list=${PROJECTID_LIST}" -var "cluster_name=${CLUSTER_NAME}" -var "billing_account_id=${BILLING_ACCOUNT_ID}" -var "parent=${PARENT}" -var "redhat_pull_secret=${REDHAT_PULL_SECRET}" -var "domain=${DOMAIN}" -var "ssh_key_path=${SSH_KEY_PATH}" -var "project_create=${PROJECT_CREATE}" --auto-approve
+
+echo "##############################################################################"
+echo "Please Ensure if you have updated the Nameservers in your domain name registar"
+echo "##############################################################################"
+read -p "Press enter to continue"
 
 echo "############################################################"
 echo "Waiting for  60 seconds for resources to be ready..."
@@ -135,3 +191,8 @@ echo "############################################################"
 echo "Endpoint"
 echo "############################################################"
 oc get service frontend | awk '{print $4}'
+
+echo "############################################################"
+echo "Get Bearer Token"
+echo "############################################################"
+oc whoami --show-token
