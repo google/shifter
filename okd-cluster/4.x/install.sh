@@ -158,8 +158,8 @@ echo "#################################################################"
 ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
 
 
-#export USERNAME="kubeadmin"
-#export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
+export USERNAME="kubeadmin"
+export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
 export KUBECONFIG=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeconfig
 #Disable the service account
 #gcloud iam service-accounts disable okd-sa@${PROJECT_ID}.iam.gserviceaccount.com
@@ -193,7 +193,14 @@ echo "Endpoint"
 echo "############################################################"
 oc get service frontend | awk '{print $4}'
 
-echo "############################################################"
-echo "Get Bearer Token"
-echo "############################################################"
-oc whoami --show-token
+echo "##################################################################"
+echo "Get Token and the Cluster API Endpoint to be used for the shifter"
+echo "##################################################################"
+oc login --username=$USERNAME --password=$PASSWORD
+export TOKEN=$(grep 'token:' $KUBECONFIG | tail -n1); TOKEN=${TOKEN//*token: /};
+export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
+
+#echo $TOKEN
+#echo $CLUSTER_API_ENDPOINT
+
+echo "##################################################################"
