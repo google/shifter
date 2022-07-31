@@ -14,13 +14,19 @@ limitations under the license.
 package ops
 
 import (
+	"bytes"
 	"log"
 	"strings"
 )
 
-type JSONResponse struct {
-	Value1 string `json:"Filename"`
-	Value2 string `json:"Link"`
+type FileObject struct {
+	UUID          string       // Unique ID of the Run
+	StorageType   string       // GCS or LCL Storage
+	Path          string       // Bucket or Local Path
+	Ext           string       // File Extention
+	Filename      string       // Filename
+	Content       bytes.Buffer // Content as Bytes Buffer
+	ContentLength int          // Content Length (len(bytes.buffer))
 }
 
 /*
@@ -36,7 +42,7 @@ const LCL string = "LCL"
 func (fileObj *FileObject) Meta() {
 	log.Println("-------------------------------------------------------------")
 	log.Println("Storage Type:		", fileObj.StorageType)
-	log.Println("Source Path:		", fileObj.SourcePath)
+	log.Println("Source Path:		", fileObj.Path)
 	log.Println("File Extention:		", fileObj.Ext)
 	log.Println("-------------------------------------------------------------")
 }

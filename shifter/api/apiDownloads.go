@@ -21,6 +21,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Downloads struct {
+	Items *[]Download `json:"items"`
+}
+
+type ResponseDownloads struct {
+	Items   []*ops.SUID `json:"items"`
+	Message string      `json:"message"`
+}
+
 // Get All Downloadable Objects
 func (server *Server) Downloads(ctx *gin.Context) {
 	fmt.Println("... Download[s]")

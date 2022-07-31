@@ -133,13 +133,13 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 
 	//Check if a target port has been specified
 	if OSRoute.Spec.Port != nil {
-	//Check if a port name has been provided otherwise use the default
-	if OSRoute.Spec.Port.TargetPort.IntValue() == 0 && OSRoute.Spec.Port.TargetPort.String() != "" {
-		ingressServiceBackend.Port.Name = OSRoute.Spec.Port.TargetPort.String()
-	} else if OSRoute.Spec.Port.TargetPort.IntValue() != 0 {
-		ingressServiceBackend.Port.Number = int32(OSRoute.Spec.Port.TargetPort.IntValue())
+		//Check if a port name has been provided otherwise use the default
+		if OSRoute.Spec.Port.TargetPort.IntValue() == 0 && OSRoute.Spec.Port.TargetPort.String() != "" {
+			ingressServiceBackend.Port.Name = OSRoute.Spec.Port.TargetPort.String()
+		} else if OSRoute.Spec.Port.TargetPort.IntValue() != 0 {
+			ingressServiceBackend.Port.Number = int32(OSRoute.Spec.Port.TargetPort.IntValue())
+		}
 	}
-}
 	ingressServiceBackend.Name = OSRoute.Spec.To.Name
 
 	// build up the ingress spec

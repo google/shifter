@@ -16,10 +16,13 @@ package openshift
 // ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"log"
+
+	osappsv1 "github.com/openshift/api/apps/v1"
+	os "github.com/openshift/client-go/apps/clientset/versioned"
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
 func (c Openshift) GetAllDeployments(namespace string) (*v1.DeploymentList, error) {
@@ -52,4 +55,36 @@ func (c Openshift) GetDeployment(name string, namespace string) (*v1.Deployment,
 	}
 
 	return deployment, nil
+}
+
+func (c Openshift) GetAllDeploymentConfigs(namespace string) (*osappsv1.DeploymentConfigList, error) {
+	cluster, err := os.NewForConfig(c.clusterClient())
+	if err != nil {
+		log.Println(err)
+		return &osappsv1.DeploymentConfigList{}, err
+	}
+
+	depCfgLst, err := cluster.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		log.Println(err)
+		return &osappsv1.DeploymentConfigList{}, err
+	}
+
+	return depCfgLst, nil
+}
+
+func (c Openshift) GetDeploymentConfig(namespace string, name string) (*osappsv1.DeploymentConfig, error) {
+	cluster, err := os.NewForConfig(c.clusterClient())
+	if err != nil {
+		log.Println(err)
+		return &osappsv1.DeploymentConfig{}, err
+	}
+
+	depCfg, err := cluster.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		log.Println(err)
+		return &osappsv1.DeploymentConfig{}, err
+	}
+
+	return depCfg, nil
 }

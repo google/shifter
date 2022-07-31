@@ -22,12 +22,14 @@ import (
 
 func (fileObj *FileObject) WriteLCLFile() {
 
-	if _, err := os.Stat(fileObj.SourcePath); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(fileObj.SourcePath), 0700) // Create output directory
+	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
+		os.MkdirAll(filepath.Dir(fileObj.Path), 0700) // Create output directory
 	}
 
 	// Create New File
-	f, err := os.OpenFile(fileObj.SourcePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)
+	fileName := fileObj.Path + "." + fileObj.Ext
+	log.Println("Writing to " + fileName)
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)
 	if err != nil {
 		log.Println(err)
 		return
@@ -45,12 +47,12 @@ func (fileObj *FileObject) WriteLCLFile() {
 
 func (fileObj *FileObject) LoadLCLFile() {
 
-	file, err := os.Open(fileObj.SourcePath)
+	file, err := os.Open(fileObj.Path)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	log.Printf("Reading %v", fileObj.SourcePath)
+	log.Printf("Reading %v", fileObj.Path)
 	defer file.Close()
 
 	fileinfo, err := file.Stat()
@@ -91,7 +93,7 @@ func ProcessLCLPath(path string) ([]*FileObject, error) {
 				// Create File Object for every file in Directory
 				fileObj := &FileObject{
 					StorageType: LCL,
-					SourcePath:  filePath,
+					Path:        filePath,
 					Ext:         filepath.Ext(filePath),
 					Filename:    filepath.Base(filePath),
 				}
@@ -111,7 +113,7 @@ func ProcessLCLPath(path string) ([]*FileObject, error) {
 		// Create File Object for file
 		fileObj := &FileObject{
 			StorageType: LCL,
-			SourcePath:  path,
+			Path:        path,
 			Ext:         filepath.Ext(path),
 			Filename:    filepath.Base(path),
 		}

@@ -18,6 +18,12 @@ import (
 	"net/http"
 )
 
+type ResponseStatusHealthz struct {
+	Timestamp string `json:"timestamp"`
+	Status    int    `json:"status"`
+	Message   string `json:"message"`
+}
+
 func (server *Server) Healthz(ctx *gin.Context) {
 	// Construct API Endpoint Response
 	r := ResponseStatusHealthz{}

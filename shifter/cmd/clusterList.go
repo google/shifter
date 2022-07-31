@@ -17,13 +17,14 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"log"
-	os "shifter/openshift"
+	"os"
+	"shifter/openshift"
 )
 
 // clusterListCmd represents the clusterList command
 var clusterListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
+	Short: "Lists all resources supported by shifter in the target Openshift cluster.",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,9 +43,13 @@ to quickly create a Cobra application.`,
 `)
 		log.Println("Connecting to cluster: ", endpoint)
 
-		var openshift os.Openshift
+		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
+		if namespace == "" && allnamespaces == false {
+			log.Println("Choose either all-namespaces or specify a namespace")
+			os.Exit(1)
+		}
 		openshift.ListNSResources(csvoutput, namespace)
 	},
 }

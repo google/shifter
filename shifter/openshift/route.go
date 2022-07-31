@@ -18,12 +18,12 @@ import (
 	"log"
 
 	v1 "github.com/openshift/api/route/v1"
-	routev1 "github.com/openshift/client-go/route/clientset/versioned"
+	os "github.com/openshift/client-go/route/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.RouteList{}, err
@@ -40,7 +40,7 @@ func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
 }
 
 func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
-	cluster, err := routev1.NewForConfig(c.clusterClient())
+	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
 		log.Println(err)
 		return &v1.Route{}, err

@@ -53,3 +53,35 @@ func (c Openshift) GetImage(name string, namespace string) (*v1.Image, error) {
 
 	return image, nil
 }
+
+func (c Openshift) GetAllImageStreams(namespace string) (*v1.ImageStreamList, error) {
+	cluster, err := imagev1.NewForConfig(c.clusterClient())
+	if err != nil {
+		log.Println(err)
+		return &v1.ImageStreamList{}, err
+	}
+
+	images, err := cluster.ImageV1().ImageStreams(namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		log.Println(err)
+		return &v1.ImageStreamList{}, err
+	}
+
+	return images, nil
+}
+
+func (c Openshift) GetImageStream(name string, namespace string) (*v1.ImageStream, error) {
+	cluster, err := imagev1.NewForConfig(c.clusterClient())
+	if err != nil {
+		log.Println(err)
+		return &v1.ImageStream{}, err
+	}
+
+	image, err := cluster.ImageV1().ImageStreams(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		log.Println(err)
+		return &v1.ImageStream{}, err
+	}
+
+	return image, nil
+}

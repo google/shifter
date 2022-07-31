@@ -14,36 +14,38 @@ limitations under the license.
 package generator
 
 import (
+	//"github.com/instrumenta/kubeval/kubeval"
+	"reflect"
 	"shifter/lib"
+	"strings"
 )
 
 type Generator struct {
-	OutputType string
-	Name       string
-	Input      struct {
-		Object     []lib.K8sobject
-		Parameters []lib.OSTemplateParams
-	}
+	/*
+		OutputType string
+		Name       string
+		Input      struct {
+			Object     []lib.K8sobject
+			Parameters []lib.OSTemplateParams
+		}
+	*/
 }
 
 type Input struct {
 	Object []lib.K8sobject
 }
 
-func NewGenerator(outputType string, name string, input []lib.K8sobject, parameters []lib.OSTemplateParams) []lib.Converted {
-	generator := &Generator{}
-
-	outputType = outputType
-	generator.Name = name
-	generator.Input.Object = input
-	generator.Input.Parameters = parameters
-
-	switch outputType {
-	case "yaml":
-		return generator.Yaml(name, generator.Input.Object)
-	case "helm":
-		return generator.Helm(name, generator.Input.Object, generator.Input.Parameters)
+func NewGenerator(outputType string, args ...interface{}) []lib.Converted {
+	c := Generator{}
+	inputs := make([]reflect.Value, len(args))
+	for i, _ := range args {
+		inputs[i] = reflect.ValueOf(args[i])
 	}
 
-	return nil
+	outputType = strings.Title(strings.ToLower(outputType))
+	val := reflect.ValueOf(c).MethodByName(outputType).Call(inputs)
+
+	var result []lib.Converted
+	result = val[0].Interface().([]lib.Converted)
+	return result
 }
