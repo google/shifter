@@ -113,3 +113,13 @@ variable "public_subdomain" {
   description = "public domain path"
   type = string
 }
+
+variable "dns_master_subdomain" {
+  description = "Master subdomain entry"
+  type = string
+}
+
+variable "ssh_user"{
+  description = "ssh user"
+  type= string
+}

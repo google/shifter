@@ -23,3 +23,8 @@ output "dns-name-server" {
     description  = "The nameserver created "
     value = google_dns_managed_zone.okd-gcp-zone.name_servers
 }
+
+output "google_compute_address" {
+  description = "Address associated with LB"
+  value = google_compute_address.os-master-addr.address
+}

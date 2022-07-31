@@ -21,3 +21,5 @@ activate_apis = [
 ]
 master_subdomain = "okd.avinashj.in"
 public_subdomain = "console.okd.avinashj.in"
+dns_master_subdomain = "okd.avinashj.in."
+ssh_user = "avinashjha"
