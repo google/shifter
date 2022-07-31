@@ -47,10 +47,10 @@ echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Provision Infra function Ends ------
 # function to copy the host and the ssh files
 function copy_files() {
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Copy files function starts ------------" >> ${LOG_FILE}
-BASTION_HOST=$(terraform output bastion | tr -d '"')
-PROJECT=$(terraform output project_id | tr -d '"')
-MASTER=$(terraform output master | tr -d '"')
-LB_IP=$(terraform output google_compute_address | tr -d '"')
+export BASTION_HOST=$(terraform output bastion | tr -d '"')
+export PROJECT=$(terraform output project_id | tr -d '"')
+export MASTER=$(terraform output master | tr -d '"')
+export LB_IP=$(terraform output google_compute_address | tr -d '"')
 echo "$(date +'%Y-%m-%d %H:%M:%S'): Copying ssh key and host file" >> ${LOG_FILE}
 gcloud compute scp  --project=$PROJECT --zone=$ZONE $SSH_PATH $SSH_USER@$BASTION_HOST:~/.ssh/id_rsa >> ${LOG_FILE}
 gcloud compute scp  --project=$PROJECT --zone=$ZONE ./inventory/ansible-hosts $SSH_USER@$BASTION_HOST:/home/$SSH_USER >> ${LOG_FILE}
@@ -132,7 +132,8 @@ echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Set Configfunction starts ----------
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Assign cluster role to the user shifter ------------"
 oc adm policy add-cluster-role-to-user cluster-admin shifter
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Generating the Bearer token ------------"
-curl -u shifter:shifter -kv '$LB_IP:8443/oauth/authorize?client_id=openshift-challenging-client&response_type=token' -skv -H "X-CSRF-Token: xxx"
+export TOKEN=$(curl -u shifter:shifter -kv '$LB_IP:8443/oauth/authorize?client_id=openshift-challenging-client&response_type=token' -skv -H "X-CSRF-Token: xxx"  --stderr - |  grep access_token | awk -F'=' ' {print $2}'| awk -F'&' '{print$1}')
+echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Bearer token: $TOKEN ------------"
 echo "$(date +'%Y-%m-%d %H:%M:%S'): Exiting from the master node."
 echo "$(date +'%Y-%m-%d %H:%M:%S'):-------- Set configuration function Ends ------------"
 } 
