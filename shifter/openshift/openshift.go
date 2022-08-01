@@ -94,11 +94,11 @@ func (c *Openshift) clusterClient() *restclientcmdapi.Config {
 	return cl
 }
 
-func (c *Openshift) ExportNSResources(namespace string) {
+func (c *Openshift) ExportNSResources(namespace string, outputPath string) {
 	var resourcelist []ResourceList
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace)
+		resourcelist = c.getResources(namespace, true)
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
@@ -106,24 +106,30 @@ func (c *Openshift) ExportNSResources(namespace string) {
 			os.Exit(1)
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name)
+			rl := c.getResources(p.ObjectMeta.Name, true)
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
 		}
 	}
-	for _, obj := range resourcelist {
-		//obj := processor.Processor(obj.Payload.Bytes(), obj.Kind, nil)
-		log.Println(obj.Kind, obj.Name)
-		//fmt.Println(obj.Payload.String())
+	for _, res := range resourcelist {
+		log.Println("Exporting object: " + res.Namespace + "\\" + res.Name + " of kind " + res.Kind)
+		fileObj := &ops.FileObject{
+			StorageType:   "local",
+			Path:          (outputPath + "/" + res.Namespace + "/" + res.Name),
+			Ext:           "yaml",
+			Content:       res.Payload,
+			ContentLength: res.Payload.Len(),
+		}
+		fileObj.WriteFile()
 	}
 }
 
-func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string) error {
+func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string, outputPath string) error {
 	var resourcelist []ResourceList
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace)
+		resourcelist = c.getResources(namespace, false)
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
@@ -131,7 +137,7 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 			return err
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name)
+			rl := c.getResources(p.ObjectMeta.Name, false)
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
@@ -140,13 +146,12 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 
 	for _, res := range resourcelist {
 		log.Println("Converting object: " + res.Namespace + "\\" + res.Name + " of kind " + res.Kind)
-		//obj := processor.Processor(obj.Payload.Bytes(), obj.Kind, nil)
 		obj := processor.Processor(res.Payload.Bytes(), res.Kind, flags)
 		convertedObject := generator.NewGenerator("yaml", res.Name, obj)
 		for _, conObj := range convertedObject {
 			fileObj := &ops.FileObject{
 				StorageType:   "local",
-				Path:          ("./out_test_1/" + res.Namespace + "/" + conObj.Name),
+				Path:          (outputPath + "/" + res.Namespace + "/" + conObj.Name),
 				Ext:           "yaml",
 				Content:       conObj.Payload,
 				ContentLength: conObj.Payload.Len(),
@@ -161,14 +166,14 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) {
 	var resourcelist []ResourceList
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace)
+		resourcelist = c.getResources(namespace, false)
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
 			log.Println(err)
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name)
+			rl := c.getResources(p.ObjectMeta.Name, false)
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
@@ -190,7 +195,7 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) {
 	}
 }
 
-func (c *Openshift) getResources(namespace string) []ResourceList {
+func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 	var resourcelist []ResourceList
 
 	// Add OpenShift specific types to the json schemes
@@ -220,7 +225,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -244,7 +249,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -268,7 +273,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -292,7 +297,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -316,7 +321,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -340,7 +345,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -364,7 +369,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -388,7 +393,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -412,7 +417,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -436,7 +441,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -460,7 +465,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -484,7 +489,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -508,7 +513,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},
@@ -532,7 +537,7 @@ func (c *Openshift) getResources(namespace string) []ResourceList {
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
 			k8sjson.SerializerOptions{
-				Yaml:   false,
+				Yaml:   yaml,
 				Pretty: true,
 				Strict: true,
 			},

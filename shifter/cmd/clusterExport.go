@@ -24,12 +24,16 @@ import (
 var clusterExportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Exports the resources from the source cluster",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Export takes the resources 'as-is' from a OpenShift cluster endpoint and exports them in yaml format so the manifests can be fed into the shifter conversion process.'
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+	Export all resources from a given namespace into yaml files:
+	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export -n $NAMESPACE ./output/directory/path
+
+	Export all resources from all namespaces into yaml files:
+	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export --all-namespaces ./output/directory/path
+
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
    _____ __    _ ______
@@ -40,11 +44,19 @@ to quickly create a Cobra application.`,
 
 ----------------------------------------
 `)
+		if len(args) != 1 {
+			log.Fatal("Please specify the destination path.")
+		}
+
+		outputPath = args[0]
+
 		log.Println("Connecting to cluster: ", endpoint)
+		log.Println("Exporting cluster resources")
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		openshift.ExportNSResources(namespace)
+		openshift.ExportNSResources(namespace, outputPath)
+		log.Println("Export Complete")
 	},
 }
 
@@ -53,6 +65,5 @@ func init() {
 
 	clusterExportCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Namespace or Project")
 	clusterExportCmd.Flags().BoolVarP(&allnamespaces, "all-namespaces", "", false, "All Namespaces/Projects")
-	clusterExportCmd.Flags().BoolVarP(&csvoutput, "csv", "", false, "CSV Output")
 	clusterExportCmd.MarkFlagsMutuallyExclusive("namespace", "all-namespaces")
 }
