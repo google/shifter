@@ -19,7 +19,8 @@ import (
 )
 
 var (
-	Version string = "development"
+	Version  string = "development"
+	Platform string = "platform"
 )
 
 func init() {
@@ -32,6 +33,16 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of Shifter",
 	Long:  `This is the version of Shifter you are running`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Shifter version " + Version)
+		fmt.Println(`
+   _____ __    _ ______
+  / ___// /_  (_) __/ /____  _____
+  \__ \/ __ \/ / /_/ __/ _ \/ ___/
+ ___/ / / / / / __/ /_/  __/ /
+/____/_/ /_/_/_/  \__/\___/_/
+
+----------------------------------------
+https://github.com/google/shifter
+`)
+		fmt.Println("Shifter version " + Version + " " + Platform)
 	},
 }

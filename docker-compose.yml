@@ -5,16 +5,15 @@ services:
     domainname: shifter.local
     image: images.shifter.cloud/shifter-ui:latest
     environment:
-      SHIFTER_SERVER_ENDPOINT: "http://localhost:9091/api/v1"
+      SHIFTER_SERVER_ENDPOINT: "http://shifter-server:7762/api/v1"
     ports:
       - 7761:8080
     links:
-      - "shifter-server:shifter-server.local"
+      - "shifter-server"
     networks:
       - shifter-network
   shifter-server:
     container_name: shifter_server_development
-    domainname: shifter-server.local
     image: images.shifter.cloud/shifter:latest
     entrypoint: ["./shifter", "server"]
     ports:

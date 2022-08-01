@@ -66,6 +66,11 @@ func (c *Openshift) clusterClient() *restclientcmdapi.Config {
 		Server:                c.Endpoint,
 	}
 
+	if len(c.AuthToken) <= 5 {
+		log.Println("ERROR: Token invald")
+		os.Exit(1)
+	}
+
 	config.AuthInfos["cluster-auth"] = &clientcmdapi.AuthInfo{
 		Token:    c.AuthToken,
 		Username: c.Username,

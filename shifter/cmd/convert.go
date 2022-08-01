@@ -76,7 +76,7 @@ Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/fi
 func init() {
 	rootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().StringVarP(&inputType, "input-format", "i", "yaml", "Input format. One of: yaml|template")
-	convertCmd.Flags().StringVarP(&generator, "output-format", "t", "", "Output format. One of: yaml|helm")
+	convertCmd.Flags().StringVarP(&generator, "output-format", "o", "", "Output format. One of: yaml|helm")
 	convertCmd.Flags().StringSliceVarP(&pFlags, "pflags", "p", []string{}, "Flags passed to the processor")
 	convertCmd.Flags().BoolVarP(&useIstio, "istio", "m", false, "Use istio for routes conversion")
 	convertCmd.MarkFlagRequired("input-format")
