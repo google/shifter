@@ -62,6 +62,9 @@ Read the detailed documentation at [shifter/README.md](shifter/README.md)
 ##### Demo
 
 [https://github.com./google/shifter/assets/shifter-cluster-demo.gif](https://github.com./google/shifter/assets/shifter-cluster-demo.gif)
+<p float="left">
+	<img src="https://github.com./google/shifter/assets/shifter-cluster-demo.gif" alt="shifter demo 1" />
+</p>
 
 ### Shifter-UI
 
