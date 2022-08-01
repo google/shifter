@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: pv-protection-controller-dockercfg-2gmbs
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: pv-protection-controller
+  namespace: kube-system
+  resourceVersion: "825"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/pv-protection-controller
+  uid: fd51fc33-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: pv-protection-controller-token-clzcn
+- name: pv-protection-controller-dockercfg-2gmbs

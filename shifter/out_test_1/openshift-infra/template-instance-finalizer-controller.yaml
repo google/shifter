@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: template-instance-finalizer-controller-dockercfg-9f84l
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: template-instance-finalizer-controller
+  namespace: openshift-infra
+  resourceVersion: "896"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/template-instance-finalizer-controller
+  uid: fd65124b-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: template-instance-finalizer-controller-token-6q72n
+- name: template-instance-finalizer-controller-dockercfg-9f84l

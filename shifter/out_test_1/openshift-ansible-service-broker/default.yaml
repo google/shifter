@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-cmvhl
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:12:01Z"
+  name: default
+  namespace: openshift-ansible-service-broker
+  resourceVersion: "4342"
+  selfLink: /api/v1/namespaces/openshift-ansible-service-broker/serviceaccounts/default
+  uid: aef060f6-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-8s7xk
+- name: default-dockercfg-cmvhl

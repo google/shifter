@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: namespace-controller-dockercfg-l4cc5
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: namespace-controller
+  namespace: kube-system
+  resourceVersion: "818"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/namespace-controller
+  uid: fd3a609f-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: namespace-controller-token-vcsnw
+- name: namespace-controller-dockercfg-l4cc5

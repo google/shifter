@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: pod-garbage-collector-dockercfg-pxf5t
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: pod-garbage-collector
+  namespace: kube-system
+  resourceVersion: "832"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/pod-garbage-collector
+  uid: fd5924a2-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: pod-garbage-collector-token-gd4sg
+- name: pod-garbage-collector-dockercfg-pxf5t

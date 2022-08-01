@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-xszzz
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:12:01Z"
+  name: builder
+  namespace: openshift-ansible-service-broker
+  resourceVersion: "4344"
+  selfLink: /api/v1/namespaces/openshift-ansible-service-broker/serviceaccounts/builder
+  uid: aef069d0-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-7ckz2
+- name: builder-dockercfg-xszzz

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-m9jdn
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: default
+  namespace: openshift-node
+  resourceVersion: "900"
+  selfLink: /api/v1/namespaces/openshift-node/serviceaccounts/default
+  uid: fdb16a75-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-4twq2
+- name: default-dockercfg-m9jdn

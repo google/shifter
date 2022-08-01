@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: cluster-quota-reconciliation-controller-dockercfg-gt2wq
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: cluster-quota-reconciliation-controller
+  namespace: openshift-infra
+  resourceVersion: "847"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/cluster-quota-reconciliation-controller
+  uid: fd1c2fd8-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: cluster-quota-reconciliation-controller-token-w44js
+- name: cluster-quota-reconciliation-controller-dockercfg-gt2wq

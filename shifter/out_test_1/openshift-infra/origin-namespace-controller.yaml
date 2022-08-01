@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: origin-namespace-controller-dockercfg-lzrmt
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: origin-namespace-controller
+  namespace: openshift-infra
+  resourceVersion: "879"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/origin-namespace-controller
+  uid: fd71fa6f-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: origin-namespace-controller-token-dzdvd
+- name: origin-namespace-controller-dockercfg-lzrmt

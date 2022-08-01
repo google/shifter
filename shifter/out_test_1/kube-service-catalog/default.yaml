@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-5cvvt
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:09:59Z"
+  name: default
+  namespace: kube-service-catalog
+  resourceVersion: "3903"
+  selfLink: /api/v1/namespaces/kube-service-catalog/serviceaccounts/default
+  uid: 662fc74e-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-mtfbk
+- name: default-dockercfg-5cvvt

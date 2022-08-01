@@ -1,0 +1,165 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  creationTimestamp: "2022-07-08T05:07:08Z"
+  labels:
+    app: rails-pgsql-persistent
+    template: rails-pgsql-persistent
+    template.openshift.io/template-instance-owner: d14f975d-fe7b-11ec-b9cc-42010a000003
+  name: rails-pgsql-persistent
+  namespace: demo-100
+  resourceVersion: "16195092"
+  selfLink: /apis/route.openshift.io/v1/namespaces/demo-100/routes/rails-pgsql-persistent
+  uid: d156029b-fe7b-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: rails-pgsql-persistent-demo-100.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: rails-pgsql-persistent
+            port: {}
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: Exposes and load balances the application pods
+    service.alpha.openshift.io/dependencies: '[{"name": "postgresql", "kind": "Service"}]'
+  creationTimestamp: "2022-07-08T05:07:08Z"
+  labels:
+    app: rails-pgsql-persistent
+    template: rails-pgsql-persistent
+    template.openshift.io/template-instance-owner: d14f975d-fe7b-11ec-b9cc-42010a000003
+  name: rails-pgsql-persistent
+  namespace: demo-100
+  resourceVersion: "16195087"
+  selfLink: /api/v1/namespaces/demo-100/services/rails-pgsql-persistent
+  uid: d1557ca1-fe7b-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.157.246
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    name: rails-pgsql-persistent
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    description: Defines how to deploy the application server
+    template.alpha.openshift.io/wait-for-ready: "true"
+  creationTimestamp: "2022-07-08T05:07:08Z"
+  generation: 1
+  labels:
+    app: rails-pgsql-persistent
+    template: rails-pgsql-persistent
+    template.openshift.io/template-instance-owner: d14f975d-fe7b-11ec-b9cc-42010a000003
+  name: rails-pgsql-persistent
+  namespace: demo-100
+  resourceVersion: "16195094"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/demo-100/deploymentconfigs/rails-pgsql-persistent
+  uid: d15ae68d-fe7b-11ec-b9cc-42010a000003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rails-pgsql-persistent
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: rails-pgsql-persistent
+      name: rails-pgsql-persistent
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_SERVICE_NAME
+          value: postgresql
+        - name: POSTGRESQL_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: rails-pgsql-persistent
+        - name: POSTGRESQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: rails-pgsql-persistent
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              key: keybase
+              name: rails-pgsql-persistent
+        - name: POSTGRESQL_DATABASE
+          value: root
+        - name: POSTGRESQL_MAX_CONNECTIONS
+          value: "100"
+        - name: POSTGRESQL_SHARED_BUFFERS
+          value: 12MB
+        - name: APPLICATION_DOMAIN
+        - name: APPLICATION_USER
+          valueFrom:
+            secretKeyRef:
+              key: application-user
+              name: rails-pgsql-persistent
+        - name: APPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: application-password
+              name: rails-pgsql-persistent
+        - name: RAILS_ENV
+          value: production
+        image: ' '
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /articles
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: rails-pgsql-persistent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /articles
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status: {}

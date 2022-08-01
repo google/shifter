@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployment-controller-dockercfg-rvf9t
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: deployment-controller
+  namespace: kube-system
+  resourceVersion: "801"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/deployment-controller
+  uid: fd70b135-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: deployment-controller-token-5cm25
+- name: deployment-controller-dockercfg-rvf9t

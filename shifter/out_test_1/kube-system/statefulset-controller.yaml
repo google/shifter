@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: statefulset-controller-dockercfg-dr26l
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: statefulset-controller
+  namespace: kube-system
+  resourceVersion: "857"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/statefulset-controller
+  uid: fd605a77-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: statefulset-controller-token-9kts2
+- name: statefulset-controller-dockercfg-dr26l

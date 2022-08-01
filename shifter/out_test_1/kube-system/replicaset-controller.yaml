@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: replicaset-controller-dockercfg-7fmks
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: replicaset-controller
+  namespace: kube-system
+  resourceVersion: "840"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/replicaset-controller
+  uid: fd91bcde-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: replicaset-controller-token-2kqgf
+- name: replicaset-controller-dockercfg-7fmks

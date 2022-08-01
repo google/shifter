@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-t65h2
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T15:33:22Z"
+  name: builder
+  namespace: get-off-open-shift
+  resourceVersion: "15696"
+  selfLink: /api/v1/namespaces/get-off-open-shift/serviceaccounts/builder
+  uid: 0bf400a3-bff6-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-t7gc7
+- name: builder-dockercfg-t65h2

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-mwb4k
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-06-02T22:59:29Z"
+  name: builder
+  namespace: demo-100
+  resourceVersion: "8723303"
+  selfLink: /api/v1/namespaces/demo-100/serviceaccounts/builder
+  uid: a83aacc4-e2c7-11ec-b9cc-42010a000003
+secrets:
+- name: builder-dockercfg-mwb4k
+- name: builder-token-vvvsp

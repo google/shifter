@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"service.alpha.openshift.io/serving-cert-secret-name":"apiserver-serving-cert"},"name":"apiserver","namespace":"openshift-template-service-broker"},"spec":{"ports":[{"port":443,"targetPort":8443}],"selector":{"apiserver":"true"}}}
+    service.alpha.openshift.io/serving-cert-secret-name: apiserver-serving-cert
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:12:27Z"
+  name: apiserver
+  namespace: openshift-template-service-broker
+  resourceVersion: "4542"
+  selfLink: /api/v1/namespaces/openshift-template-service-broker/services/apiserver
+  uid: be21583b-bfea-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.56.134
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    apiserver: "true"
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: apiserver-dockercfg-cjjpp
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"name":"apiserver","namespace":"openshift-template-service-broker"}}
+  creationTimestamp: "2022-04-19T14:12:27Z"
+  name: apiserver
+  namespace: openshift-template-service-broker
+  resourceVersion: "4535"
+  selfLink: /api/v1/namespaces/openshift-template-service-broker/serviceaccounts/apiserver
+  uid: be1f9baf-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: apiserver-dockercfg-cjjpp
+- name: apiserver-token-gnfwr

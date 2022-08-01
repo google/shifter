@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2022-04-19T14:08:46Z"
+  labels:
+    logging-infra: support
+  name: logging-es
+  namespace: openshift-logging
+  resourceVersion: "3550"
+  selfLink: /api/v1/namespaces/openshift-logging/services/logging-es
+  uid: 3a7f17e5-bfea-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.152.87
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: restapi
+  selector:
+    component: es
+    provider: openshift
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

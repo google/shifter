@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-wkxpf
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: deployer
+  namespace: kube-public
+  resourceVersion: "911"
+  selfLink: /api/v1/namespaces/kube-public/serviceaccounts/deployer
+  uid: fdcfd770-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-d4znd
+- name: deployer-dockercfg-wkxpf

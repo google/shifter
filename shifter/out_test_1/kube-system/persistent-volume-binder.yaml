@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: persistent-volume-binder-dockercfg-mg4qx
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: persistent-volume-binder
+  namespace: kube-system
+  resourceVersion: "823"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/persistent-volume-binder
+  uid: fd13bbc9-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: persistent-volume-binder-token-nnzhm
+- name: persistent-volume-binder-dockercfg-mg4qx

@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: aggregated-logging-fluentd-dockercfg-jrcrq
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:09:29Z"
+  name: aggregated-logging-fluentd
+  namespace: openshift-logging
+  resourceVersion: "3711"
+  selfLink: /api/v1/namespaces/openshift-logging/serviceaccounts/aggregated-logging-fluentd
+  uid: 53fa9f14-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: logging-fluentd
+- name: aggregated-logging-fluentd-token-xtnvs
+- name: aggregated-logging-fluentd-dockercfg-jrcrq

@@ -1,0 +1,105 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2022-04-19T14:04:24Z"
+  labels:
+    app: cluster-monitoring-operator
+  name: cluster-monitoring-operator
+  namespace: openshift-monitoring
+  resourceVersion: "2272"
+  selfLink: /api/v1/namespaces/openshift-monitoring/services/cluster-monitoring-operator
+  uid: 9e84ea8a-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: None
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: cluster-monitoring-operator
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2022-04-19T14:03:52Z"
+  generation: 1
+  labels:
+    app: cluster-monitoring-operator
+  name: cluster-monitoring-operator
+  namespace: openshift-monitoring
+  resourceVersion: "2175"
+  selfLink: /apis/apps/v1/namespaces/openshift-monitoring/deployments/cluster-monitoring-operator
+  uid: 8af5e079-bfe9-11ec-b9cc-42010a000003
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cluster-monitoring-operator
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: cluster-monitoring-operator
+    spec:
+      containers:
+      - args:
+        - -namespace=openshift-monitoring
+        - -configmap=cluster-monitoring-config
+        - -logtostderr=true
+        - -v=4
+        image: quay.io/openshift/origin-cluster-monitoring-operator:v3.11
+        imagePullPolicy: IfNotPresent
+        name: cluster-monitoring-operator
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: cluster-monitoring-operator
+      serviceAccountName: cluster-monitoring-operator
+      terminationGracePeriodSeconds: 30
+status: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: cluster-monitoring-operator-dockercfg-l547w
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"name":"cluster-monitoring-operator","namespace":"openshift-monitoring"}}
+  creationTimestamp: "2022-04-19T14:03:48Z"
+  name: cluster-monitoring-operator
+  namespace: openshift-monitoring
+  resourceVersion: "2110"
+  selfLink: /api/v1/namespaces/openshift-monitoring/serviceaccounts/cluster-monitoring-operator
+  uid: 88bba06f-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: cluster-monitoring-operator-dockercfg-l547w
+- name: cluster-monitoring-operator-token-tv2xl

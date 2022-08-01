@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-zn6hl
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: default
+  namespace: default
+  resourceVersion: "1957"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/default
+  uid: fdac3f1d-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-6lgwj
+- name: default-dockercfg-zn6hl
+- name: registry-certificates

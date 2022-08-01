@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: registry-dockercfg-bldb7
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:03:22Z"
+  name: registry
+  namespace: default
+  resourceVersion: "1955"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/registry
+  uid: 79973dae-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: registry-dockercfg-bldb7
+- name: registry-token-kf8cr
+- name: registry-certificates

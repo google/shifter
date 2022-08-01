@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deploymentconfig-controller-dockercfg-rrtr8
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: deploymentconfig-controller
+  namespace: openshift-infra
+  resourceVersion: "867"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/deploymentconfig-controller
+  uid: fd4db184-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: deploymentconfig-controller-token-7ppjc
+- name: deploymentconfig-controller-dockercfg-rrtr8

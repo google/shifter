@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-czgsn
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-06-02T23:12:46Z"
+  name: deployer
+  namespace: gdc-example
+  resourceVersion: "8727393"
+  selfLink: /api/v1/namespaces/gdc-example/serviceaccounts/deployer
+  uid: 834cd326-e2c9-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-p4ttp
+- name: deployer-dockercfg-czgsn

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: template-instance-controller-dockercfg-clcj7
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: template-instance-controller
+  namespace: openshift-infra
+  resourceVersion: "894"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/template-instance-controller
+  uid: fd8f43fc-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: template-instance-controller-token-4hc6q
+- name: template-instance-controller-dockercfg-clcj7

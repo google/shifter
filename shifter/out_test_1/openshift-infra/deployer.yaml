@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-sk5pr
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: deployer
+  namespace: openshift-infra
+  resourceVersion: "926"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/deployer
+  uid: fdd5992a-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-rhb5z
+- name: deployer-dockercfg-sk5pr

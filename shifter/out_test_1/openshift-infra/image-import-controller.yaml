@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: image-import-controller-dockercfg-wx4bv
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:53Z"
+  name: image-import-controller
+  namespace: openshift-infra
+  resourceVersion: "862"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/image-import-controller
+  uid: fcb62507-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: image-import-controller-token-44zw5
+- name: image-import-controller-dockercfg-wx4bv

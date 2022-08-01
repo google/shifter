@@ -1,0 +1,177 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: "2022-04-19T14:09:02Z"
+  labels:
+    component: support
+    logging-infra: support
+    provider: openshift
+  name: logging-kibana
+  namespace: openshift-logging
+  resourceVersion: "3600"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-logging/routes/logging-kibana
+  uid: 43f11dfe-bfea-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: kibana.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: logging-kibana
+            port: {}
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2022-04-19T14:09:00Z"
+  labels:
+    logging-infra: support
+  name: logging-kibana
+  namespace: openshift-logging
+  resourceVersion: "3589"
+  selfLink: /api/v1/namespaces/openshift-logging/services/logging-kibana
+  uid: 42b1667a-bfea-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.40.119
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: oaproxy
+  selector:
+    component: kibana
+    provider: openshift
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: "2022-04-19T14:09:09Z"
+  generation: 1
+  labels:
+    component: kibana
+    logging-infra: kibana
+    provider: openshift
+  name: logging-kibana
+  namespace: openshift-logging
+  resourceVersion: "5570"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/openshift-logging/deploymentconfigs/logging-kibana
+  uid: 47fd5a02-bfea-11ec-b9cc-42010a000003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: kibana
+      logging-infra: kibana
+      provider: openshift
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: kibana
+        logging-infra: kibana
+        provider: openshift
+      name: logging-kibana
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: ELASTICSEARCH_URL
+          value: https://logging-es:9200
+        - name: KIBANA_MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: kibana
+              divisor: "0"
+              resource: limits.memory
+        image: quay.io/openshift/origin-logging-kibana5:v3.11
+        imagePullPolicy: IfNotPresent
+        name: kibana
+        readinessProbe:
+          exec:
+            command:
+            - /usr/share/kibana/probe/readiness.sh
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 4
+        resources:
+          limits:
+            memory: 736Mi
+          requests:
+            cpu: 100m
+            memory: 736Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/kibana/keys
+          name: kibana
+          readOnly: true
+      - args:
+        - --upstream-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - --https-address=:3000
+        - -provider=openshift
+        - -client-id=kibana-proxy
+        - -client-secret-file=/secret/oauth-secret
+        - -cookie-secret-file=/secret/session-secret
+        - -upstream=http://localhost:5601
+        - -scope=user:info user:check-access user:list-projects
+        - --tls-cert=/secret/server-cert
+        - --tls-key=/secret/server-key
+        - -pass-access-token
+        - -skip-provider-button
+        env:
+        - name: OAP_DEBUG
+          value: "False"
+        - name: OCP_AUTH_PROXY_MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: kibana-proxy
+              divisor: "0"
+              resource: limits.memory
+        image: quay.io/openshift/oauth-proxy:v1.1.0
+        imagePullPolicy: IfNotPresent
+        name: kibana-proxy
+        ports:
+        - containerPort: 3000
+          name: oaproxy
+          protocol: TCP
+        resources:
+          limits:
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /secret
+          name: kibana-proxy
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: aggregated-logging-kibana
+      serviceAccountName: aggregated-logging-kibana
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: kibana
+        secret:
+          defaultMode: 420
+          secretName: logging-kibana
+      - name: kibana-proxy
+        secret:
+          defaultMode: 420
+          secretName: logging-kibana-proxy
+status: {}

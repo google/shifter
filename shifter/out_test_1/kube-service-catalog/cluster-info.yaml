@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+data:
+  id: 98eed807-bfea-11ec-98c6-0a580a800008
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-04-19T14:11:25Z"
+  name: cluster-info
+  namespace: kube-service-catalog
+  resourceVersion: "4224"
+  selfLink: /api/v1/namespaces/kube-service-catalog/configmaps/cluster-info
+  uid: 98ef0192-bfea-11ec-b9cc-42010a000003

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: namespace-security-allocation-controller-dockercfg-cfcfb
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: namespace-security-allocation-controller
+  namespace: openshift-infra
+  resourceVersion: "874"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/namespace-security-allocation-controller
+  uid: fd26bde9-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: namespace-security-allocation-controller-token-z7c59
+- name: namespace-security-allocation-controller-dockercfg-cfcfb

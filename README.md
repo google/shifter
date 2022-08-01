@@ -59,6 +59,10 @@ Provides the backend service required by the front-end application and also prov
 
 Read the detailed documentation at [shifter/README.md](shifter/README.md)
 
+##### Demo
+
+[https://github.com./google/shifter/assets/shifter-cluster-demo.gif](https://github.com./google/shifter/assets/shifter-cluster-demo.gif)
+
 ### Shifter-UI
 
 Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see ![shifter-ui/readme.md](shifter-ui/README.md)

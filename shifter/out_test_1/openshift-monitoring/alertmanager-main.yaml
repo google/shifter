@@ -1,0 +1,247 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  creationTimestamp: "2022-04-19T14:05:33Z"
+  name: alertmanager-main
+  namespace: openshift-monitoring
+  resourceVersion: "2699"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-monitoring/routes/alertmanager-main
+  uid: c72012bf-bfe9-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: alertmanager-main-openshift-monitoring.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: alertmanager-main
+            port:
+              name: web
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: alertmanager-main-tls
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:05:34Z"
+  labels:
+    alertmanager: main
+  name: alertmanager-main
+  namespace: openshift-monitoring
+  resourceVersion: "21099080"
+  selfLink: /api/v1/namespaces/openshift-monitoring/services/alertmanager-main
+  uid: c7c51b9d-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.182.109
+  ports:
+  - name: web
+    port: 9094
+    protocol: TCP
+    targetPort: web
+  selector:
+    alertmanager: main
+    app: alertmanager
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: alertmanager-main-dockercfg-t9lzg
+kind: ServiceAccount
+metadata:
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.alertmanager-main: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"alertmanager-main"}}'
+  creationTimestamp: "2022-04-19T14:05:34Z"
+  name: alertmanager-main
+  namespace: openshift-monitoring
+  resourceVersion: "2723"
+  selfLink: /api/v1/namespaces/openshift-monitoring/serviceaccounts/alertmanager-main
+  uid: c7c1aa81-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: alertmanager-main-token-f5qw8
+- name: alertmanager-main-dockercfg-t9lzg
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: "2022-04-19T14:05:34Z"
+  generation: 1
+  labels:
+    alertmanager: main
+  name: alertmanager-main
+  namespace: openshift-monitoring
+  ownerReferences:
+  - apiVersion: monitoring.coreos.com/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Alertmanager
+    name: main
+    uid: c7cc4a41-bfe9-11ec-b9cc-42010a000003
+  resourceVersion: "2852"
+  selfLink: /apis/apps/v1/namespaces/openshift-monitoring/statefulsets/alertmanager-main
+  uid: c7d3af05-bfe9-11ec-b9cc-42010a000003
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      alertmanager: main
+      app: alertmanager
+  serviceName: alertmanager-operated
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        alertmanager: main
+        app: alertmanager
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: alertmanager
+                  operator: In
+                  values:
+                  - main
+              namespaces:
+              - openshift-monitoring
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - --config.file=/etc/alertmanager/config/alertmanager.yaml
+        - --cluster.listen-address=$(POD_IP):6783
+        - --storage.path=/alertmanager
+        - --data.retention=120h
+        - --web.listen-address=127.0.0.1:9093
+        - --web.external-url=https://alertmanager-main-openshift-monitoring.okd.shifter.cloud/
+        - --web.route-prefix=/
+        - --cluster.peer=alertmanager-main-0.alertmanager-operated.openshift-monitoring.svc:6783
+        - --cluster.peer=alertmanager-main-1.alertmanager-operated.openshift-monitoring.svc:6783
+        - --cluster.peer=alertmanager-main-2.alertmanager-operated.openshift-monitoring.svc:6783
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        image: openshift/prometheus-alertmanager:v0.15.2
+        imagePullPolicy: IfNotPresent
+        name: alertmanager
+        ports:
+        - containerPort: 6783
+          name: mesh
+          protocol: TCP
+        resources:
+          requests:
+            memory: 200Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/alertmanager/config
+          name: config-volume
+        - mountPath: /alertmanager
+          name: alertmanager-main-db
+        - mountPath: /etc/alertmanager/secrets/alertmanager-main-tls
+          name: secret-alertmanager-main-tls
+          readOnly: true
+        - mountPath: /etc/alertmanager/secrets/alertmanager-main-proxy
+          name: secret-alertmanager-main-proxy
+          readOnly: true
+      - args:
+        - -webhook-url=http://localhost:9093/-/reload
+        - -volume-dir=/etc/alertmanager/config
+        image: quay.io/coreos/configmap-reload:v0.0.1
+        imagePullPolicy: IfNotPresent
+        name: config-reloader
+        resources:
+          limits:
+            cpu: 5m
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/alertmanager/config
+          name: config-volume
+          readOnly: true
+      - args:
+        - -provider=openshift
+        - -https-address=:9094
+        - -http-address=
+        - -email-domain=*
+        - -upstream=http://localhost:9093
+        - '-openshift-sar={"resource": "namespaces", "verb": "get"}'
+        - '-openshift-delegate-urls={"/": {"resource": "namespaces", "verb": "get"}}'
+        - -tls-cert=/etc/tls/private/tls.crt
+        - -tls-key=/etc/tls/private/tls.key
+        - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
+        - -cookie-secret-file=/etc/proxy/secrets/session_secret
+        - -cookie-expire=24h
+        - -openshift-service-account=alertmanager-main
+        - -openshift-ca=/etc/pki/tls/cert.pem
+        - -openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - -skip-auth-regex=^/metrics
+        env:
+        - name: HTTP_PROXY
+        - name: HTTPS_PROXY
+        - name: NO_PROXY
+        image: openshift/oauth-proxy:v1.1.0
+        imagePullPolicy: IfNotPresent
+        name: alertmanager-proxy
+        ports:
+        - containerPort: 9094
+          name: web
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: secret-alertmanager-main-tls
+        - mountPath: /etc/proxy/secrets
+          name: secret-alertmanager-main-proxy
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: alertmanager-main
+      serviceAccountName: alertmanager-main
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - name: config-volume
+        secret:
+          defaultMode: 420
+          secretName: alertmanager-main
+      - name: secret-alertmanager-main-tls
+        secret:
+          defaultMode: 420
+          secretName: alertmanager-main-tls
+      - name: secret-alertmanager-main-proxy
+        secret:
+          defaultMode: 420
+          secretName: alertmanager-main-proxy
+      - emptyDir: {}
+        name: alertmanager-main-db
+  updateStrategy:
+    type: RollingUpdate
+status:
+  availableReplicas: 0
+  replicas: 0

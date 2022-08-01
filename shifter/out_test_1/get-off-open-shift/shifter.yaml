@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+  creationTimestamp: "2022-04-19T15:38:19Z"
+  labels:
+    app: shifter
+  name: shifter
+  namespace: get-off-open-shift
+  resourceVersion: "16438"
+  selfLink: /api/v1/namespaces/get-off-open-shift/services/shifter
+  uid: bce5e33e-bff6-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.251.78
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    deploymentconfig: shifter
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

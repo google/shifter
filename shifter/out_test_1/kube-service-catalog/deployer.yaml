@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-2r6ph
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:09:59Z"
+  name: deployer
+  namespace: kube-service-catalog
+  resourceVersion: "3905"
+  selfLink: /api/v1/namespaces/kube-service-catalog/serviceaccounts/deployer
+  uid: 6631a734-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-g56qc
+- name: deployer-dockercfg-2r6ph

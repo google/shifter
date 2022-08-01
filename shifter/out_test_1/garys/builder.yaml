@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-vb48b
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-07-21T12:10:34Z"
+  name: builder
+  namespace: garys
+  resourceVersion: "18891607"
+  selfLink: /api/v1/namespaces/garys/serviceaccounts/builder
+  uid: 1fbed69d-08ee-11ed-b9cc-42010a000003
+secrets:
+- name: builder-dockercfg-vb48b
+- name: builder-token-m6sx4

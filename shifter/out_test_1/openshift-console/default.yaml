@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-hcmwm
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:05:04Z"
+  name: default
+  namespace: openshift-console
+  resourceVersion: "2552"
+  selfLink: /api/v1/namespaces/openshift-console/serviceaccounts/default
+  uid: b5d49200-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-znh7f
+- name: default-dockercfg-hcmwm

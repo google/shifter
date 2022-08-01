@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: clusterrole-aggregation-controller-dockercfg-hf5p4
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: clusterrole-aggregation-controller
+  namespace: kube-system
+  resourceVersion: "799"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/clusterrole-aggregation-controller
+  uid: fd983fad-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: clusterrole-aggregation-controller-token-v62ch
+- name: clusterrole-aggregation-controller-dockercfg-hf5p4

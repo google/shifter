@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: endpoint-controller-dockercfg-bjhvj
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: endpoint-controller
+  namespace: kube-system
+  resourceVersion: "806"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/endpoint-controller
+  uid: fd7ebc5d-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: endpoint-controller-token-48wqh
+- name: endpoint-controller-dockercfg-bjhvj

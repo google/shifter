@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-xtvf9
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:03:45Z"
+  name: builder
+  namespace: openshift-monitoring
+  resourceVersion: "2077"
+  selfLink: /api/v1/namespaces/openshift-monitoring/serviceaccounts/builder
+  uid: 873bcdb9-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-ch8tk
+- name: builder-dockercfg-xtvf9

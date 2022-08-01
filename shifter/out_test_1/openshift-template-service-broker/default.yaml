@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-zmr6n
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:12:22Z"
+  name: default
+  namespace: openshift-template-service-broker
+  resourceVersion: "4497"
+  selfLink: /api/v1/namespaces/openshift-template-service-broker/serviceaccounts/default
+  uid: bb327fde-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-jpp7h
+- name: default-dockercfg-zmr6n

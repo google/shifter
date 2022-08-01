@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: build-controller-dockercfg-gsxrz
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: build-controller
+  namespace: openshift-infra
+  resourceVersion: "852"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/build-controller
+  uid: fd87257f-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: build-controller-token-r6j92
+- name: build-controller-dockercfg-gsxrz

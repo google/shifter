@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: ingress-to-route-controller-dockercfg-v6p8b
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: ingress-to-route-controller
+  namespace: openshift-infra
+  resourceVersion: "871"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/ingress-to-route-controller
+  uid: fd15a549-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: ingress-to-route-controller-token-6mfgk
+- name: ingress-to-route-controller-dockercfg-v6p8b

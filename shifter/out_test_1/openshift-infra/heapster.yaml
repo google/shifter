@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"service.alpha.openshift.io/serving-cert-secret-name":"heapster-certs"},"labels":{"metrics-infra":"heapster","name":"heapster"},"name":"heapster","namespace":"openshift-infra"},"spec":{"ports":[{"port":80,"targetPort":"http-endpoint"}],"selector":{"name":"heapster"}}}
+    service.alpha.openshift.io/serving-cert-secret-name: heapster-certs
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:06:30Z"
+  labels:
+    metrics-infra: heapster
+    name: heapster
+  name: heapster
+  namespace: openshift-infra
+  resourceVersion: "3078"
+  selfLink: /api/v1/namespaces/openshift-infra/services/heapster
+  uid: e953bc12-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.68.203
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: http-endpoint
+  selector:
+    name: heapster
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: heapster-dockercfg-mqjb9
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{},"labels":{"metrics-infra":"support"},"name":"heapster","namespace":"openshift-infra"},"secrets":[{"name":"heapster-secrets"},{"name":"heapster-certs"},{"name":"hawkular-metrics-certs"},{"name":"hawkular-metrics-account"}]}
+  creationTimestamp: "2022-04-19T14:06:28Z"
+  labels:
+    metrics-infra: support
+  name: heapster
+  namespace: openshift-infra
+  resourceVersion: "3059"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/heapster
+  uid: e860ac8f-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: heapster-secrets
+- name: heapster-certs
+- name: hawkular-metrics-certs
+- name: hawkular-metrics-account
+- name: heapster-dockercfg-mqjb9
+- name: heapster-token-q65k5

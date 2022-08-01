@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-gzqsn
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:09:59Z"
+  name: builder
+  namespace: kube-service-catalog
+  resourceVersion: "3902"
+  selfLink: /api/v1/namespaces/kube-service-catalog/serviceaccounts/builder
+  uid: 662fdfb8-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-vfs8l
+- name: builder-dockercfg-gzqsn

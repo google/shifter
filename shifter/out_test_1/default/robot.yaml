@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: robot-dockercfg-dcbv9
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T15:56:37Z"
+  name: robot
+  namespace: default
+  resourceVersion: "19356"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/robot
+  uid: 4b2f7fd2-bff9-11ec-b9cc-42010a000003
+secrets:
+- name: robot-dockercfg-dcbv9
+- name: robot-token-8hwwm

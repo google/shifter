@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-skk7g
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-21T08:48:47Z"
+  name: deployer
+  namespace: openshift-console-user-settings
+  resourceVersion: "352225"
+  selfLink: /api/v1/namespaces/openshift-console-user-settings/serviceaccounts/deployer
+  uid: dbc7bbf2-c14f-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-qxtzm
+- name: deployer-dockercfg-skk7g

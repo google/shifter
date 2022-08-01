@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    include.release.openshift.io/ibm-cloud-managed: "true"
+    include.release.openshift.io/self-managed-high-availability: "true"
+    include.release.openshift.io/single-node-developer: "true"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"include.release.openshift.io/ibm-cloud-managed":"true","include.release.openshift.io/self-managed-high-availability":"true","include.release.openshift.io/single-node-developer":"true","service.beta.openshift.io/serving-cert-secret-name":"serving-cert"},"labels":{"name":"console-operator"},"name":"metrics","namespace":"openshift-console-operator"},"spec":{"ports":[{"name":"https","port":443,"protocol":"TCP","targetPort":8443}],"selector":{"name":"console-operator"},"sessionAffinity":"None","type":"ClusterIP"}}
+    service.beta.openshift.io/serving-cert-secret-name: serving-cert
+  creationTimestamp: "2022-04-21T08:48:48Z"
+  labels:
+    name: console-operator
+  name: metrics
+  namespace: openshift-console-operator
+  resourceVersion: "352248"
+  selfLink: /api/v1/namespaces/openshift-console-operator/services/metrics
+  uid: dc310a65-c14f-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.114.79
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    name: console-operator
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-7qr9l
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-21T08:48:47Z"
+  name: builder
+  namespace: openshift-console-operator
+  resourceVersion: "352219"
+  selfLink: /api/v1/namespaces/openshift-console-operator/serviceaccounts/builder
+  uid: dbb447b3-c14f-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-zk8xm
+- name: builder-dockercfg-7qr9l

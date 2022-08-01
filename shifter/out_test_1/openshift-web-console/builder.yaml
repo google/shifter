@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-ptzvk
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:04:24Z"
+  name: builder
+  namespace: openshift-web-console
+  resourceVersion: "2307"
+  selfLink: /api/v1/namespaces/openshift-web-console/serviceaccounts/builder
+  uid: 9e8a2473-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-7sn6r
+- name: builder-dockercfg-ptzvk

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-gpkbr
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:02:15Z"
+  name: builder
+  namespace: management-infra
+  resourceVersion: "1388"
+  selfLink: /api/v1/namespaces/management-infra/serviceaccounts/builder
+  uid: 51a610ee-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-7psdk
+- name: builder-dockercfg-gpkbr

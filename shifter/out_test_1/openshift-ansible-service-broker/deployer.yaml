@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-krst9
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:12:02Z"
+  name: deployer
+  namespace: openshift-ansible-service-broker
+  resourceVersion: "4345"
+  selfLink: /api/v1/namespaces/openshift-ansible-service-broker/serviceaccounts/deployer
+  uid: aef2d680-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-dockercfg-krst9
+- name: deployer-token-bxz27

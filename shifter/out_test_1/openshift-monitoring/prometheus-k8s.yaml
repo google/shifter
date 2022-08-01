@@ -1,0 +1,278 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  creationTimestamp: "2022-04-19T14:04:49Z"
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+  resourceVersion: "2445"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-monitoring/routes/prometheus-k8s
+  uid: ad351c6d-bfe9-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: prometheus-k8s-openshift-monitoring.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-k8s
+            port:
+              name: web
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.openshift.io/serving-cert-secret-name: prometheus-k8s-tls
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:04:52Z"
+  labels:
+    prometheus: k8s
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+  resourceVersion: "21099054"
+  selfLink: /api/v1/namespaces/openshift-monitoring/services/prometheus-k8s
+  uid: af10ca1e-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.220.70
+  ports:
+  - name: web
+    port: 9091
+    protocol: TCP
+    targetPort: web
+  selector:
+    app: prometheus
+    prometheus: k8s
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: prometheus-k8s-dockercfg-tctdc
+kind: ServiceAccount
+metadata:
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.prometheus-k8s: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus-k8s"}}'
+  creationTimestamp: "2022-04-19T14:04:50Z"
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+  resourceVersion: "2460"
+  selfLink: /api/v1/namespaces/openshift-monitoring/serviceaccounts/prometheus-k8s
+  uid: add0e8d5-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: prometheus-k8s-token-f67w7
+- name: prometheus-k8s-dockercfg-tctdc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    prometheus-operator-input-hash: "919353438732739542"
+  creationTimestamp: "2022-04-19T14:04:53Z"
+  generation: 1
+  labels:
+    prometheus: k8s
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+  ownerReferences:
+  - apiVersion: monitoring.coreos.com/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Prometheus
+    name: k8s
+    uid: af44b817-bfe9-11ec-b9cc-42010a000003
+  resourceVersion: "2691"
+  selfLink: /apis/apps/v1/namespaces/openshift-monitoring/statefulsets/prometheus-k8s
+  uid: af5111d3-bfe9-11ec-b9cc-42010a000003
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: prometheus
+      prometheus: k8s
+  serviceName: prometheus-operated
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: prometheus
+        prometheus: k8s
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: prometheus
+                  operator: In
+                  values:
+                  - k8s
+              namespaces:
+              - openshift-monitoring
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - --web.console.templates=/etc/prometheus/consoles
+        - --web.console.libraries=/etc/prometheus/console_libraries
+        - --config.file=/etc/prometheus/config_out/prometheus.env.yaml
+        - --storage.tsdb.path=/prometheus
+        - --storage.tsdb.retention=15d
+        - --web.enable-lifecycle
+        - --storage.tsdb.no-lockfile
+        - --web.external-url=https://prometheus-k8s-openshift-monitoring.okd.shifter.cloud/
+        - --web.route-prefix=/
+        - --web.listen-address=127.0.0.1:9090
+        image: openshift/prometheus:v2.3.2
+        imagePullPolicy: IfNotPresent
+        name: prometheus
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/prometheus/config_out
+          name: config-out
+          readOnly: true
+        - mountPath: /prometheus
+          name: prometheus-k8s-db
+        - mountPath: /etc/prometheus/rules/prometheus-k8s-rulefiles-0
+          name: prometheus-k8s-rulefiles-0
+        - mountPath: /etc/prometheus/secrets/prometheus-k8s-tls
+          name: secret-prometheus-k8s-tls
+          readOnly: true
+        - mountPath: /etc/prometheus/secrets/prometheus-k8s-proxy
+          name: secret-prometheus-k8s-proxy
+          readOnly: true
+        - mountPath: /etc/prometheus/secrets/prometheus-k8s-htpasswd
+          name: secret-prometheus-k8s-htpasswd
+          readOnly: true
+      - args:
+        - --log-format=logfmt
+        - --reload-url=http://localhost:9090/-/reload
+        - --config-file=/etc/prometheus/config/prometheus.yaml
+        - --config-envsubst-file=/etc/prometheus/config_out/prometheus.env.yaml
+        command:
+        - /bin/prometheus-config-reloader
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: quay.io/coreos/prometheus-config-reloader:v0.23.2
+        imagePullPolicy: IfNotPresent
+        name: prometheus-config-reloader
+        resources:
+          limits:
+            cpu: 10m
+            memory: 50Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/prometheus/config
+          name: config
+        - mountPath: /etc/prometheus/config_out
+          name: config-out
+      - args:
+        - -provider=openshift
+        - -https-address=:9091
+        - -http-address=
+        - -email-domain=*
+        - -upstream=http://localhost:9090
+        - -htpasswd-file=/etc/proxy/htpasswd/auth
+        - -openshift-service-account=prometheus-k8s
+        - '-openshift-sar={"resource": "namespaces", "verb": "get"}'
+        - '-openshift-delegate-urls={"/": {"resource": "namespaces", "verb": "get"}}'
+        - -tls-cert=/etc/tls/private/tls.crt
+        - -tls-key=/etc/tls/private/tls.key
+        - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
+        - -cookie-secret-file=/etc/proxy/secrets/session_secret
+        - -cookie-expire=24h
+        - -openshift-ca=/etc/pki/tls/cert.pem
+        - -openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - -skip-auth-regex=^/metrics
+        image: openshift/oauth-proxy:v1.1.0
+        imagePullPolicy: IfNotPresent
+        name: prometheus-proxy
+        ports:
+        - containerPort: 9091
+          name: web
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/tls/private
+          name: secret-prometheus-k8s-tls
+        - mountPath: /etc/proxy/secrets
+          name: secret-prometheus-k8s-proxy
+        - mountPath: /etc/proxy/htpasswd
+          name: secret-prometheus-k8s-htpasswd
+      - args:
+        - --webhook-url=http://localhost:9090/-/reload
+        - --volume-dir=/etc/prometheus/rules/prometheus-k8s-rulefiles-0
+        image: quay.io/coreos/configmap-reload:v0.0.1
+        imagePullPolicy: IfNotPresent
+        name: rules-configmap-reloader
+        resources:
+          limits:
+            cpu: 5m
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/prometheus/rules/prometheus-k8s-rulefiles-0
+          name: prometheus-k8s-rulefiles-0
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: prometheus-k8s
+      serviceAccountName: prometheus-k8s
+      terminationGracePeriodSeconds: 600
+      volumes:
+      - name: config
+        secret:
+          defaultMode: 420
+          secretName: prometheus-k8s
+      - emptyDir: {}
+        name: config-out
+      - configMap:
+          defaultMode: 420
+          name: prometheus-k8s-rulefiles-0
+        name: prometheus-k8s-rulefiles-0
+      - name: secret-prometheus-k8s-tls
+        secret:
+          defaultMode: 420
+          secretName: prometheus-k8s-tls
+      - name: secret-prometheus-k8s-proxy
+        secret:
+          defaultMode: 420
+          secretName: prometheus-k8s-proxy
+      - name: secret-prometheus-k8s-htpasswd
+        secret:
+          defaultMode: 420
+          secretName: prometheus-k8s-htpasswd
+      - emptyDir: {}
+        name: prometheus-k8s-db
+  updateStrategy:
+    type: RollingUpdate
+status:
+  availableReplicas: 0
+  replicas: 0

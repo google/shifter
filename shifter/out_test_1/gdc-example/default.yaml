@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-w2j69
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-06-02T23:12:46Z"
+  name: default
+  namespace: gdc-example
+  resourceVersion: "8727394"
+  selfLink: /api/v1/namespaces/gdc-example/serviceaccounts/default
+  uid: 834c33e3-e2c9-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-ctjvv
+- name: default-dockercfg-w2j69

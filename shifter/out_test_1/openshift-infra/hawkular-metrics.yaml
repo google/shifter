@@ -1,0 +1,56 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"route.openshift.io/v1","kind":"Route","metadata":{"annotations":{},"labels":{"metrics-infra":"hawkular-metrics"},"name":"hawkular-metrics","namespace":"openshift-infra"},"spec":{"host":"hawkular-metrics.okd.shifter.cloud","tls":{"destinationCACertificate":"-----BEGIN CERTIFICATE-----\nMIIC5jCCAc6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAkMSIwIAYDVQQDDBltZXRy\naWNzLXNpZ25lckAxNjUwMzc3MTI4MB4XDTIyMDQxOTE0MDUyOFoXDTI3MDQxODE0\nMDUyOVowJDEiMCAGA1UEAwwZbWV0cmljcy1zaWduZXJAMTY1MDM3NzEyODCCASIw\nDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALu36kxy0eg1x87sD2/JmeCqvTdx\nP+mfFGQCJ8JGv3hirrcZ3aRoIFwGiMor4ONpRl1rdqQPR0kxORgwfSZcEFQYe/Pd\nyEvN3WIcLdp73uoktw9eka7xq8Mfy0ObQ4awswB84b6bOSApBBdApj/t0igMR4mN\nue1wNKH0ZIG06MwKLdMiwPrBUIu+SFvN+LtGgbNSnkW3oVqqgqedS43awAE6JEhJ\nEo+sb2UbXTUCru/R2gS1FwqFDmasQ9T4vy1O7e82T4X/Gh9UksMlTh2bIGcGFMWQ\nBNNzaynn6zgMYMkDR+dz7jWvCR4gcFU4iwNA/ncbQwiUsfZG5ik6/rB+szcCAwEA\nAaMjMCEwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcN\nAQELBQADggEBACTICVFrwR+FLP8iCw752qPwlmVQ5roiqqGW5M8iCcJn4vA7oRJC\n3SKDTJceN0KyL7LmCSEJDFfLwIKEXjuh3mC17ckgcWQtRObrbBgk3gIP8Ely3C0d\nxKmY2HQxjFYeUJtKqOXvZqEUZu4hX4whQZCCbGhkqe2GPv67rm19Z7m+03TgQ+9b\noo3+zLNChEoyxfNhfmxeBCrufNCaoHo7Ujt+32oQDdixKZTqevpPID9yqVf4Aili\nfNcHueW3e6SmLA/cmTElCZOOjdRj34++YvV8EL2Jp2kRtpIDg6CVn9YQb9c5cpPR\ncy33gsNrXsq4RXtRC3SDHfBAr4WIwbwol1o=\n-----END CERTIFICATE-----\n","termination":"reencrypt"},"to":{"kind":"Service","name":"hawkular-metrics"}}}
+  creationTimestamp: "2022-04-19T14:06:38Z"
+  labels:
+    metrics-infra: hawkular-metrics
+  name: hawkular-metrics
+  namespace: openshift-infra
+  resourceVersion: "3116"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-infra/routes/hawkular-metrics
+  uid: ee255dcd-bfe9-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: hawkular-metrics.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: hawkular-metrics
+            port: {}
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"labels":{"metrics-infra":"hawkular-metrics","name":"hawkular-metrics"},"name":"hawkular-metrics","namespace":"openshift-infra"},"spec":{"ports":[{"port":443,"targetPort":"https-endpoint"}],"selector":{"name":"hawkular-metrics"}}}
+  creationTimestamp: "2022-04-19T14:06:18Z"
+  labels:
+    metrics-infra: hawkular-metrics
+    name: hawkular-metrics
+  name: hawkular-metrics
+  namespace: openshift-infra
+  resourceVersion: "2964"
+  selfLink: /api/v1/namespaces/openshift-infra/services/hawkular-metrics
+  uid: e25a558d-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.169.71
+  ports:
+  - port: 443
+    protocol: TCP
+    targetPort: https-endpoint
+  selector:
+    name: hawkular-metrics
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

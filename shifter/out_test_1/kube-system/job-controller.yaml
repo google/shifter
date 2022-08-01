@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: job-controller-dockercfg-fs2gz
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: job-controller
+  namespace: kube-system
+  resourceVersion: "821"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/job-controller
+  uid: fd8d6f68-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: job-controller-token-6hwsm
+- name: job-controller-dockercfg-fs2gz

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"controller-manager-f4tql-external-service-catalog-controller","leaseDurationSeconds":15,"acquireTime":"2022-04-19T14:10:45Z","renewTime":"2022-08-01T10:10:31Z","leaderTransitions":0}'
+  creationTimestamp: "2022-04-19T14:10:45Z"
+  name: service-catalog-controller-manager
+  namespace: kube-service-catalog
+  resourceVersion: "21099217"
+  selfLink: /api/v1/namespaces/kube-service-catalog/configmaps/service-catalog-controller-manager
+  uid: 81619018-bfea-11ec-b9cc-42010a000003

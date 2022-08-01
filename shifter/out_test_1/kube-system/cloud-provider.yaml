@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: cloud-provider-dockercfg-r4ddm
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:53Z"
+  name: cloud-provider
+  namespace: kube-system
+  resourceVersion: "782"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/cloud-provider
+  uid: fcf863e8-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: cloud-provider-token-c2nst
+- name: cloud-provider-dockercfg-r4ddm

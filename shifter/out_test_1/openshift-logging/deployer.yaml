@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-h74ds
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:03:07Z"
+  name: deployer
+  namespace: openshift-logging
+  resourceVersion: "1760"
+  selfLink: /api/v1/namespaces/openshift-logging/serviceaccounts/deployer
+  uid: 7088b37c-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-psdph
+- name: deployer-dockercfg-h74ds

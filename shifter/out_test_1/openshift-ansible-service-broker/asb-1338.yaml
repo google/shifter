@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  creationTimestamp: "2022-04-19T14:12:17Z"
+  labels:
+    app: openshift-ansible-service-broker
+    service: asb
+  name: asb-1338
+  namespace: openshift-ansible-service-broker
+  resourceVersion: "4424"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-ansible-service-broker/routes/asb-1338
+  uid: b7f7fe26-bfea-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: asb-1338-openshift-ansible-service-broker.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: asb
+            port:
+              number: 1338
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}

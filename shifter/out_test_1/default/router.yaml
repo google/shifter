@@ -1,0 +1,193 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.openshift.io/password: KEIQbIHSrP
+    prometheus.openshift.io/username: admin
+    service.alpha.openshift.io/serving-cert-secret-name: router-metrics-tls
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:03:20Z"
+  labels:
+    router: router
+  name: router
+  namespace: default
+  resourceVersion: "1802"
+  selfLink: /api/v1/namespaces/default/services/router
+  uid: 78203753-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.19.186
+  ports:
+  - name: 80-tcp
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: 443-tcp
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  - name: 1936-tcp
+    port: 1936
+    protocol: TCP
+    targetPort: 1936
+  selector:
+    router: router
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: "2022-04-19T14:03:21Z"
+  generation: 1
+  labels:
+    router: router
+  name: router
+  namespace: default
+  resourceVersion: "2035"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/default/deploymentconfigs/router
+  uid: 78d9f4bd-bfe9-11ec-b9cc-42010a000003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      router: router
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        router: router
+    spec:
+      containers:
+      - env:
+        - name: DEFAULT_CERTIFICATE_DIR
+          value: /etc/pki/tls/private
+        - name: DEFAULT_CERTIFICATE_PATH
+          value: /etc/pki/tls/private/tls.crt
+        - name: ROUTER_CIPHERS
+        - name: ROUTER_EXTERNAL_HOST_HOSTNAME
+        - name: ROUTER_EXTERNAL_HOST_HTTPS_VSERVER
+        - name: ROUTER_EXTERNAL_HOST_HTTP_VSERVER
+        - name: ROUTER_EXTERNAL_HOST_INSECURE
+          value: "false"
+        - name: ROUTER_EXTERNAL_HOST_INTERNAL_ADDRESS
+        - name: ROUTER_EXTERNAL_HOST_PARTITION_PATH
+        - name: ROUTER_EXTERNAL_HOST_PASSWORD
+        - name: ROUTER_EXTERNAL_HOST_PRIVKEY
+          value: /etc/secret-volume/router.pem
+        - name: ROUTER_EXTERNAL_HOST_USERNAME
+        - name: ROUTER_EXTERNAL_HOST_VXLAN_GW_CIDR
+        - name: ROUTER_LISTEN_ADDR
+          value: 0.0.0.0:1936
+        - name: ROUTER_METRICS_TLS_CERT_FILE
+          value: /etc/pki/tls/metrics/tls.crt
+        - name: ROUTER_METRICS_TLS_KEY_FILE
+          value: /etc/pki/tls/metrics/tls.key
+        - name: ROUTER_METRICS_TYPE
+          value: haproxy
+        - name: ROUTER_SERVICE_HTTPS_PORT
+          value: "443"
+        - name: ROUTER_SERVICE_HTTP_PORT
+          value: "80"
+        - name: ROUTER_SERVICE_NAME
+          value: router
+        - name: ROUTER_SERVICE_NAMESPACE
+          value: default
+        - name: ROUTER_SUBDOMAIN
+        - name: ROUTER_THREADS
+          value: "0"
+        - name: STATS_PASSWORD
+          value: KEIQbIHSrP
+        - name: STATS_PORT
+          value: "1936"
+        - name: STATS_USERNAME
+          value: admin
+        - name: EXTENDED_VALIDATION
+          value: "true"
+        image: quay.io/openshift/origin-haproxy-router:v3.11
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            host: localhost
+            path: /healthz
+            port: 1936
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: router
+        ports:
+        - containerPort: 80
+          hostPort: 80
+          protocol: TCP
+        - containerPort: 443
+          hostPort: 443
+          protocol: TCP
+        - containerPort: 1936
+          hostPort: 1936
+          name: stats
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            host: localhost
+            path: healthz/ready
+            port: 1936
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/pki/tls/metrics/
+          name: metrics-server-certificate
+          readOnly: true
+        - mountPath: /etc/pki/tls/private
+          name: server-certificate
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: router
+      serviceAccountName: router
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: metrics-server-certificate
+        secret:
+          defaultMode: 420
+          secretName: router-metrics-tls
+      - name: server-certificate
+        secret:
+          defaultMode: 420
+          secretName: router-certs
+status: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: router-dockercfg-f47qc
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:03:11Z"
+  name: router
+  namespace: default
+  resourceVersion: "1779"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/router
+  uid: 72ee47a1-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: router-token-kqbmp
+- name: router-dockercfg-f47qc

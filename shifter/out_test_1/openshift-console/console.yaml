@@ -1,0 +1,200 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"route.openshift.io/v1","kind":"Route","metadata":{"annotations":{},"labels":{"app":"openshift-console"},"name":"console","namespace":"openshift-console"},"spec":{"host":"console.okd.shifter.cloud","port":{"targetPort":"https"},"tls":{"caCertificate":"","certificate":"","insecureEdgeTerminationPolicy":"Redirect","key":"","termination":"reencrypt"},"to":{"kind":"Service","name":"console"}}}
+  creationTimestamp: "2022-04-19T14:05:08Z"
+  labels:
+    app: openshift-console
+  name: console
+  namespace: openshift-console
+  resourceVersion: "2599"
+  selfLink: /apis/route.openshift.io/v1/namespaces/openshift-console/routes/console
+  uid: b8a3b885-bfe9-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: console.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: console
+            port:
+              name: https
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"service.alpha.openshift.io/serving-cert-secret-name":"console-serving-cert"},"labels":{"app":"openshift-console"},"name":"console","namespace":"openshift-console"},"spec":{"ports":[{"name":"https","port":443,"targetPort":8443}],"selector":{"app":"openshift-console","component":"ui"}}}
+    service.alpha.openshift.io/serving-cert-secret-name: console-serving-cert
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:05:08Z"
+  labels:
+    app: openshift-console
+  name: console
+  namespace: openshift-console
+  resourceVersion: "2603"
+  selfLink: /api/v1/namespaces/openshift-console/services/console
+  uid: b89f966a-bfe9-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.229.169
+  ports:
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: openshift-console
+    component: ui
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"openshift-console","component":"ui"},"name":"console","namespace":"openshift-console"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"selector":{"matchLabels":{"app":"openshift-console","component":"ui"}},"strategy":{"type":"RollingUpdate"},"template":{"metadata":{"annotations":{"installer-triggered-rollout":"K15YEIK"},"labels":{"app":"openshift-console","component":"ui"},"name":"console"},"spec":{"affinity":{"podAntiAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"podAffinityTerm":{"labelSelector":{"matchLabels":{"app":"openshift-console"}},"topologyKey":"kubernetes.io/hostname"},"weight":100}]}},"containers":[{"command":["/opt/bridge/bin/bridge","--public-dir=/opt/bridge/static","--config=/var/console-config/console-config.yaml"],"image":"quay.io/openshift/origin-console:v3.11","imagePullPolicy":"IfNotPresent","livenessProbe":{"httpGet":{"path":"/health","port":8443,"scheme":"HTTPS"},"initialDelaySeconds":30},"name":"console","ports":[{"containerPort":8443,"protocol":"TCP"}],"readinessProbe":{"httpGet":{"path":"/health","port":8443,"scheme":"HTTPS"}},"resources":{"limits":{"cpu":"100m","memory":"100Mi"},"requests":{"cpu":"100m","memory":"100Mi"}},"terminationMessagePath":"/dev/termination-log","volumeMounts":[{"mountPath":"/var/serving-cert","name":"serving-cert","readOnly":true},{"mountPath":"/var/oauth-config","name":"oauth-config","readOnly":true},{"mountPath":"/var/console-config","name":"console-config"}]}],"dnsPolicy":"ClusterFirst","nodeSelector":{"node-role.kubernetes.io/master":"true"},"restartPolicy":"Always","selector":{"matchLabels":{"app":"openshift-console","component":"ui"}},"terminationGracePeriodSeconds":30,"volumes":[{"name":"serving-cert","secret":{"defaultMode":288,"secretName":"console-serving-cert"}},{"name":"oauth-config","secret":{"defaultMode":288,"secretName":"console-oauth-config"}},{"configMap":{"defaultMode":288,"name":"console-config"},"name":"console-config"}]}}}}
+  creationTimestamp: "2022-04-19T14:05:08Z"
+  generation: 1
+  labels:
+    app: openshift-console
+    component: ui
+  name: console
+  namespace: openshift-console
+  resourceVersion: "14388"
+  selfLink: /apis/apps/v1/namespaces/openshift-console/deployments/console
+  uid: b8914691-bfe9-11ec-b9cc-42010a000003
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: openshift-console
+      component: ui
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        installer-triggered-rollout: K15YEIK
+      creationTimestamp: null
+      labels:
+        app: openshift-console
+        component: ui
+      name: console
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: openshift-console
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - command:
+        - /opt/bridge/bin/bridge
+        - --public-dir=/opt/bridge/static
+        - --config=/var/console-config/console-config.yaml
+        image: quay.io/openshift/origin-console:v3.11
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: console
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8443
+            scheme: HTTPS
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/serving-cert
+          name: serving-cert
+          readOnly: true
+        - mountPath: /var/oauth-config
+          name: oauth-config
+          readOnly: true
+        - mountPath: /var/console-config
+          name: console-config
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        node-role.kubernetes.io/master: "true"
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: serving-cert
+        secret:
+          defaultMode: 288
+          secretName: console-serving-cert
+      - name: oauth-config
+        secret:
+          defaultMode: 288
+          secretName: console-oauth-config
+      - configMap:
+          defaultMode: 288
+          name: console-config
+        name: console-config
+status: {}
+---
+apiVersion: v1
+imagePullSecrets:
+- name: console-dockercfg-4772l
+kind: ServiceAccount
+metadata:
+  annotations:
+    include.release.openshift.io/ibm-cloud-managed: "true"
+    include.release.openshift.io/self-managed-high-availability: "true"
+    include.release.openshift.io/single-node-developer: "true"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ServiceAccount","metadata":{"annotations":{"include.release.openshift.io/ibm-cloud-managed":"true","include.release.openshift.io/self-managed-high-availability":"true","include.release.openshift.io/single-node-developer":"true"},"name":"console","namespace":"openshift-console"}}
+  creationTimestamp: "2022-04-19T14:05:08Z"
+  name: console
+  namespace: openshift-console
+  resourceVersion: "352253"
+  selfLink: /api/v1/namespaces/openshift-console/serviceaccounts/console
+  uid: b8973b4b-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: console-token-vwqjq
+- name: console-dockercfg-4772l

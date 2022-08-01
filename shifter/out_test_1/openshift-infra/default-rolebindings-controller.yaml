@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-rolebindings-controller-dockercfg-2pqtk
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: default-rolebindings-controller
+  namespace: openshift-infra
+  resourceVersion: "869"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/default-rolebindings-controller
+  uid: fd2af99d-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: default-rolebindings-controller-token-v7zqt
+- name: default-rolebindings-controller-dockercfg-2pqtk

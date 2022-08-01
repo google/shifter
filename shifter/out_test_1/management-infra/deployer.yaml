@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-g6x9v
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:02:15Z"
+  name: deployer
+  namespace: management-infra
+  resourceVersion: "1389"
+  selfLink: /api/v1/namespaces/management-infra/serviceaccounts/deployer
+  uid: 51a6d66a-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-qwxtp
+- name: deployer-dockercfg-g6x9v

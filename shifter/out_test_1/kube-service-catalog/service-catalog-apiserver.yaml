@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: service-catalog-apiserver-dockercfg-44llm
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:10:14Z"
+  name: service-catalog-apiserver
+  namespace: kube-service-catalog
+  resourceVersion: "3962"
+  selfLink: /api/v1/namespaces/kube-service-catalog/serviceaccounts/service-catalog-apiserver
+  uid: 6f21c78f-bfea-11ec-b9cc-42010a000003
+secrets:
+- name: service-catalog-apiserver-dockercfg-44llm
+- name: service-catalog-apiserver-token-k8l2z

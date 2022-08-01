@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: builder-dockercfg-bc6vh
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: builder
+  namespace: default
+  resourceVersion: "904"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/builder
+  uid: fdcdddee-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: builder-token-l8sbd
+- name: builder-dockercfg-bc6vh

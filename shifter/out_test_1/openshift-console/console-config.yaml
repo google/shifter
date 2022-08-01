@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+data:
+  console-config.yaml: |
+    apiVersion: console.openshift.io/v1beta1
+    auth:
+      clientID: openshift-console
+      clientSecretFile: /var/oauth-config/clientSecret
+      logoutRedirect: ''
+      oauthEndpointCAFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    clusterInfo:
+      consoleBaseAddress: https://console.okd.shifter.cloud
+      consoleBasePath: ''
+      developerConsolePublicURL: https://console.okd.shifter.cloud:8443/console/
+      masterPublicURL: https://console.okd.shifter.cloud:8443
+    customization:
+      branding: okd
+      documentationBaseURL: https://docs.okd.io/3.11/
+    kind: ConsoleConfig
+    servingInfo:
+      bindAddress: https://0.0.0.0:8443
+      certFile: /var/serving-cert/tls.crt
+      keyFile: /var/serving-cert/tls.key
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"console-config.yaml":"apiVersion: console.openshift.io/v1beta1\nauth:\n  clientID: openshift-console\n  clientSecretFile: /var/oauth-config/clientSecret\n  logoutRedirect: ''\n  oauthEndpointCAFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\nclusterInfo:\n  consoleBaseAddress: https://console.okd.shifter.cloud\n  consoleBasePath: ''\n  developerConsolePublicURL: https://console.okd.shifter.cloud:8443/console/\n  masterPublicURL: https://console.okd.shifter.cloud:8443\ncustomization:\n  branding: okd\n  documentationBaseURL: https://docs.okd.io/3.11/\nkind: ConsoleConfig\nservingInfo:\n  bindAddress: https://0.0.0.0:8443\n  certFile: /var/serving-cert/tls.crt\n  keyFile: /var/serving-cert/tls.key\n"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app":"openshift-console"},"name":"console-config","namespace":"openshift-console"}}
+  creationTimestamp: "2022-04-19T14:05:08Z"
+  labels:
+    app: openshift-console
+  name: console-config
+  namespace: openshift-console
+  resourceVersion: "2573"
+  selfLink: /api/v1/namespaces/openshift-console/configmaps/console-config
+  uid: b8930495-bfe9-11ec-b9cc-42010a000003

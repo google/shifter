@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  creationTimestamp: "2022-04-19T14:08:44Z"
+  labels:
+    logging-infra: support
+  name: logging-es-cluster
+  namespace: openshift-logging
+  resourceVersion: "3544"
+  selfLink: /api/v1/namespaces/openshift-logging/services/logging-es-cluster
+  uid: 39201ca3-bfea-11ec-b9cc-42010a000003
+spec:
+  clusterIP: None
+  ports:
+  - port: 9300
+    protocol: TCP
+    targetPort: 9300
+  publishNotReadyAddresses: true
+  selector:
+    component: es
+    provider: openshift
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

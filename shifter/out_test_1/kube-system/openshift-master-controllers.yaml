@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"dev-cluster-cp-0","leaseDurationSeconds":15,"acquireTime":"2022-04-19T13:59:52Z","renewTime":"2022-08-01T10:10:31Z","leaderTransitions":0}'
+  creationTimestamp: "2022-04-19T13:59:52Z"
+  name: openshift-master-controllers
+  namespace: kube-system
+  resourceVersion: "21099216"
+  selfLink: /api/v1/namespaces/kube-system/configmaps/openshift-master-controllers
+  uid: fc16a20e-bfe8-11ec-b9cc-42010a000003

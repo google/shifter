@@ -1,0 +1,151 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+  creationTimestamp: "2022-06-02T23:00:06Z"
+  labels:
+    app: django-psql-persistent
+    template: django-psql-persistent
+    template.openshift.io/template-instance-owner: bec9fb26-e2c7-11ec-b9cc-42010a000003
+  name: django-psql-persistent
+  namespace: demo-100
+  resourceVersion: "8723422"
+  selfLink: /apis/route.openshift.io/v1/namespaces/demo-100/routes/django-psql-persistent
+  uid: bed1ea82-e2c7-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: django-psql-persistent-demo-100.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: django-psql-persistent
+            port: {}
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: Exposes and load balances the application pods
+    service.alpha.openshift.io/dependencies: '[{"name": "postgresql", "kind": "Service"}]'
+  creationTimestamp: "2022-06-02T23:00:06Z"
+  labels:
+    app: django-psql-persistent
+    template: django-psql-persistent
+    template.openshift.io/template-instance-owner: bec9fb26-e2c7-11ec-b9cc-42010a000003
+  name: django-psql-persistent
+  namespace: demo-100
+  resourceVersion: "8723378"
+  selfLink: /api/v1/namespaces/demo-100/services/django-psql-persistent
+  uid: bed1185d-e2c7-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.59.185
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    name: django-psql-persistent
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    description: Defines how to deploy the application server
+    template.alpha.openshift.io/wait-for-ready: "true"
+  creationTimestamp: "2022-06-02T23:00:07Z"
+  generation: 2
+  labels:
+    app: django-psql-persistent
+    template: django-psql-persistent
+    template.openshift.io/template-instance-owner: bec9fb26-e2c7-11ec-b9cc-42010a000003
+  name: django-psql-persistent
+  namespace: demo-100
+  resourceVersion: "8724129"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/demo-100/deploymentconfigs/django-psql-persistent
+  uid: befd846a-e2c7-11ec-b9cc-42010a000003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: django-psql-persistent
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: django-psql-persistent
+      name: django-psql-persistent
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_SERVICE_NAME
+          value: postgresql
+        - name: DATABASE_ENGINE
+          value: postgresql
+        - name: DATABASE_NAME
+          value: default
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              key: database-user
+              name: django-psql-persistent
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: database-password
+              name: django-psql-persistent
+        - name: APP_CONFIG
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: django-secret-key
+              name: django-psql-persistent
+        image: docker-registry.default.svc:5000/demo-100/django-psql-persistent@sha256:c785e594c623c86498ef6355f54e499deccd642aaaa14e093f4e6238047fe3e8
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: django-psql-persistent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status: {}

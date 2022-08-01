@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-xgd75
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-07-21T12:10:35Z"
+  name: deployer
+  namespace: garys
+  resourceVersion: "18891700"
+  selfLink: /api/v1/namespaces/garys/serviceaccounts/deployer
+  uid: 200a88a5-08ee-11ed-b9cc-42010a000003
+secrets:
+- name: deployer-token-dq656
+- name: deployer-dockercfg-xgd75

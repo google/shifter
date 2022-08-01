@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/path: /_prometheus/metrics
+    prometheus.io/port: "4443"
+    prometheus.io/scheme: https
+    prometheus.io/scrape: "true"
+    service.alpha.openshift.io/serving-cert-secret-name: prometheus-tls
+    service.alpha.openshift.io/serving-cert-signed-by: openshift-service-serving-signer@1650376713
+  creationTimestamp: "2022-04-19T14:08:47Z"
+  labels:
+    logging-infra: support
+  name: logging-es-prometheus
+  namespace: openshift-logging
+  resourceVersion: "3561"
+  selfLink: /api/v1/namespaces/openshift-logging/services/logging-es-prometheus
+  uid: 3b2f5dfd-bfea-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.152.117
+  ports:
+  - name: proxy
+    port: 443
+    protocol: TCP
+    targetPort: 4443
+  selector:
+    component: es
+    provider: openshift
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

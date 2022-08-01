@@ -1,0 +1,125 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    openshift.io/host.generated: "true"
+    template.openshift.io/expose-uri: http://{.spec.host}{.spec.path}
+  creationTimestamp: "2022-06-02T23:00:49Z"
+  labels:
+    template: nginx-example
+    template.openshift.io/template-instance-owner: d818e282-e2c7-11ec-b9cc-42010a000003
+  name: nginx-example
+  namespace: demo-100
+  resourceVersion: "8723712"
+  selfLink: /apis/route.openshift.io/v1/namespaces/demo-100/routes/nginx-example
+  uid: d81e2372-e2c7-11ec-b9cc-42010a000003
+spec:
+  rules:
+  - host: nginx-example-demo-100.okd.shifter.cloud
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx-example
+            port: {}
+        path: /
+        pathType: ImplementationSpecific
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: Exposes and load balances the application pods
+  creationTimestamp: "2022-06-02T23:00:49Z"
+  labels:
+    template: nginx-example
+    template.openshift.io/template-instance-owner: d818e282-e2c7-11ec-b9cc-42010a000003
+  name: nginx-example
+  namespace: demo-100
+  resourceVersion: "8723707"
+  selfLink: /api/v1/namespaces/demo-100/services/nginx-example
+  uid: d81c5b07-e2c7-11ec-b9cc-42010a000003
+spec:
+  clusterIP: 172.30.32.252
+  ports:
+  - name: web
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    name: nginx-example
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    description: Defines how to deploy the application server
+    template.alpha.openshift.io/wait-for-ready: "true"
+  creationTimestamp: "2022-06-02T23:00:49Z"
+  generation: 2
+  labels:
+    template: nginx-example
+    template.openshift.io/template-instance-owner: d818e282-e2c7-11ec-b9cc-42010a000003
+  name: nginx-example
+  namespace: demo-100
+  resourceVersion: "8724147"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/demo-100/deploymentconfigs/nginx-example
+  uid: d820f066-e2c7-11ec-b9cc-42010a000003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginx-example
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: nginx-example
+      name: nginx-example
+    spec:
+      containers:
+      - image: docker-registry.default.svc:5000/demo-100/nginx-example@sha256:f6c48f3a0aa02660d4a679cf9067a2b49f1885ffdcc78bbe474b8b204ef05d80
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        name: nginx-example
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 3
+        resources:
+          limits:
+            memory: 512Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status: {}

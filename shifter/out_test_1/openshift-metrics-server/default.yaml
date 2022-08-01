@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-v42wq
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:07:02Z"
+  name: default
+  namespace: openshift-metrics-server
+  resourceVersion: "3247"
+  selfLink: /api/v1/namespaces/openshift-metrics-server/serviceaccounts/default
+  uid: fc5ffc49-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-qkq9p
+- name: default-dockercfg-v42wq

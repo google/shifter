@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-frn64
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:01:58Z"
+  name: deployer
+  namespace: openshift-sdn
+  resourceVersion: "1168"
+  selfLink: /api/v1/namespaces/openshift-sdn/serviceaccounts/deployer
+  uid: 4750afd1-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-xst7z
+- name: deployer-dockercfg-frn64

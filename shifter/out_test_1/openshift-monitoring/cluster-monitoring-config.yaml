@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+data:
+  config.yaml: |
+    prometheusOperator:
+      baseImage: quay.io/coreos/prometheus-operator
+      prometheusConfigReloaderBaseImage: quay.io/coreos/prometheus-config-reloader
+      configReloaderBaseImage: quay.io/coreos/configmap-reload
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+    prometheusK8s:
+      baseImage: openshift/prometheus
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+      externalLabels:
+        cluster: openshift
+    alertmanagerMain:
+      baseImage: openshift/prometheus-alertmanager
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+    nodeExporter:
+      baseImage: openshift/prometheus-node-exporter
+    grafana:
+      baseImage: grafana/grafana
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+    kubeStateMetrics:
+      baseImage: quay.io/coreos/kube-state-metrics
+      nodeSelector:
+        node-role.kubernetes.io/infra: "true"
+    kubeRbacProxy:
+      baseImage: quay.io/coreos/kube-rbac-proxy
+    auth:
+      baseImage: openshift/oauth-proxy
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-04-19T14:03:50Z"
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+  resourceVersion: "2114"
+  selfLink: /api/v1/namespaces/openshift-monitoring/configmaps/cluster-monitoring-config
+  uid: 89de266e-bfe9-11ec-b9cc-42010a000003

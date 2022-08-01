@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-smrs4
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:55Z"
+  name: default
+  namespace: kube-system
+  resourceVersion: "803"
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/default
+  uid: fdaf106b-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-2pdss
+- name: default-dockercfg-smrs4

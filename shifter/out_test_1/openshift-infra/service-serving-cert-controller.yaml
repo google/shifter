@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: service-serving-cert-controller-dockercfg-c8mrz
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T13:59:54Z"
+  name: service-serving-cert-controller
+  namespace: openshift-infra
+  resourceVersion: "888"
+  selfLink: /api/v1/namespaces/openshift-infra/serviceaccounts/service-serving-cert-controller
+  uid: fd8064b0-bfe8-11ec-b9cc-42010a000003
+secrets:
+- name: service-serving-cert-controller-token-ngvbp
+- name: service-serving-cert-controller-dockercfg-c8mrz

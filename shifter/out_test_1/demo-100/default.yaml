@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: default-dockercfg-8t9mh
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-06-02T22:59:28Z"
+  name: default
+  namespace: demo-100
+  resourceVersion: "8723294"
+  selfLink: /api/v1/namespaces/demo-100/serviceaccounts/default
+  uid: a7b0e75b-e2c7-11ec-b9cc-42010a000003
+secrets:
+- name: default-token-cnsmg
+- name: default-dockercfg-8t9mh

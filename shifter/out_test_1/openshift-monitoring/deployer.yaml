@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-29hsh
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-04-19T14:03:45Z"
+  name: deployer
+  namespace: openshift-monitoring
+  resourceVersion: "2073"
+  selfLink: /api/v1/namespaces/openshift-monitoring/serviceaccounts/deployer
+  uid: 873d1a2b-bfe9-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-fm6x5
+- name: deployer-dockercfg-29hsh
