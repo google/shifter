@@ -16,7 +16,7 @@ dev-cluster-in-0 openshift_node_group_name='node-config-infra'
 dev-cluster-cp-0
 
 [OSEv3:vars]
-ansible_ssh_user=avinashjha
+ansible_ssh_user=${ssh_user}
 ansible_become=true
 
 openshift_metrics_install_metrics=true

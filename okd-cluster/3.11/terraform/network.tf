@@ -18,16 +18,16 @@ resource "google_compute_address" "os-master-addr" {
   region  = var.region
 }
 
-resource "google_compute_http_health_check" "os-master-hc" {
-  project             = module.project.project_id
-  name                = "${var.prefix}-cluster-master-hc"
-  check_interval_sec  = 10
-  healthy_threshold   = 10
-  unhealthy_threshold = 10
-  timeout_sec         = 5
-  request_path        = "/"
-  port                = "8443"
-}
+# resource "google_compute_http_health_check" "os-master-hc" {
+#   project             = module.project.project_id
+#   name                = "${var.prefix}-cluster-master-hc"
+#   check_interval_sec  = 10
+#   healthy_threshold   = 10
+#   unhealthy_threshold = 10
+#   timeout_sec         = 5
+#   request_path        = "/"
+#   port                = "8443"
+# }
 
 resource "google_compute_firewall" "os-master-hc-fw" {
   project     = module.project.project_id
@@ -48,7 +48,7 @@ resource "google_compute_target_pool" "os-master-tp" {
   project       = module.project.project_id
   name          = "${var.prefix}-cluster-master-tp"
   instances     = [google_compute_instance_from_template.os-control-plane.0.self_link]
-  health_checks = [google_compute_http_health_check.os-master-hc.name]
+  //health_checks = [google_compute_http_health_check.os-master-hc.name]
   region        = var.region
 }
 

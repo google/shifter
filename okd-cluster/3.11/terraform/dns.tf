@@ -1,7 +1,7 @@
 resource "google_dns_managed_zone" "okd-gcp-zone" {
   project     = module.project.project_id
   name        = "okd-gcp-iac"
-  dns_name    = "okd.avinashj.in."
+  dns_name    = var.dns_master_subdomain
   description = "okd-gcp-iac-zone"
 }
 
