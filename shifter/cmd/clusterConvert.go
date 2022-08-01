@@ -23,12 +23,16 @@ import (
 var clusterConvertCmd = &cobra.Command{
 	Use:   "convert",
 	Short: "Convert all resources or resources from a namepace from the cluster.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Convert takes all the resources from a OpenShift cluster endpoint and converts them to the desired output format
+on your local disk or GCS bucket.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+	Convert all resources from a given namespace into yaml files:
+	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN convert -n $NAMESPACE -o yaml ./output/directory/path
+
+	Convert all resources from all namespaces into yaml files:
+	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN convert --all-namespaces -o yaml ./output/directory/path
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
    _____ __    _ ______
@@ -39,6 +43,13 @@ to quickly create a Cobra application.`,
 
 ----------------------------------------
 `)
+
+		if len(args) != 1 {
+			log.Fatal("Please specify the destination path.")
+		}
+
+		outputPath = args[0]
+
 		log.Println("Connecting to cluster: ", endpoint)
 		log.Println("Converting cluster resources")
 		procflags := ProcFlags(pFlags)
@@ -46,7 +57,8 @@ to quickly create a Cobra application.`,
 		var openshift os.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		openshift.ConvertNSResources(namespace, procflags)
+		openshift.ConvertNSResources(namespace, procflags, outputPath)
+		log.Println("Conversion Complete")
 	},
 }
 
@@ -54,8 +66,8 @@ func init() {
 	clusterCmd.AddCommand(clusterConvertCmd)
 
 	clusterConvertCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "Namespace or Project")
-	clusterConvertCmd.Flags().StringP("output-format", "o", "yaml", "Output format")
 	clusterConvertCmd.Flags().BoolVarP(&allnamespaces, "all-namespaces", "", false, "All Namespaces or Projects")
+	clusterConvertCmd.Flags().StringP("output-format", "o", "yaml", "Output format")
 
 	clusterConvertCmd.MarkFlagRequired("output-format")
 	clusterConvertCmd.MarkFlagsMutuallyExclusive("namespace", "all-namespaces")

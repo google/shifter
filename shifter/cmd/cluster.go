@@ -41,7 +41,7 @@ var clusterCmd = &cobra.Command{
 
 Convert OpenShift resources to kubernetes native formats
 
-Usage: shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN -n $NAMESPACE
+Usage: shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
