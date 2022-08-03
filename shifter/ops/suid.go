@@ -23,7 +23,7 @@ import (
 	"github.com/google/uuid"
 )
 
-//Used for String Splitting Pre and Post Hash
+// Used for String Splitting Pre and Post Hash
 const seperator string = "#!#"
 
 type SUID struct {

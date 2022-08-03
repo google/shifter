@@ -18,6 +18,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"fmt"
 )
 
 func (fileObj *FileObject) WriteLCLFile() {
@@ -25,6 +26,12 @@ func (fileObj *FileObject) WriteLCLFile() {
 	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
 		os.MkdirAll(filepath.Dir(fileObj.Path), 0700) // Create output directory
 	}
+
+	res, err := ValidateYaml(fileObj)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(res)
 
 	// Create New File
 	fileName := fileObj.Path + "." + fileObj.Ext

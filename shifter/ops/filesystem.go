@@ -30,10 +30,10 @@ type FileObject struct {
 }
 
 /*
-	Cross Platform File Object.
-	Can be used to Store Content and MetaData about
-	Files stored in Local Storage and or GCS Storage where
-	contents is written as a pointer to a bytes buffer
+Cross Platform File Object.
+Can be used to Store Content and MetaData about
+Files stored in Local Storage and or GCS Storage where
+contents is written as a pointer to a bytes buffer
 */
 const GCS string = "GCS"
 const LCL string = "LCL"
