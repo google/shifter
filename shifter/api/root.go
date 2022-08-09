@@ -16,7 +16,6 @@ package api
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/gin-contrib/cors"
 
@@ -67,18 +66,29 @@ func (server *Server) setupRouter() {
 	// Create Default Gin Router
 	router := gin.Default()
 
-	// Configure CORS
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"OPTIONS", "GET", "POST"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		/*AllowOriginFunc: func(origin string) bool {
-		    return origin == "https://example.com"
-		},*/
-		MaxAge: 12 * time.Hour,
-	}))
+	// Setup & Configure CORS
+	config := cors.DefaultConfig()
+	config.AllowWildcard = true
+	config.AllowOrigins = []string{"*"}
+	config.AddAllowMethods("OPTIONS", "GET", "POST")
+	config.AddAllowHeaders("Origin", "Accept", "Accept-Encoding", "Cache-Control", "X-Requested-With", "X-Custom-Header", "Content-Type", "Content-Length", "Authorization")
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	// Appply CORS
+	router.Use(cors.New(config))
+
+	/*
+		router.Use(cors.New(cors.Config{
+			AllowOrigins:     []string{"*"},
+			AllowMethods:     []string{"OPTIONS", "GET", "POST"},
+			AllowHeaders:     []string{"Origin"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,*/
+	/*AllowOriginFunc: func(origin string) bool {
+	    return origin == "https://example.com"
+	},*/
+	/*MaxAge: 12 * time.Hour,
+	}))*/
 
 	// Declare API V1 Route Group and Routes
 	v1 := router.Group("/api/v1")
