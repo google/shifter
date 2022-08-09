@@ -17,10 +17,32 @@ import (
 	"github.com/google/uuid"
 	"log"
 	"path/filepath"
-	"shifter/generators"
-	inputs "shifter/inputs"
+	"shifter/generator"
+	"shifter/input"
 	"shifter/lib"
 )
+
+type LogObject struct {
+}
+
+type Converter struct {
+	UUID       string // Unique ID of the Run
+	InputType  string
+	SourcePath string
+	Generator  string
+	OutputPath string
+	Flags      map[string]string
+
+	SourceFiles []*FileObject
+	OutputFiles []*FileObject
+
+	Logs []*LogObject
+}
+
+type DownloadFile struct {
+	Link     string `json:"link"`
+	Filename string `json:"filename"`
+}
 
 // Input Types
 const YAML string = "YAML"
@@ -91,25 +113,27 @@ func (converter *Converter) ConvertFiles() {
 		var r []lib.Converted
 		switch converter.InputType {
 		case "yaml":
-			sourceFile := inputs.Yaml(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, "test", sourceFile, nil)
+			sourceFile := input.Yaml(file.Content, converter.Flags)
+			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile)
 		case "template":
-			sourceFile, values := inputs.Template(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, "test", sourceFile, values)
+			sourceFile, values := input.Template(file.Content, converter.Flags)
+			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
 		}
 
 		//outputFileName := fmt.Sprint(idx)
 		for k := range r {
 			fileObj := &FileObject{
-				StorageType:   file.StorageType,
-				SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
-				Filename:      r[k].Name,
-				Ext:           filepath.Ext(file.SourcePath),
+				StorageType: file.StorageType,
+				//SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
+				Path:          (converter.OutputPath + "/" + r[k].Path + r[k].Name),
+				Filename:      file.Filename,
+				Ext:           filepath.Ext(file.Path),
 				Content:       r[k].Payload,
 				ContentLength: file.ContentLength,
 			}
 
 			// Write Converted File to Storage
+			log.Printf("Writing to file %v", fileObj.Filename)
 			fileObj.WriteFile()
 
 			// Add Converted File Object to Converter

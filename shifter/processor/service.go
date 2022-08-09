@@ -16,9 +16,10 @@ package processor
 import (
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"shifter/lib"
 )
 
-func convertServiceToService(OSService apiv1.Service, flags map[string]string) apiv1.Service {
+func convertServiceToService(OSService apiv1.Service, flags map[string]string) lib.K8sobject {
 	service := &apiv1.Service{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Service",
@@ -27,6 +28,9 @@ func convertServiceToService(OSService apiv1.Service, flags map[string]string) a
 		ObjectMeta: OSService.ObjectMeta,
 		Spec:       OSService.Spec,
 	}
+	var k lib.K8sobject
+	k.Kind = "Service"
+	k.Object = service
 
-	return *service
+	return k
 }

@@ -15,6 +15,7 @@ package ops
 
 import (
 	"archive/zip"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -27,6 +28,7 @@ import (
 	- Return error struct on Errors
 	- Prevent Function from Including .zip archive in the .zip archive (recursive zip error)
 */
+/*
 func Archive(srcPath string, fileName string) error {
 	// 1. Create a ZIP file and zip.Writer
 	f, err := os.Create(fileName)
@@ -81,4 +83,53 @@ func Archive(srcPath string, fileName string) error {
 		_, err = io.Copy(headerWriter, f)
 		return err
 	})
+}*/
+
+func Archive(sourcePath string, outputPath string, suid SUID) error {
+
+	if _, err := os.Stat(outputPath + "/"); os.IsNotExist(err) {
+		os.MkdirAll(filepath.Dir(outputPath+"/"), 0700) // Create output directory
+	}
+	file, err := os.Create(outputPath + "/" + suid.DownloadId + ".zip")
+	if err != nil {
+		return (err)
+	}
+	defer file.Close()
+
+	w := zip.NewWriter(file)
+	defer w.Close()
+
+	walker := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+
+		// Ensure that `path` is not absolute; it should not start with "/".
+		// This snippet happens to work because I don't use
+		// absolute paths, but ensure your real-world code
+		// transforms path into a zip-root relative path.
+		f, err := w.Create(path)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(f, file)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	err = filepath.Walk(sourcePath+"/"+suid.DirectoryName+"/", walker)
+	if err != nil {
+		return errors.New("Unable to resolve or find Download ID")
+	}
+	return nil
 }

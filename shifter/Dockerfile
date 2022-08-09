@@ -3,7 +3,7 @@
 ##
 ## Build Shifter Server
 ##
-FROM golang:1.18.1 AS build
+FROM golang:1.18.4 AS build
 
 WORKDIR /app
 
@@ -23,6 +23,7 @@ FROM gcr.io/distroless/base-debian11
 ARG serverPort=8080
 ENV env_serverPort=$serverPort
 
-COPY --from=build /shifter /
+WORKDIR /shifter
+COPY --from=build /shifter ./
 EXPOSE 8080
 CMD ["/shifter"]

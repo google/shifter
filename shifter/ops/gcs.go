@@ -41,7 +41,7 @@ func GCSPathDeconstruction(gscPath string) (string, string) {
 // Write bytes.Buffer to GSC Bucket as File
 func (fileObj *FileObject) WriteGCSFile() {
 
-	bucket, prefix := GCSPathDeconstruction(fileObj.SourcePath)
+	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
@@ -68,7 +68,7 @@ func (fileObj *FileObject) WriteGCSFile() {
 // Load GSC File from Bucket to bytes.Buffer
 func (fileObj *FileObject) LoadGCSFile() {
 
-	bucket, prefix := GCSPathDeconstruction(fileObj.SourcePath)
+	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
@@ -134,7 +134,7 @@ func ProcessGCSPath(path string) ([]*FileObject, error) {
 		// Create File Object for every file in Bucket
 		fileObj := &FileObject{
 			StorageType: GCS,
-			SourcePath:  ("gs://" + bucket + "/" + attrs.Name),
+			Path:        ("gs://" + bucket + "/" + attrs.Name),
 			Ext:         filepath.Ext(attrs.Name),
 		}
 		// Add File Object to Array of Files
