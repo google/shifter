@@ -5,7 +5,7 @@ services:
     domainname: shifter.local
     image: images.shifter.cloud/shifter-ui:latest
     environment:
-      SHIFTER_SERVER_ENDPOINT: "http://shifter-server:9091/api/v1"
+      SHIFTER_SERVER_ENDPOINT: "http://localhost:9091/api/v1"
     ports:
       - 9090:8080
     links:
