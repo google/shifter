@@ -15,9 +15,9 @@ jobs:
       uses: securego/gosec@master
       with:
         # we let the report trigger content trigger a failure using the GitHub Security features.
-        args: '-no-fail -fmt=json -out=results.json -stdout -verbose=text ./...'
-    - name: Upload results.json file
+        args: '-no-fail -fmt=sarif -out=results.sarif -stdout -verbose=text ./...'
+    - name: Upload results.sarif file
       uses: github/codeql-action/upload-sarif@v2
       with:
         # Path to SARIF file relative to the root of the repository
-        sarif_file: results.json
+        sarif_file: results.sarif
