@@ -5,8 +5,9 @@ on:
       - main
 
 jobs:
-  tests:
+  gosec-scan:
     runs-on: ubuntu-latest
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     env:
       GO111MODULE: on
     steps:
