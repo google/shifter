@@ -5,16 +5,6 @@ on:
       - main
 
 jobs:
-  gosec-scan:
-    runs-on: ubuntu-latest
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    env:
-      GO111MODULE: on
-    steps:
-        - name: Run Gosec Security Scanner
-          uses: securego/gosec@master
-          with:
-            args: -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
   release-on-push:
     runs-on: ubuntu-latest
     env:
