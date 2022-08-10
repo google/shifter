@@ -73,6 +73,7 @@ Usage: shifter server
 }
 
 func init() {
+	// TODO - Revisit the Flags and Required Flags, Fix descriptions add options, Add valdations.
 	rootCmd.AddCommand(serverCmd)
 	serverCmd.Flags().StringVarP(&serverPort, "port", "p", "8080", "Server Port: Default 8080")
 	serverCmd.Flags().StringVarP(&serverAddress, "host-address", "a", "0.0.0.0", "Host Address: Default 0.0.0.0")
