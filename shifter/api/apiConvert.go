@@ -159,16 +159,16 @@ func (server *Server) Convert(ctx *gin.Context) {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		}
 
-		// Construct API Endpoint Response
-		r := ResponseConvert{
-			SUID:    suid,
-			Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
-		}
-
 		// API Convert Successful
 		log.Printf("✅ SUCCESS: API Convert - %d Objects Converted", len(convert.Items))
 		// Return API JSON Response
-		ctx.JSON(http.StatusOK, r)
+		ctx.JSON(
+			http.StatusOK,
+			// Construct API Endpoint Response
+			ResponseConvert{
+				SUID:    suid,
+				Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
+			})
 	}
 }
 
