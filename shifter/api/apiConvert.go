@@ -128,11 +128,14 @@ func (server *Server) Convert(ctx *gin.Context) {
 				objs = append(objs, v)
 			}
 
+			// Log Info
 			log.Printf("🌐 💡 INFO: Preparing to Convert %d OpenShift DeploymentConfigs", len(objs))
 
 			//NESTED TODO - Error Handling in New Generator Call
 			convertedObjects := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
+			// Loop Through Each ConvertedObject and create File Object
 			for _, conObj := range convertedObjects {
+				// Create File Object
 				fileObj := &ops.FileObject{
 					StorageType:   server.config.serverStorage.storageType,
 					Path:          (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
@@ -151,14 +154,20 @@ func (server *Server) Convert(ctx *gin.Context) {
 		//NESTED TODO - Error Handling in Archive Call
 		err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
 		if err != nil {
+			// Error: Unable to Archive Directory of Objects
+			log.Printf("🌐 ❌ ERROR: Unable to Archive Directory of Objects, Returning: Status %d.", http.StatusBadRequest)
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		}
 
 		// Construct API Endpoint Response
 		r := ResponseConvert{
 			SUID:    suid,
-			Message: "Converted..." + fmt.Sprint(len(convert.Items)) + " Objects",
+			Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
 		}
+
+		// API Convert Successful
+		log.Printf("✅ SUCCESS: API Convert - %d Objects Converted", len(convert.Items))
+		// Return API JSON Response
 		ctx.JSON(http.StatusOK, r)
 	}
 }
