@@ -40,6 +40,7 @@ func GCSPathDeconstruction(gscPath string) (string, string) {
 
 // Write bytes.Buffer to GSC Bucket as File
 func (fileObj *FileObject) WriteGCSFile() {
+	log.Printf("🌐 📜 INFO: Writing Shifter File Object to GCS")
 
 	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 
@@ -67,6 +68,7 @@ func (fileObj *FileObject) WriteGCSFile() {
 
 // Load GSC File from Bucket to bytes.Buffer
 func (fileObj *FileObject) LoadGCSFile() {
+	log.Printf("🌐 📜 INFO: Loading Shifter File Object from GCS")
 
 	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 

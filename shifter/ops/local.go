@@ -21,6 +21,7 @@ import (
 )
 
 func (fileObj *FileObject) WriteLCLFile() {
+	log.Printf("🌐 📜 INFO: Writing Shifter File Object to Local Filesystem")
 
 	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
 		os.MkdirAll(filepath.Dir(fileObj.Path), 0700) // Create output directory
@@ -46,6 +47,7 @@ func (fileObj *FileObject) WriteLCLFile() {
 }
 
 func (fileObj *FileObject) LoadLCLFile() {
+	log.Printf("🌐 📜 INFO: Loading Shifter File Object from Local Filesystem")
 
 	file, err := os.Open(fileObj.Path)
 	if err != nil {
