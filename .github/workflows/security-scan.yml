@@ -1,4 +1,4 @@
-name: "Security-Scan"
+name: Security-Scan
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       run: |
         cd shifter && \
         curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.12.0 && \
-	      ./bin/gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
+	      gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
     - name: Upload results.sarif file
       uses: github/codeql-action/upload-sarif@v2
       with:
