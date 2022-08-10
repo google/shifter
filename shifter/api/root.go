@@ -34,7 +34,7 @@ type ServerConfig struct {
 	serverAddress   string
 	serverPort      string
 	storagePlatform string
-	//gcsBucket       string
+	//gcsBucket       string //TODO ? What is this?
 	serverStorage ServerStorage
 }
 
@@ -102,15 +102,15 @@ func (server *Server) setupServer() error {
 	router.Use(cors.New(config))
 
 	// Declare API V1 Route Group and Routes
-	log.Printf("💡 INFO: API Declare v1 Route Group and Routes")
+	log.Printf("💡 INFO: API Declare Route Group and Routes: /api/v1")
 	v1 := router.Group("/api/v1")
 	{
 		// Convert Openshift API Endpoints
-		log.Printf("💡 INFO: API Declare /openshift Route Group and Routes")
+		log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift")
 		o := v1.Group("/openshift")
 		{
 			// API Endpoints - Projects
-			log.Printf("💡 INFO: API Declare /openshift/projects Route Group and Routes")
+			log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift/projects")
 			op := o.Group("/projects")
 			{
 				// API Endpoint - Get Projects
@@ -120,7 +120,7 @@ func (server *Server) setupServer() error {
 			}
 
 			// API Endpoints - DeploymentConfigs
-			log.Printf("💡 INFO: API Declare /openshift/deploymentconfigs Route Group and Routes")
+			log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift/deploymentconfigs")
 			dc := o.Group("/deploymentconfigs")
 			{
 				// API Endpoint - Get DeploymentConfigs
@@ -134,18 +134,18 @@ func (server *Server) setupServer() error {
 		}
 
 		// Convert Shifter API Endpoints
-		log.Printf("💡 INFO: API Declare /shifter Route Group and Routes")
+		log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter")
 		s := v1.Group("/shifter")
 		{
 			// API Endpoints - Converter
-			log.Printf("💡 INFO: API Declare /shifter/convert Route Group and Routes")
+			log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter/convert")
 			sc := s.Group("/convert")
 			{
 				sc.POST("/", server.Convert)
 			}
 
 			// API Endpoints - Downloads
-			log.Printf("💡 INFO: API Declare /shifter/downloads Route Group and Routes")
+			log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter/downloads")
 			sd := s.Group("/downloads")
 			{
 				// API Endpoint - Get Downloads
@@ -158,7 +158,7 @@ func (server *Server) setupServer() error {
 		}
 
 		// Convert Shifter Server Status API Endpoints
-		log.Printf("💡 INFO: API Declare /status Route Group and Routes")
+		log.Printf("💡 INFO: API Declare Route Group and Routes: /status")
 		st := v1.Group("/status")
 		{
 			// API Endpoint - Operational Shifter Server Health Checks
