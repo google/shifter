@@ -30,21 +30,23 @@ type FileObject struct {
 }
 
 /*
-	Cross Platform File Object.
-	Can be used to Store Content and MetaData about
-	Files stored in Local Storage and or GCS Storage where
-	contents is written as a pointer to a bytes buffer
+Cross Platform File Object.
+Can be used to Store Content and MetaData about
+Files stored in Local Storage and or GCS Storage where
+contents is written as a pointer to a bytes buffer
 */
 const GCS string = "GCS"
 const LCL string = "LCL"
 
 // Display File Object Content for Debugging.
 func (fileObj *FileObject) Meta() {
-	log.Println("-------------------------------------------------------------")
-	log.Println("Storage Type:		", fileObj.StorageType)
-	log.Println("Source Path:		", fileObj.Path)
-	log.Println("File Extention:		", fileObj.Ext)
-	log.Println("-------------------------------------------------------------")
+	// Log File Object Data.
+	log.Printf("🌐 📜 INFO: Shifter File Object [Storage Type: %s, Filename: %s, Extension: %s, Path: %s ]",
+		fileObj.StorageType,
+		fileObj.Filename,
+		fileObj.Ext,
+		fileObj.Path,
+	)
 }
 
 // Returns FileObject Content (bytes.Buffer) as a String

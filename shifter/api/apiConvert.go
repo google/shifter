@@ -61,7 +61,7 @@ type ClusterConfig struct {
 func (server *Server) Convert(ctx *gin.Context) {
 
 	// Create API Unique RUN ID
-	suid := ops.CreateSUID("")
+	suid := ops.CreateSUID("") //NESTED TODO - Error Handling
 
 	// Instanciate a Shifter Convert Structure
 	convert := Convert{}
@@ -122,10 +122,15 @@ func (server *Server) Convert(ctx *gin.Context) {
 			// Handle the Conversion of the Manifests and File Writing
 			//var generator generator.Generator
 			var objs []lib.K8sobject
+			//NESTED TODO - Error Handling in Processor Call
 			obj := processor.Processor(osDeploymentConfig, "DeploymentConfig", nil)
 			for _, v := range obj {
 				objs = append(objs, v)
 			}
+
+			log.Printf("🌐 💡 INFO: Preparing to Convert %d OpenShift DeploymentConfigs", len(objs))
+
+			//NESTED TODO - Error Handling in New Generator Call
 			convertedObjects := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
 			for _, conObj := range convertedObjects {
 				fileObj := &ops.FileObject{
@@ -135,11 +140,15 @@ func (server *Server) Convert(ctx *gin.Context) {
 					Content:       conObj.Payload,
 					ContentLength: conObj.Payload.Len(),
 				}
+				// Log FileObject
+				fileObj.Meta()
+				//NESTED TODO - Error Handling in Write File Call
 				fileObj.WriteFile()
 			}
 		}
 
 		// Zip / Package Converted Objects
+		//NESTED TODO - Error Handling in Archive Call
 		err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
 		if err != nil {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))

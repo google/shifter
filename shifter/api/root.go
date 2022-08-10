@@ -225,12 +225,13 @@ func (server *Server) setupStorage(sourcePath string, outputPath string) error {
 
 // Start gin-gonic HTTP Server on Specific Address
 func (server *Server) Start() error {
-	// Run Server
+	// Log Server Run Diagnostics
 	log.Printf("🌐 💡 INFO: Shifter Server Starting")
 	log.Printf("🌐 🔧 DEBUG: [Shifter Server Settings] - [Port: %s]", server.config.serverPort)
 	log.Printf("🌐 🔧 DEBUG: [Shifter Server Settings] - [Hostname: %s]", server.config.serverAddress)
 	log.Printf("🌐 ✅ SUCCESS: Shifter Server Running")
 
+	// Run Server
 	err := server.router.Run(server.config.serverAddress + ":" + server.config.serverPort)
 	if err != nil {
 		// Error Setting Shifter Server (gin-gonic) Routes
@@ -248,6 +249,8 @@ func (server *Server) Start() error {
 
 // Standard API Error Response
 func errorResponse(err error) gin.H {
+	// Log the High Level Error
 	log.Printf("🌐 ❌ ERROR [API]: %s", err)
+	// Return Error that will be passed on to Client
 	return gin.H{"error": err.Error()}
 }
