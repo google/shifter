@@ -5,6 +5,15 @@ on:
       - main
 
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+        - name: Run Gosec Security Scanner
+          uses: securego/gosec@master
+          with:
+            args: -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
   release-on-push:
     runs-on: ubuntu-latest
     env:
