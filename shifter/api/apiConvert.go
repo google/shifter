@@ -159,7 +159,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		}
 
-		// API Convert Successful
+		// API Convert Endpoint Successful
 		log.Printf("✅ SUCCESS: API Convert - %d Objects Converted", len(convert.Items))
 		// Return API JSON Response
 		ctx.JSON(
@@ -170,6 +170,8 @@ func (server *Server) Convert(ctx *gin.Context) {
 				Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
 			})
 	}
+	// API Convert Endpoint Completed
+	return
 }
 
 /*
