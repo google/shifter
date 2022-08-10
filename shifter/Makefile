@@ -17,7 +17,7 @@ test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest te
 
 clean:
 
-build: shifter_linux_amd64 shifter_darwin_amd64 shifter_win_amd64.exe
+build: secScan shifter_linux_amd64 shifter_darwin_amd64 shifter_win_amd64.exe
 
 shifter_linux_amd64: fmt
 	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static" -X shifter/cmd.Version=v0.3.0 -X shifter/cmd.Platform=amd64_GNU/Linux' -o $@ -v shifter
@@ -33,7 +33,8 @@ fmt:
 
 secScan:
 	echo " ============= Running GoSec Scan =============" && \
-	gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
+	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.12.0 && \
+	./bin/gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
 
 apply:
 	helm install  ./out -n test --generate-name
