@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
     - name: Security Scan
       uses: securego/gosec@master
       with:
