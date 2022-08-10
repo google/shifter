@@ -53,15 +53,21 @@ Usage: shifter server
 -------------------------------------------------------------------------------------
 			`)
 
-		//flags := ProcFlags(pFlags)
-		//err :=
+		// Welcome Banners
+		log.Printf("👋 INFO: Welcome to Shifter Server")
+		log.Printf("🎬 INFO: Let's Start Shifting...")
+
+		// Instanciate Shifter Server Instance
 		server, err := api.InitServer(serverAddress, serverPort, sourcePath, outputPath)
 		if err != nil {
-			log.Fatal("Cannot Create HTTP Server:", err)
+			// Unable to instanciate Shifter HTTP Server
+			log.Fatal("🌐 ❌ ERROR: Cannot Create Shifter HTTP Server:", err)
 		}
-		server.Start()
+		// Start Shifter Server Instance
+		err = server.Start()
 		if err != nil {
-			log.Fatal("Cannot Start HTTP Server:", err)
+			// Unable to start Shifter HTTP Server
+			log.Fatal("🌐 ❌ ERROR: Cannot Start Shiter HTTP Server:", err)
 		}
 	},
 }
