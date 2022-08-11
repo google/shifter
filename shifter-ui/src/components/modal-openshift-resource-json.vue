@@ -35,7 +35,7 @@
         <div
           class="container flex w-1/4 mr-4 text-lg font-bold hover:animate-pulse cursor cursor-pointer"
         >
-          Deployment Config JSON
+          Resource JSON
         </div>
         <div class="container flex w-3/4 bg-shifter-black-soft text-sm">
           <pre v-html="content"></pre>

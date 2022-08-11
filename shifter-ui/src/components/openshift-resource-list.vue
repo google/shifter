@@ -16,16 +16,14 @@
 
 <script setup>
 // Vue Component Imports
-import OpenshiftResourceList from "./openshift-resource-list.vue";
+import OpenshiftResourceListItem from "./openshift-resource-list-item.vue";
 </script>
 <template>
-  <div
-    class="container mb-6 border rounded-xl bg-shifter-black-soft overflow-hidden"
-  >
-    <div class="flex flex-row items-center my-4">
+  <div class="container mb-4">
+    <div class="flex flex-row items-center my-2">
       <!-- Title -->
       <div class="container flex">
-        <p class="text-xl font-bold mx-6">{{ namespace.metadata.name }}</p>
+        <p class="font-bold mx-6">Resources ({{ itemCount }})</p>
       </div>
       <!-- Actions -->
       <div class="container flex flex-row-reverse gap-3 mx-6">
@@ -74,41 +72,54 @@ import OpenshiftResourceList from "./openshift-resource-list.vue";
         <!-- End Action -->
       </div>
     </div>
-    <!-- Start Resources -->
-    <div
-      class="container flex flex-col bg-shifter-black-soft overflow-hidden"
-      v-show="isOpen"
-    >
-      <OpenshiftResourceList 
-	:namespace="namespace.metadata.name"
-      ></OpenshiftResourceList>
+    <!-- Start Resource Items -->
+    <div class="flex flex-col ml-6" v-show="isOpen">
+      <OpenshiftResourceListItem v-for="resource in osResources" :key="resource.Name" :resource="resource" :v-show="itemCount > 0"></OpenshiftResourceListItem>
+      <p v-show="itemCount === 0">No {{ itemType }} found in this Namespace</p>
     </div>
-    <!-- End Resources -->
+    <!-- End Resource Items -->
   </div>
 </template>
 
 <script>
-// Pinia Store Imports
-import { useOSProjects } from "../stores/openshift/projects";
+// Shifter Import Config
+import { shifterConfig } from "@/main";
+// Notifications Imports
+import { notifyAxiosError } from "@/notifications";
+// Axios Imports
+import axios from "axios";
+// External Pinia Store Imports
+import { useConvertObjects } from "../stores/convert/convertv2";
+import { useConfigurationsClusters } from "../stores/configurations/clusters";
+import { useConfigurationsLoading } from "../stores/configurations/loading";
+// Instansitate Pinia Store Objects
+const storeConvertObjects = useConvertObjects();
+const storeConfigClusters = useConfigurationsClusters();
+const storeConfigLoading = useConfigurationsLoading();
 // Plugin & Package Imports
 import { mapState } from "pinia";
-
 export default {
   props: {
-    uid: {
+    namespace: {
       type: String,
       required: true,
     },
   },
   data() {
     return {
+      apiEndpoint: "/openshift/",
+      apiEndpoint2: "/resources/",
+      itemType: "Resources",
       isOpen: false,
+      osResources: [],
     };
   },
+  watch: {},
 
   methods: {
     openSection() {
       this.isOpen = true;
+      this.fetch();
     },
     closeSection() {
       this.isOpen = false;
@@ -116,13 +127,56 @@ export default {
     selectAll() {
       alert("Selecting All");
     },
+    async fetch() {
+      // API Endpoint Configuration
+      const config = {
+        method: "post",
+        url: shifterConfig.API_BASE_URL + this.apiEndpoint + "projects/" + this.namespace + this.apiEndpoint2,
+        headers: {},
+        data: {
+          ...storeConfigClusters.getCluster(storeConvertObjects.selectedCluster.id),
+        },
+        timeout: 2000,
+      };
+      try {
+        /*storeConfigLoading.startLoading(
+          "Loading...",
+          "Fetching OpenShift Resourcess"
+        );*/
+        this.osResources = [];
+        this.osResources = await axios(config)
+          .then((response) => {
+            // handle success
+            storeConfigLoading.endLoading();
+	    console.log(response);
+            return response.data.Resources;
+          })
+          .catch((err) => {
+            console.log(err);
+            notifyAxiosError(err, "Problem Loading OpenShift Resources", 6000);
+            storeConfigLoading.endLoading();
+            return err;
+          });
+      } catch (err) {
+        console.log(err);
+        this.osResources = [];
+        notifyAxiosError(err, "Problem Loading OpenShift Resources", 6000);
+        storeConfigLoading.endLoading();
+        return err;
+      }
+    },
   },
-
   computed: {
-    ...mapState(useOSProjects, { getByUid: "getByUid" }),
+    ...mapState(useConfigurationsClusters, {
+      configurationClusters: "getActiveClusters",
+    }),
 
-    namespace() {
-      return this.getByUid(this.uid);
+    itemCount() {
+      console.log(this.osResources.length);
+      if (this.osResources !== undefined && this.osResources.length >= 0) {
+        return this.osResources.length;
+      }
+      return 0;
     },
   },
 };

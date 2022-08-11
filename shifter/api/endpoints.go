@@ -14,9 +14,8 @@ limitations under the License.
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type ResponseStatusSettings struct {
@@ -30,6 +29,12 @@ type ResponseStatusSettings struct {
 	Version            int    `json:"version"`
 	Status             int    `json:"status"`
 	Message            string `json:"message"`
+}
+
+type ResponseStatusHealthz struct {
+	Timestamp string `json:"timestamp"`
+	Status    int    `json:"status"`
+	Message   string `json:"message"`
 }
 
 const GCS string = "GCS"
@@ -54,6 +59,14 @@ func (server *Server) Settingz(ctx *gin.Context) {
 	r.Version = 0
 	r.Status = http.StatusOK
 	r.Message = "Shifter Server Settings."
-	// Return JSON API Response
+
+	ctx.JSON(http.StatusOK, r)
+}
+
+func (server *Server) Healthz(ctx *gin.Context) {
+	r := ResponseStatusHealthz{}
+	r.Timestamp = ""
+	r.Status = http.StatusOK
+	r.Message = "Shifter Server is reachable."
 	ctx.JSON(http.StatusOK, r)
 }
