@@ -17,7 +17,7 @@ test: yamlTest yamlMultiTest yamlDCTest yamlMultiOutputSingleTest yamlQNSTest te
 
 clean:
 
-build: secScan shifter_linux_amd64 shifter_darwin_amd64 shifter_win_amd64.exe
+build: shifter_linux_amd64 shifter_darwin_amd64 shifter_win_amd64.exe
 
 shifter_linux_amd64: fmt
 	env GOOS=linux GOARCH=amd64 go build --ldflags '-linkmode external -extldflags "-static" -X shifter/cmd.Version=v0.3.0 -X shifter/cmd.Platform=amd64_GNU/Linux' -o $@ -v shifter
