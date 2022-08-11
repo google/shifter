@@ -32,9 +32,7 @@ fmt:
 	go fmt ./...
 
 secScan:
-	echo " ============= Running GoSec Scan =============" && \
-	curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s v2.12.0 && \
-	./bin/gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
+	gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
 
 apply:
 	helm install  ./out -n test --generate-name
