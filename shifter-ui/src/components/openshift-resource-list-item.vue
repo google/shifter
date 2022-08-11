@@ -23,18 +23,19 @@
       <!-- Title -->
       <div class="container flex">
         <p class="text-sm italic mx-6">
-          {{ deploymentconfig.metadata.name }}
+	  {{ resource.Kind }}
+          {{ resource.Name }}
         </p>
       </div>
       <!-- Actions -->
       <div class="container flex flex-row-reverse gap-3 mx-6">
-        <!-- Action: Show Deployment Config -->
+        <!-- Action: Show Resource -->
         <div class="flex">
           <!-- Material Design - SVG - check-circle -->
           <svg
             style="width: 24px; height: 24px"
             viewBox="0 0 24 24"
-            @click="openModal(deploymentconfig)"
+            @click="openModal(resource)"
           >
             <path
               fill="currentColor"
@@ -43,14 +44,14 @@
           </svg>
         </div>
         <!-- End Action -->
-        <!-- Action: Select/Unselect Deployment Config -->
+        <!-- Action: Select/Unselect Resource -->
         <div class="flex">
           <!-- Material Design - SVG - check-circle -->
           <svg
             style="width: 24px; height: 24px"
             viewBox="0 0 24 24"
-            v-if="isSelected(deploymentconfig)"
-            @click="deploymentConfigRemove(deploymentconfig)"
+            v-if="isSelected(resource)"
+            @click="resourceRemove(resource)"
           >
             <path
               fill="currentColor"
@@ -62,7 +63,7 @@
             style="width: 24px; height: 24px"
             viewBox="0 0 24 24"
             v-else
-            @click="deploymentConfigAdd(deploymentconfig)"
+            @click="resourceAdd(resource)"
           >
             <path
               fill="currentColor"
@@ -80,12 +81,13 @@
 <script>
 // Pinia Store Imports
 import { useJSONModal } from "../stores/convert/modalJSON";
-import { useConvertObjects } from "../stores/convert/convert";
+//import { useConvertObjects } from "../stores/convert/convert";
+import { useConvertObjects } from "../stores/convert/convertv2";
 // Plugin & Package Imports
 import { mapActions, mapState } from "pinia";
 export default {
   props: {
-    deploymentconfig: {
+    resource: {
       type: Object,
       required: true,
     },
@@ -95,8 +97,8 @@ export default {
   },
 
   methods: {
-    ...mapActions(useConvertObjects, { deploymentConfigRemove: "remove" }),
-    ...mapActions(useConvertObjects, { deploymentConfigAdd: "add" }),
+    ...mapActions(useConvertObjects, { resourceRemove: "remove" }),
+    ...mapActions(useConvertObjects, { resourceAdd: "add" }),
     ...mapActions(useJSONModal, { openModal: "openModal" }),
   },
   computed: {

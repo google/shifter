@@ -16,7 +16,6 @@ package api
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	os "shifter/openshift"
@@ -39,7 +38,7 @@ func (server *Server) SOSGetDeploymentConfigsByProject(ctx *gin.Context) {
 	//decoder :=
 	err := json.NewDecoder(ctx.Request.Body).Decode(&sOSDeploymentConfigs)
 	if err != nil {
-		fmt.Printf("error %s", err)
+		log.Println("error %s", err)
 		ctx.JSON(501, gin.H{"error": err})
 	}
 

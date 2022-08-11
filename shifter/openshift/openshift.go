@@ -1,25 +1,29 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package openshift
 
 import (
 	"bufio"
 	"bytes"
+	"log"
 	"os"
+	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	k8sjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
+	types "k8s.io/apimachinery/pkg/types"
 	restclientcmdapi "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -44,6 +48,7 @@ import (
 
 	"shifter/lib"
 	//"reflect"
+	//"fmt"
 	"shifter/ops"
 )
 
@@ -55,11 +60,14 @@ type Openshift struct {
 }
 
 type ResourceList struct {
-	Namespace string
-	Kind      string
-	Name      string
-	Payload   bytes.Buffer
-	Error     error
+	Namespace  string
+	Kind       string
+	APIVersion string
+	Name       string
+	UID        types.UID
+	Payload    bytes.Buffer
+	PayloadStr string
+	Error      error
 }
 
 func (c *Openshift) clusterClient() *restclientcmdapi.Config {
@@ -94,10 +102,17 @@ func (c *Openshift) clusterClient() *restclientcmdapi.Config {
 }
 
 func (c *Openshift) ExportNSResources(namespace string, outputPath string) error {
-	var resourcelist []ResourceList
+	var (
+		resourcelist []ResourceList
+		err          error
+	)
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace, true)
+		resourcelist, err = c.getResources(namespace, true)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
@@ -105,7 +120,11 @@ func (c *Openshift) ExportNSResources(namespace string, outputPath string) error
 			return err
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name, true)
+			rl, err := c.getResources(p.ObjectMeta.Name, true)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
@@ -131,10 +150,17 @@ func (c *Openshift) ExportNSResources(namespace string, outputPath string) error
 }
 
 func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string, outputPath string) error {
-	var resourcelist []ResourceList
+	var (
+		resourcelist []ResourceList
+		err          error
+	)
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace, false)
+		resourcelist, err = c.getResources(namespace, false)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
@@ -142,7 +168,11 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 			return err
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name, false)
+			rl, err := c.getResources(p.ObjectMeta.Name, false)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
@@ -178,14 +208,20 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 			}
 		}
 	}
-	return nil
+	return err
 }
 
 func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
-	var resourcelist []ResourceList
+	var (
+		resourcelist []ResourceList
+		err          error
+	)
 
 	if namespace != "" {
-		resourcelist = c.getResources(namespace, false)
+		resourcelist, err = c.getResources(namespace, false)
+		if err != nil {
+			lib.CLog("error", "Getting resources from namespace "+namespace, err)
+		}
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
@@ -193,7 +229,11 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
 			return err
 		}
 		for _, p := range projects.Items {
-			rl := c.getResources(p.ObjectMeta.Name, false)
+			rl, err := c.getResources(p.ObjectMeta.Name, false)
+			if err != nil {
+				lib.CLog("error", "Getting project "+p.ObjectMeta.Name, err)
+				return err
+			}
 			for _, v := range rl {
 				resourcelist = append(resourcelist, v)
 			}
@@ -217,8 +257,37 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
 	return nil
 }
 
-func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
-	var resourcelist []ResourceList
+func (c *Openshift) GetResources(namespace string, yaml bool, kind string, name string, uid types.UID) ([]ResourceList, error) {
+
+	kind = strings.ToLower(kind)
+	namespace = strings.ToLower(namespace)
+	name = strings.ToLower(name)
+
+	var resources []ResourceList
+	rl, err := c.getResources(namespace, yaml)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	for _, v := range rl {
+		if uid == "" || uid == v.UID {
+			if kind == "" || kind == strings.ToLower(v.Kind) {
+				if name == "" || name == strings.ToLower(v.Name) {
+					resources = append(resources, v)
+				}
+			}
+		}
+	}
+
+	return resources, err
+}
+
+func (c *Openshift) getResources(namespace string, yaml bool) ([]ResourceList, error) {
+	var (
+		resourcelist []ResourceList
+		err          error
+	)
 
 	// Add OpenShift specific types to the json schemes
 	appsv1.AddToScheme(scheme.Scheme)
@@ -241,8 +310,11 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
+		//fmt.Println(y.TypeMeta.Kind)
 		rl.Kind = "Route"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -252,7 +324,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 				Strict: true,
 			},
 		)
-		err := serializer.Encode(&y, writer)
+		err = serializer.Encode(&y, writer)
 		if err != nil {
 			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
@@ -264,6 +336,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		}
 
 		rl.Payload = *buff
+		rl.PayloadStr = rl.Payload.String()
 		resourcelist = append(resourcelist, rl)
 	}
 
@@ -274,6 +347,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Service"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -304,6 +379,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "DeploymentConfig"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -324,6 +401,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			rl.Error = err
 		}
 		rl.Payload = *buff
+		rl.PayloadStr = rl.Payload.String()
 		resourcelist = append(resourcelist, rl)
 	}
 
@@ -334,6 +412,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Deployment"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -354,6 +434,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			rl.Error = err
 		}
 		rl.Payload = *buff
+		rl.PayloadStr = rl.Payload.String()
 		resourcelist = append(resourcelist, rl)
 	}
 
@@ -364,6 +445,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "ServiceAccount"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -394,6 +477,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "StatefulSet"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -424,6 +509,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Build"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -454,6 +541,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "ConfigMap"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -484,6 +573,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "ImageStream"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -514,6 +605,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Template"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -544,6 +637,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Job"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -574,6 +669,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "PersistentVolumeClaim"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -604,6 +701,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "PersistentVolume"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -634,6 +733,8 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Namespace = namespace
 		rl.Kind = "Secret"
 		rl.Name = y.ObjectMeta.Name
+		rl.APIVersion = y.TypeMeta.APIVersion
+		rl.UID = y.ObjectMeta.UID
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
 		serializer := k8sjson.NewSerializerWithOptions(k8sjson.DefaultMetaFactory, scheme.Scheme, scheme.Scheme,
@@ -656,5 +757,5 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
-	return resourcelist
+	return resourcelist, err
 }
