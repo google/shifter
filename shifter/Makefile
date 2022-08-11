@@ -31,6 +31,9 @@ shifter_win_amd64.exe: fmt
 fmt:
 	go fmt ./...
 
+secScan:
+	gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
+
 apply:
 	helm install  ./out -n test --generate-name
 
