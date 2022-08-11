@@ -3,12 +3,30 @@ steps:
   name: golang
   args: ['make', 'test']
   waitFor: ['-']
+- id: "Gosec Security Scan"
+  name: golang
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    echo " ============= Running GoSec Scan =============" &&
+    go install github.com/securego/gosec/v2/cmd/gosec@latest &&
+    gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
 - id: "Go Binary Make"
   name: golang
+  entrypoint: 'bash'
   env:
   - 'GOOS=linux'
   - 'GOARCH=amd64'
-  args: ['make', 'build']
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    go install github.com/securego/gosec/v2/cmd/gosec@latest &&
+    make build
 - id: "Go Server Docker Image"
   name: "gcr.io/cloud-builders/docker"
   entrypoint: "sh"
@@ -21,3 +39,4 @@ artifacts:
   objects:
     location: gs://${PROJECT_ID}-builds/shifter-server/$BRANCH_NAME/
     paths: ['shifter_*']
+timeout: 3600s
