@@ -30,10 +30,10 @@ var clusterExportCmd = &cobra.Command{
 
 Examples:
 	Export all resources from a given namespace into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export -n $NAMESPACE ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export -n $NAMESPACE ./output/directory/path
 
 	Export all resources from all namespaces into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export --all-namespaces ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces ./output/directory/path
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
