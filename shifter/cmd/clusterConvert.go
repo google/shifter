@@ -14,6 +14,7 @@ limitations under the license.
 package cmd
 
 import (
+	"fmt"
 	"log"
 	os "shifter/openshift"
 
@@ -62,8 +63,7 @@ Examples:
 		err := openshift.ConvertNSResources(namespace, procflags, outputPath)
 		if err != nil {
 			// Error: Converting Resource List
-			log.Printf("🧰 ❌ ERROR: Converting Resource List: '%s'. ", err.Error())
-			os.Exit(1)
+			log.Fatal(fmt.Sprintf("🧰 ❌ ERROR: Converting Resource List: '%s'. ", err.Error()))
 		}
 		log.Println("Conversion Complete")
 		log.Printf("🧰 ✅ SUCCESS: Conversion Complete")
