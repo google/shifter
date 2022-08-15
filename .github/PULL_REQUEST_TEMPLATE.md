@@ -17,7 +17,7 @@ Please mark one option with an "x".
 Please mark one option with an "x".
 
 - [ ] #RELEASE New Collection of Features (containing breaking and non-breaking changes)
-- [ ] #FT New feature (non-breaking change which adds functionality, imrproves performance or code quality)
+- [ ] #FT New feature (non-breaking change which adds functionality, improves performance or code quality)
 - [ ] #BUG Bug Fix (non-breaking change which fixes an issue)
 - [ ] #PATCH Patch (non-breaking change which modifies only non-code object [Docs, Readme])
 
