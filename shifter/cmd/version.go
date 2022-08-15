@@ -30,7 +30,7 @@ func init() {
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version number of Shifter",
+	Short: "Show the version number of Shifter",
 	Long:  `This is the version of Shifter you are running`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(`

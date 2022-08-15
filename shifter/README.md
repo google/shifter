@@ -123,6 +123,20 @@ shifter server -p 9090
 </br>
 
 ## Shifter Version
+Show the version number of Shifter Core that is currently being executed.
+#### Usage 
+```
+shifter version 
+```
+
+#### Flags 
+None
+
+#### Examples 
+```
+// Output Shifter Core's Version
+shifter version
+```
 </br>
 
 ## Shifter Help
