@@ -58,8 +58,13 @@ Examples:
 		var openshift os.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		// TODO - Error Handling
-		openshift.ConvertNSResources(namespace, procflags, outputPath)
+		// Convert OpenShift Resources
+		err := openshift.ConvertNSResources(namespace, procflags, outputPath)
+		if err != nil {
+			// Error: Converting Resource List
+			log.Printf("🧰 ❌ ERROR: Converting Resource List: '%s'. ", err.Error())
+			os.Exit(1)
+		}
 		log.Println("Conversion Complete")
 		log.Printf("🧰 ✅ SUCCESS: Conversion Complete")
 		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")

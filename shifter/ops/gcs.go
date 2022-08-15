@@ -39,7 +39,6 @@ func GCSPathDeconstruction(gscPath string) (string, string) {
 	return bucket, path
 }
 
-// TODO - Error Handling
 // Write bytes.Buffer to GSC Bucket as File
 func (fileObj *FileObject) WriteGCSFile() error {
 	log.Printf("🧰 💡 INFO: Writing Shifter File Object to GCS")
@@ -87,7 +86,6 @@ func (fileObj *FileObject) WriteGCSFile() error {
 	return nil
 }
 
-// TODO - Error Handling
 // Load GSC File from Bucket to bytes.Buffer
 func (fileObj *FileObject) LoadGCSFile() error {
 	log.Printf("🧰 💡 INFO: Loading Shifter File Object from GCS")
@@ -149,7 +147,6 @@ func (fileObj *FileObject) LoadGCSFile() error {
 	return nil
 }
 
-// TODO - Error Handling
 // Walk a GCS Path and Retrieve a list og Files
 func ProcessGCSPath(path string) ([]*FileObject, error) {
 
