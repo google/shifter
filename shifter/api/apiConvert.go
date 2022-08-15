@@ -142,7 +142,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))
 			} else {
 				// Succes: Creating Shifter DeploymentConfig Processor
-				log.Printf("🧰 ✅ SUCCESS: Creating Shifter '%s' Processor.", osDeploymentConfig)
+				log.Printf("🧰 ✅ SUCCESS: Creating Shifter Processor.")
 			}
 			for _, v := range obj {
 				objs = append(objs, v)
