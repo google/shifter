@@ -28,7 +28,6 @@ type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-// TODO - Error Handling
 func Yaml(input bytes.Buffer, flags map[string]string) ([]lib.K8sobject, error) {
 
 	//nestedQuotedStringHack(fileName)

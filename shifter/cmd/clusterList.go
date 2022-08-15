@@ -51,8 +51,13 @@ to quickly create a Cobra application.`,
 			log.Printf("🧰 ❌ ERROR: Please Choose either all-namespaces or specify a namespace")
 			os.Exit(1)
 		}
-		// TODO - Error Handling
-		openshift.ListNSResources(csvoutput, namespace)
+		// List OpenShift Resources
+		err := openshift.ListNSResources(csvoutput, namespace)
+		if err != nil {
+			// Error: Building Resource List
+			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
+			os.Exit(1)
+		}
 		log.Printf("🧰 ✅ SUCCESS: OpenShift Resource Listing Complete")
 		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},

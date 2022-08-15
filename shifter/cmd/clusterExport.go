@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	openshift "shifter/openshift"
 
 	"github.com/spf13/cobra"
@@ -56,8 +57,13 @@ Examples:
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		// TODO - Error Handling
-		openshift.ExportNSResources(namespace, outputPath)
+		// Export OpenShift Resources
+		err := openshift.ExportNSResources(namespace, outputPath)
+		if err != nil {
+			// Error: Exporting Resource List
+			log.Printf("🧰 ❌ ERROR: Exporting Resource List: '%s'. ", err.Error())
+			os.Exit(1)
+		}
 		log.Printf("🧰 ✅ SUCCESS: Export Complete")
 		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},

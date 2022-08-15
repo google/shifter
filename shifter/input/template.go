@@ -20,7 +20,6 @@ import (
 
 	//"io/ioutil"
 	"log"
-	"os"
 	"shifter/lib"
 	"shifter/processor"
 
@@ -77,17 +76,15 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
 
-	//tplname := template.Metadata.Name
-
 	//iterate over the objects inside the template
 	for _, o := range template.Objects {
 		y, _ := yaml.Marshal(o)
 
 		jsonBody, err := gyaml.YAMLToJSON(y)
 		if err != nil {
-			log.Println(err)
-			// TODO - ERROR HANDLING
-			os.Exit(1)
+			// Error: Unable to Parse YAML to JSON
+			log.Printf("🧰 ❌ ERROR: Unable to Parse YAML to JSON.")
+			return k8s, params, err
 		}
 		// Log Opbject Conversion
 		log.Printf("🧰 🚀 INFO: Converting OpenShift object of type: '%s'", o.Kind)
