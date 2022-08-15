@@ -53,7 +53,8 @@ Provides the backend service required by the front-end application and also prov
 ##### Releases
 
 *  Binaries - [https://github.com/google/shifter/releases](https://github.com/google/shifter/releases)
-*  Docker Image - []()
+*  Shifter Core Docker Image - docker pull images.shifter.cloud/shifter:latest
+*  Shifter UI   Docker Image - docker pull images.shifter.cloud/shifter-ui:latest
 
 ##### Documentation 
 
@@ -67,7 +68,7 @@ Read the detailed documentation at [shifter/README.md](shifter/README.md)
 
 ### Shifter-UI
 
-Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see ![shifter-ui/readme.md](shifter-ui/README.md)
+Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see [shifter-ui/readme.md](shifter-ui/README.md)
 ##### Run The Latest Version Locally 
 
 1) Get the Source & Run Latest the latest Docker Release
