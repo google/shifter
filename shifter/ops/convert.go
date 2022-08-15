@@ -14,12 +14,14 @@ limitations under the license.
 package ops
 
 import (
-	"github.com/google/uuid"
 	"log"
 	"path/filepath"
 	"shifter/generator"
 	"shifter/input"
 	"shifter/lib"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 type LogObject struct {
@@ -46,10 +48,11 @@ type DownloadFile struct {
 
 // Input Types
 const YAML string = "YAML"
-const TEMPLATE string = "template"
+const TEMPLATE string = "TEMPLATE"
 
 // Create New Converter
-func NewConverter(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) *Converter {
+func NewConverter(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) (*Converter, error) {
+	log.Printf("🧰 💡 INFO: Creating New Shifter Converter")
 	// Create New Instance of Converter
 	converter := &Converter{}
 
@@ -66,7 +69,12 @@ func NewConverter(inputType string, sourcePath string, generator string, outputP
 	// Process the Path and Create Array of File Objects
 	files, err := ProcessPath(converter.SourcePath)
 	if err != nil {
-		log.Println(err)
+		// Error: Processing File Source Path
+		log.Printf("🧰 ❌ ERROR: Processing File Source Path.")
+		return converter, err
+	} else {
+		// Success: Processing File Source Path
+		log.Printf("🧰 ✅ SUCCESS: Processing File Source Path")
 	}
 
 	// Set Converter Files
@@ -75,74 +83,134 @@ func NewConverter(inputType string, sourcePath string, generator string, outputP
 		converter.LoadSourceFiles()
 	}
 
-	return converter
+	// Success Creating Shifter Converter
+	return converter, nil
 }
 
-func (converter *Converter) WriteSourceFiles() {
+func (converter *Converter) WriteSourceFiles() error {
+	log.Printf("🧰 💡 INFO: Writing all Source Files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
-		file.WriteFile()
+		err := file.WriteFile()
+		if err != nil {
+			// Error: Error Writing File
+			return err
+		}
 	}
+	// Success - Writing Source Files
+	return nil
 }
 
-func (converter *Converter) LoadSourceFiles() {
+func (converter *Converter) LoadSourceFiles() error {
+	log.Printf("🧰 💡 INFO: Loading all Source Files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
 		file.LoadFile()
 	}
+	// Success - Loading Source Files
+	return nil
 }
 
-func (converter *Converter) ListSourceFiles() {
+func (converter *Converter) ListSourceFiles() error {
+	log.Printf("🧰 💡 INFO: Listing all Source Files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
 		file.Meta()
 	}
+	// Success - Listing Source Files
+	return nil
 }
 
-func (converter *Converter) ListOutputFiles() {
+func (converter *Converter) ListOutputFiles() error {
+	log.Printf("🧰 💡 INFO: Listing all Output Files")
 	// Process Input Objects
 	for _, file := range converter.OutputFiles {
 		file.Meta()
 	}
+	// Success - Listing Output Files
+	return nil
 }
 
-func (converter *Converter) ConvertFiles() {
+func (converter *Converter) ConvertFiles() error {
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
 
-		var r []lib.Converted
-		switch converter.InputType {
-		case "yaml":
-			sourceFile := input.Yaml(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile)
-		case "template":
-			sourceFile, values := input.Template(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
+		var (
+			resources  []lib.Converted
+			err        error
+			sourceFile []lib.K8sobject
+			values     []lib.OSTemplateParams
+		)
+
+		switch strings.ToUpper(converter.InputType) {
+		// Input Type == YAML
+		case YAML:
+			sourceFile, err := input.Yaml(file.Content, converter.Flags)
+			if err != nil {
+				// Error: Parsing Input YAML
+				log.Printf("🧰 ❌ ERROR: Parsing Input YAML")
+				return err
+			}
+			resources, err = generator.NewGenerator(converter.Generator, file.Filename, sourceFile)
+			if err != nil {
+				// Error: Unable to Create Shifter 'YAML' Generator
+				log.Printf("🧰 ❌ ERROR: Create 'YAML' Shifter Generator.")
+				return err
+			} else {
+				// Succes: Creating Shifter 'YAML' Generator
+				log.Printf("🧰 ✅ SUCCESS: Shifter 'YAML' Generator Successufly Created.")
+			}
+		// Input Type == TEMPLATE
+		case TEMPLATE:
+			sourceFile, values, err = input.Template(file.Content, converter.Flags)
+			if err != nil {
+				// Error: Parsing Input TEMPLATE
+				log.Printf("🧰 ❌ ERROR: Parsing Input TEMPLATE")
+				return err
+			}
+			resources, err = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
+			if err != nil {
+				// Error: Unable to Create Shifter 'Template' Generator
+				log.Printf("🧰 ❌ ERROR: Create 'Template' Shifter Generator.")
+				return err
+			} else {
+				// Succes: Creating Shifter 'Template' Generator
+				log.Printf("🧰 ✅ SUCCESS: Shifter 'Template' Generator Successufly Created.")
+			}
 		}
 
 		//outputFileName := fmt.Sprint(idx)
-		for k := range r {
+		for k := range resources {
+			log.Printf("🧰 💡 INFO: Creating Shifter File Object")
 			fileObj := &FileObject{
 				StorageType: file.StorageType,
 				//SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
-				Path:          (converter.OutputPath + "/" + r[k].Path + r[k].Name),
+				Path:          (converter.OutputPath + "/" + resources[k].Path + resources[k].Name),
 				Filename:      file.Filename,
 				Ext:           filepath.Ext(file.Path),
-				Content:       r[k].Payload,
+				Content:       resources[k].Payload,
 				ContentLength: file.ContentLength,
 			}
 
 			// Write Converted File to Storage
-			log.Printf("Writing to file %v", fileObj.Filename)
-			fileObj.WriteFile()
+			err := fileObj.WriteFile()
+			if err != nil {
+				// Error: Error Writing File
+				return err
+			}
 
 			// Add Converted File Object to Converter
 			converter.OutputFiles = append(converter.OutputFiles, fileObj)
 		}
 	}
+
+	// Success Converting Files
+	return nil
 }
 
-func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
+/*
+TODO - Remove this Function
+func (converter *Converter) BuildDownloadFiles() ([]*DownloadFile, error) {
 	var files []*DownloadFile
 
 	// Process Output Objects
@@ -153,5 +221,6 @@ func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
 		files = append(files, dlFile)
 	}
 
-	return files
-}
+	// Success Building Download Files
+	return files, nil
+}*/

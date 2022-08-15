@@ -22,34 +22,56 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Get all OpenShift Projects by Namespace
 func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.ProjectList{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get All OpenShift Projects By Namespace
 	projectList, err := cluster.Projects().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting All OpenShift Projects By Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Projects. Error Text: '%s'. ", err.Error())
 		return &v1.ProjectList{}, err
+	} else {
+		// Success: Getting All OpenShift Projects By Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Projects from Cluster.")
+		// Return Projects
+		return projectList, err
 	}
-
-	return projectList, nil
 }
 
+// Get OpenShift Project by Name from Namespace
 func (c Openshift) GetProject(name string) (*v1.Project, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.Project{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get OpenShift Project By Name from Namespace
 	project, err := cluster.Projects().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting OpenShift Project By Name & Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Project with Name: '%s'. Error Text: '%s'. ", name, err.Error())
 		return &v1.Project{}, err
+	} else {
+		// Success: Getting OpenShift Project By Name & Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Project with Name: '%s'.", name)
+		// Return Project
+		return project, err
 	}
-
-	return project, nil
 }

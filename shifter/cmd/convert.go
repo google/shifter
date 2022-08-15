@@ -14,9 +14,10 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	ops "shifter/ops"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -55,21 +56,45 @@ Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/fi
 ----------------------------------------
 			`)
 
+		// Welcome Banners
+		log.Printf("👋 INFO: Welcome to Shifter Converter")
+		log.Printf("🎬 INFO: Let's Start Shifting...")
+
 		if len(args) != 2 {
-			log.Fatal("Please specify source and destination arguments.")
+			log.Fatal("🧰 ❌ ERROR: Please specify source and destination arguments.")
 		}
 		sourcePath = args[0]
 		outputPath = args[1]
 
-		log.Println("Converting", inputType, sourcePath, "to", generator, outputPath)
+		log.Println("🧰 🚀 Converting", inputType, sourcePath, "to", generator, outputPath)
 		procflags := ProcFlags(pFlags)
 		if useIstio == true {
 			procflags["istio"] = "true"
 		}
 
-		con := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
-		con.ConvertFiles()
-		log.Println("Conversion Complete")
+		// Create new Shifter Converter
+		con, err := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
+		if err != nil {
+			// Error: Creating New Shifter Converter
+			log.Printf("🧰 ❌ ERROR: Creating Shifter Converter, Unable to continue.")
+			log.Printf("🧰 ❌ ERROR: '%s'.", err)
+			return
+		} else {
+			// Success: Creating New Shifter Converter
+			log.Printf("🧰 ✅ SUCCESS: Creating Shifter Converter")
+		}
+		err = con.ConvertFiles()
+		if err != nil {
+			// Error: Converting Files
+			log.Printf("🧰 ❌ ERROR: Converterting provided files, Unable to continue.")
+			log.Printf("🧰 ❌ ERROR: '%s'.", err)
+			return
+		} else {
+			// Success: Files Converted
+			log.Printf("🧰 ✅ SUCCESS: Provided files converted")
+		}
+		log.Printf("✅ SUCCESS: Shifter Conversion Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

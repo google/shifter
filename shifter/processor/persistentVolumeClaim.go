@@ -22,7 +22,7 @@ func convertPvcToPvc(OSPersistentVolumeClaim apiv1.PersistentVolumeClaim, flags 
 
 	pvc := &apiv1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "PersistentVolumeClaim",
+			Kind:       PERSISTENTVOLUMECLAIM,
 			APIVersion: "v1",
 		},
 		ObjectMeta: OSPersistentVolumeClaim.ObjectMeta,

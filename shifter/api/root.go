@@ -52,7 +52,7 @@ func InitServer(serverAddress string, serverPort string, sourcePath string, outp
 	server := &Server{}
 
 	// Set Server Configuration Elements
-	// TODO - Need to tiday up and ensure default handling with constants
+	// TODO - Need to tidy up and ensure default handling with constants
 	server.config.serverAddress = serverAddress // Set HTTP Server Address
 	server.config.serverPort = serverPort       // Set HTTP Server Port
 

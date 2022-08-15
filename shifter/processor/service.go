@@ -22,14 +22,14 @@ import (
 func convertServiceToService(OSService apiv1.Service, flags map[string]string) lib.K8sobject {
 	service := &apiv1.Service{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Service",
+			Kind:       SERVICE,
 			APIVersion: "v1",
 		},
 		ObjectMeta: OSService.ObjectMeta,
 		Spec:       OSService.Spec,
 	}
 	var k lib.K8sobject
-	k.Kind = "Service"
+	k.Kind = SERVICE
 	k.Object = service
 
 	return k

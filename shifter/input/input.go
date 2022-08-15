@@ -13,6 +13,7 @@ limitations under the license.
 
 package input
 
+/*
 import (
 	"reflect"
 	"shifter/lib"
@@ -25,6 +26,7 @@ type blah struct {
 	Object     []lib.K8sobject
 	Parameters []lib.OSTemplateParams
 }
+
 
 func Import(inputType string, args ...interface{}) []blah {
 	c := Importer{}
@@ -41,3 +43,4 @@ func Import(inputType string, args ...interface{}) []blah {
 
 	return result
 }
+*/

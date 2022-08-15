@@ -14,28 +14,29 @@ limitations under the license.
 package processor
 
 import (
+	"log"
+	"shifter/lib"
+
 	osroutev1 "github.com/openshift/api/route/v1"
 	"golang.org/x/exp/maps"
 	io "istio.io/api/networking/v1beta1"
 	v1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
 	v1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
-	"shifter/lib"
 )
 
 func createIstioIngressGateway(OSRoute osroutev1.Route, flags map[string]string) lib.K8sobject {
 	gw := &v1beta1.Gateway{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.istio.io/v1beta1",
-			Kind:       "Gateway",
+			Kind:       GATEWAY,
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       io.Gateway{},
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Gateway"
+	k.Kind = GATEWAY
 	k.Object = gw
 
 	return k
@@ -47,7 +48,7 @@ func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string
 	vs := &v1beta1.VirtualService{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.istio.io/v1beta1",
-			Kind:       "VirtualService",
+			Kind:       VIRTUALSERVICE,
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       io.VirtualService{},
@@ -82,7 +83,7 @@ func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string
 	vs.Spec = vsSpec
 
 	var k lib.K8sobject
-	k.Kind = "VirtualService"
+	k.Kind = VIRTUALSERVICE
 	k.Object = vs
 
 	return k
@@ -95,7 +96,7 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 	ingress := &v1.Ingress{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.k8s.io/v1",
-			Kind:       "Ingress",
+			Kind:       INGRESS,
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       v1.IngressSpec{},
@@ -164,7 +165,7 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Ingress"
+	k.Kind = INGRESS
 	k.Object = ingress
 
 	return k
