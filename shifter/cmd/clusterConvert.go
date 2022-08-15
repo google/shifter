@@ -14,9 +14,10 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	os "shifter/openshift"
+
+	"github.com/spf13/cobra"
 )
 
 // clusterExportCmd represents the clusterExport command
@@ -45,20 +46,23 @@ Examples:
 `)
 
 		if len(args) != 1 {
-			log.Fatal("Please specify the destination path.")
+			log.Fatal("🧰 ❌ ERROR: Please specify the destination path.")
 		}
 
 		outputPath = args[0]
 
-		log.Println("Connecting to cluster: ", endpoint)
-		log.Println("Converting cluster resources")
+		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
+		log.Printf("🧰 💡 INFO: Converting cluster resources.")
 		procflags := ProcFlags(pFlags)
 
 		var openshift os.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
+		// TODO - Error Handling
 		openshift.ConvertNSResources(namespace, procflags, outputPath)
 		log.Println("Conversion Complete")
+		log.Printf("🧰 ✅ SUCCESS: Conversion Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

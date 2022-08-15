@@ -14,15 +14,16 @@ limitations under the license.
 package processor
 
 import (
+	"shifter/lib"
+
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"shifter/lib"
 )
 
 func convertDeploymentToDeployment(OSDeployment v1.Deployment, flags map[string]string) lib.K8sobject {
 	deployment := &v1.Deployment{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Deployment",
+			Kind:       DEPLOYMENT,
 			APIVersion: "apps/v1",
 		},
 		ObjectMeta: OSDeployment.ObjectMeta,
@@ -30,7 +31,7 @@ func convertDeploymentToDeployment(OSDeployment v1.Deployment, flags map[string]
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Deployment"
+	k.Kind = DEPLOYMENT
 	k.Object = deployment
 
 	return k
@@ -39,7 +40,7 @@ func convertDeploymentToDeployment(OSDeployment v1.Deployment, flags map[string]
 func convertDaemonSetToDaemonSet(OSDaemonSet v1.DaemonSet, flags map[string]string) lib.K8sobject {
 	daemonset := &v1.DaemonSet{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "DaemonSet",
+			Kind:       DAEMONSET,
 			APIVersion: "apps/v1",
 		},
 		ObjectMeta: OSDaemonSet.ObjectMeta,
@@ -47,7 +48,7 @@ func convertDaemonSetToDaemonSet(OSDaemonSet v1.DaemonSet, flags map[string]stri
 	}
 
 	var k lib.K8sobject
-	k.Kind = "DaemonSet"
+	k.Kind = DAEMONSET
 	k.Object = daemonset
 
 	return k
@@ -56,7 +57,7 @@ func convertDaemonSetToDaemonSet(OSDaemonSet v1.DaemonSet, flags map[string]stri
 func convertStatefulSetToStatefulSet(OSStatefulSet v1.StatefulSet, flags map[string]string) lib.K8sobject {
 	statefulset := &v1.StatefulSet{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "StatefulSet",
+			Kind:       STATEFULSET,
 			APIVersion: "apps/v1",
 		},
 		ObjectMeta: OSStatefulSet.ObjectMeta,
@@ -64,7 +65,7 @@ func convertStatefulSetToStatefulSet(OSStatefulSet v1.StatefulSet, flags map[str
 	}
 
 	var k lib.K8sobject
-	k.Kind = "StatefulSet"
+	k.Kind = STATEFULSET
 	k.Object = statefulset
 
 	return k

@@ -35,7 +35,7 @@ type Input struct {
 	Object []lib.K8sobject
 }
 
-func NewGenerator(outputType string, args ...interface{}) []lib.Converted {
+func NewGenerator(outputType string, args ...interface{}) ([]lib.Converted, error) {
 	c := Generator{}
 	inputs := make([]reflect.Value, len(args))
 	for i, _ := range args {
@@ -47,5 +47,7 @@ func NewGenerator(outputType string, args ...interface{}) []lib.Converted {
 
 	var result []lib.Converted
 	result = val[0].Interface().([]lib.Converted)
-	return result
+
+	// Success, New Generator Created
+	return result, nil
 }

@@ -13,44 +13,67 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"log"
+
 	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
+// Get all OpenShift Jobs by Namespace
 func (c Openshift) GetAllJobs(namespace string) (*v1.JobList, error) {
+	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.JobList{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get All OpenShift Jobs By Namespace
 	jobList, err := cluster.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting All OpenShift Jobs By Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Jobs from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
 		return &v1.JobList{}, err
+	} else {
+		// Success: Getting All OpenShift Jobs By Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Jobs from Namespace: '%s'.", namespace)
+		// Return Jobs
+		return jobList, err
 	}
-
-	return jobList, nil
 
 }
 
+// Get OpenShift Job by Name from Namespace
 func (c Openshift) GetJob(name string, namespace string) (*v1.Job, error) {
+	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.Job{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get OpenShift Job By Name from Namespace
 	job, err := cluster.BatchV1().Jobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting OpenShift Job By Name & Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Job with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
 		return &v1.Job{}, err
+	} else {
+		// Success: Getting OpenShift Job By Name & Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Job with Name: '%s' from Namespace: '%s'.", name, namespace)
+		// Return Job
+		return job, err
 	}
 
-	return job, nil
 }

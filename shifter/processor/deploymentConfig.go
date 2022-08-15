@@ -15,13 +15,14 @@ package processor
 
 import (
 	//"fmt"
+	"log"
+	"shifter/lib"
+	"strings"
+
 	osappsv1 "github.com/openshift/api/apps/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
-	"shifter/lib"
-	"strings"
 )
 
 func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) lib.K8sobject {
@@ -31,7 +32,7 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Deployment",
+			Kind:       DEPLOYMENT,
 			APIVersion: "apps/v1",
 		},
 		ObjectMeta: OSDeploymentConfig.ObjectMeta,
@@ -71,14 +72,14 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 			newImg := strings.Split(containers.Image, "/")
 			n := string(newImg[len(newImg)-1])
 			n = flagImageRepo + n
-			log.Println("Modifying image registry source from", containers.Image, "to", n)
+			log.Printf("🧰 🔄 INFO: Modifying image registry source from '%s' to '%s'", containers.Image, n)
 			deployment.Spec.Template.Spec.Containers[i].Image = n
 
 		}
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Deployment"
+	k.Kind = DEPLOYMENT
 	k.Object = deployment
 
 	return k

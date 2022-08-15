@@ -22,7 +22,7 @@ import (
 func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]string) lib.K8sobject {
 	cfgMap := &apiv1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "ConfigMap",
+			Kind:       CONFIGMAP,
 			APIVersion: "v1",
 		},
 		ObjectMeta: OSConfigMap.ObjectMeta,
@@ -30,7 +30,7 @@ func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]s
 		BinaryData: OSConfigMap.BinaryData,
 	}
 	var k lib.K8sobject
-	k.Kind = "ConfigMap"
+	k.Kind = CONFIGMAP
 	k.Object = cfgMap
 
 	return k

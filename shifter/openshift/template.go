@@ -22,34 +22,58 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Get all OpenShift Template by Namespace
 func (c Openshift) GetAllTemplates(namespace string) (*v1.TemplateList, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.TemplateList{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get All OpenShift Templates By Namespace
 	templates, err := cluster.TemplateV1().Templates(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting All OpenShift Templates By Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Templates from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
 		return &v1.TemplateList{}, err
+	} else {
+		// Success: Getting All OpenShift Templates By Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Templates from Namespace: '%s'.", namespace)
+		// Return Templates
+		return templates, err
 	}
 
-	return templates, nil
 }
 
+// Get OpenShift Template by Name from Namespace
 func (c Openshift) GetTemplate(name string, namespace string) (*v1.Template, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.Template{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get OpenShift Template By Name from Namespace
 	template, err := cluster.TemplateV1().Templates(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting OpenShift Template By Name & Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Template with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
 		return &v1.Template{}, err
+	} else {
+		// Success: Getting OpenShift Template By Name & Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Template with Name: '%s' from Namespace: '%s'.", name, namespace)
+		// Return Template
+		return template, err
 	}
 
-	return template, nil
 }

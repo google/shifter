@@ -63,6 +63,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 	// Create API Unique RUN ID
 	suid := ops.CreateSUID("") //NESTED TODO - Error Handling
 
+	// Log SUID
+	suid.Meta()
+
 	// Instanciate a Shifter Convert Structure
 	convert := Convert{}
 	// using BindJSON method to serialize API Request Body with struct
@@ -72,6 +75,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 		// Return Error JSON Response to API Call
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
+	} else {
+		// Succes: Parsed Request JSON -> Convert Struct
+		log.Printf("🌐 ✅ SUCCESS: Parsed Request JSON -> Convert Struct.")
 	}
 
 	// TODO - Turn this into a Global Function called at the beginign of all API Calls with Validations and Responses
@@ -107,6 +113,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 				// Return Error JSON Response to API Call
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))
 				return
+			} else {
+				// Succes: Parsed OpenShift DeploymentConfig Object to JSON object
+				log.Printf("🌐 ✅ SUCCESS: Located the provided requested OpenShift DeploymentConfig: %s within OpenShift Namespace: %s", item.DeploymentConfig.ObjectMeta.Name, item.Namespace.ObjectMeta.Name)
 			}
 
 			// JSON Marshal the Contents of the OpenShift DeploymentConfig Object to JSON
@@ -117,13 +126,24 @@ func (server *Server) Convert(ctx *gin.Context) {
 				// Return Error JSON Response to API Call
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))
 				return
+			} else {
+				// Succes: Parsed OpenShift DeploymentConfig Object to JSON object
+				log.Printf("🌐 ✅ SUCCESS: Parsed OpenShift DeploymentConfig Object to JSON object.")
 			}
 
 			// Handle the Conversion of the Manifests and File Writing
 			//var generator generator.Generator
 			var objs []lib.K8sobject
-			//NESTED TODO - Error Handling in Processor Call
-			obj := processor.Processor(osDeploymentConfig, "DeploymentConfig", nil)
+			obj, err := processor.Processor(osDeploymentConfig, "DeploymentConfig", nil)
+			if err != nil {
+				// Error: Unable to Create Shifter DeploymentConfig Processor
+				log.Printf("🌐 ❌ ERROR: Create Shifter Processor, Returning: Status %d.", http.StatusBadRequest)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			} else {
+				// Succes: Creating Shifter DeploymentConfig Processor
+				log.Printf("🧰 ✅ SUCCESS: Creating Shifter '%s' Processor.", osDeploymentConfig)
+			}
 			for _, v := range obj {
 				objs = append(objs, v)
 			}
@@ -131,8 +151,19 @@ func (server *Server) Convert(ctx *gin.Context) {
 			// Log Info
 			log.Printf("🌐 💡 INFO: Preparing to Convert %d OpenShift DeploymentConfigs", len(objs))
 
-			//NESTED TODO - Error Handling in New Generator Call
-			convertedObjects := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
+			// Create Shifer Generator
+			convertedObjects, err := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
+			if err != nil {
+				// Error: Unable to Create Shifter Generator
+				log.Printf("🌐 ❌ ERROR: Create Shifter Generator, Returning: Status %d.", http.StatusBadRequest)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				return
+			} else {
+				// Succes: Creating Shifter Generator
+				log.Printf("🌐 ✅ SUCCESS: Shifter Generator Successufly Created.")
+			}
+
 			// Loop Through Each ConvertedObject and create File Object
 			for _, conObj := range convertedObjects {
 				// Create File Object
@@ -145,8 +176,13 @@ func (server *Server) Convert(ctx *gin.Context) {
 				}
 				// Log FileObject
 				fileObj.Meta()
-				//NESTED TODO - Error Handling in Write File Call
-				fileObj.WriteFile()
+
+				err := fileObj.WriteFile()
+				if err != nil {
+					// Error: Error Writing File
+					log.Printf("🌐 ❌ ERROR: Unable to Write File Objects, Returning: Status %d.", http.StatusBadRequest)
+					ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				}
 			}
 		}
 
@@ -157,6 +193,9 @@ func (server *Server) Convert(ctx *gin.Context) {
 			// Error: Unable to Archive Directory of Objects
 			log.Printf("🌐 ❌ ERROR: Unable to Archive Directory of Objects, Returning: Status %d.", http.StatusBadRequest)
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		} else {
+			// Succes: Archived Directory of Objects
+			log.Printf("🌐 ✅ SUCCESS: Archived Directory of Converted Objects.")
 		}
 
 		// API Convert Endpoint Successful

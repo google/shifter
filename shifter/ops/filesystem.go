@@ -41,7 +41,7 @@ const LCL string = "LCL"
 // Display File Object Content for Debugging.
 func (fileObj *FileObject) Meta() {
 	// Log File Object Data.
-	log.Printf("🌐 📜 INFO: Shifter File Object [Storage Type: %s, Filename: %s, Extension: %s, Path: %s ]",
+	log.Printf("🌐 📜 INFO: Shifter File Object \n[\nStorage Type: %s, \nFilename: %s, \nExtension: %s, \nPath: %s \n]",
 		fileObj.StorageType,
 		fileObj.Filename,
 		fileObj.Ext,
@@ -55,37 +55,73 @@ func (fileObj *FileObject) ContentAsString() string {
 }
 
 // Writes the Contents of a FileObject to the Correct Storage Type
-func (fileObj *FileObject) WriteFile() {
+func (fileObj *FileObject) WriteFile() error {
 	// Path is GCS Bucket
 	if fileObj.StorageType == GCS {
 		// Traverse and Create Files Objects for GCS Bucket
-		fileObj.WriteGCSFile()
+		err := fileObj.WriteGCSFile()
+		if err != nil {
+			// Error Loading File. Bubble Error Up
+			return err
+		}
 	} else {
 		// Traverse and Create Files Objects for Local Directory
-		fileObj.WriteLCLFile()
+		err := fileObj.WriteLCLFile()
+		if err != nil {
+			// Error Loading File. Bubble Error Up
+			return err
+		}
 	}
+	// Success Writing File
+	return nil
 }
 
 // Loads File from Storage based on Storage Type and Stores Files content as bytes.Buffer
-func (fileObj *FileObject) LoadFile() {
+func (fileObj *FileObject) LoadFile() error {
 	// Path is GCS Bucket
 	if fileObj.StorageType == GCS {
-		// Traverse and Create Files Objects for GCS Bucket
-		fileObj.LoadGCSFile()
+		// Traverse and Load Files Objects for GCS Bucket
+		err := fileObj.LoadGCSFile()
+		if err != nil {
+			// Error Loading File. Bubble Error Up
+			return err
+		}
 	} else {
-		// Traverse and Create Files Objects for Local Directory
-		fileObj.LoadLCLFile()
+		// Traverse and Load Files Objects for Local Directory
+		err := fileObj.LoadLCLFile()
+		if err != nil {
+			// Error Loading File. Bubble Error Up
+			return err
+		}
 	}
+	// Success Loading File
+	return nil
 }
 
 // Takes Source Path, Determines Storage Tyoe and Creates File List
 func ProcessPath(path string) ([]*FileObject, error) {
+	var files []*FileObject
+
 	// Path is GCS Bucket
 	if strings.Contains(path, "gs://") {
 		// Traverse and Create Files Objects for GCS Bucket
-		return ProcessGCSPath(path)
+		fileObj, err := ProcessGCSPath(path)
+		if err != nil {
+			// Error Loading GCS File. Bubble Error Up
+			return files, err
+		} else {
+			// Success Loading GCS File.
+			return fileObj, err
+		}
 	} else {
 		// Traverse and Create Files Objects for Local Directory
-		return ProcessLCLPath(path)
+		fileObj, err := ProcessLCLPath(path)
+		if err != nil {
+			// Error Loading Local File. Bubble Error Up
+			return files, err
+		} else {
+			// Success Loading Local File.
+			return fileObj, err
+		}
 	}
 }

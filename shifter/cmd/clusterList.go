@@ -15,10 +15,11 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"shifter/openshift"
+
+	"github.com/spf13/cobra"
 )
 
 // clusterListCmd represents the clusterList command
@@ -41,16 +42,19 @@ to quickly create a Cobra application.`,
 
 ----------------------------------------
 `)
-		log.Println("Connecting to cluster: ", endpoint)
+		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
 
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
 		if namespace == "" && allnamespaces == false {
-			log.Println("Choose either all-namespaces or specify a namespace")
+			log.Printf("🧰 ❌ ERROR: Please Choose either all-namespaces or specify a namespace")
 			os.Exit(1)
 		}
+		// TODO - Error Handling
 		openshift.ListNSResources(csvoutput, namespace)
+		log.Printf("🧰 ✅ SUCCESS: OpenShift Resource Listing Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

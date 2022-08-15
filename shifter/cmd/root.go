@@ -14,7 +14,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -44,7 +44,8 @@ Migrate your OpenShift resources to GKE/Anthos`,
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		log.Printf("🧰 ❌ ERROR: Wow, This is bad. Couldn't Start the Shifter CLI.")
+		log.Printf("🧰 ❌ ERROR: '%s'.", err)
 		os.Exit(1)
 	}
 }
@@ -60,7 +61,8 @@ func initConfig() {
 	} else {
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Println(err)
+			log.Printf("🧰 ❌ ERROR: Unable to detect the system Home Directory.")
+			log.Printf("🧰 ❌ ERROR: '%s'.", err)
 			os.Exit(1)
 		}
 
@@ -72,7 +74,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Printf("🧰 💡 INFO: Shifter is using config file:", viper.ConfigFileUsed())
 	}
 }
 

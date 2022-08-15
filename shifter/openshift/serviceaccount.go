@@ -13,44 +13,66 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"log"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
+// Get all Service Accounts by Namespace
 func (c Openshift) GetAllServiceAccounts(namespace string) (*v1.ServiceAccountList, error) {
+	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.ServiceAccountList{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	object, err := cluster.CoreV1().ServiceAccounts(namespace).List(context.TODO(), metav1.ListOptions{})
+	// Get All OpenShift Service Accounts By Namespace
+	serviceAccounts, err := cluster.CoreV1().ServiceAccounts(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting All OpenShift Service Accounts By Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Service Accounts from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
 		return &v1.ServiceAccountList{}, err
+	} else {
+		// Success: Getting All OpenShift Service Accounts By Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Service Accounts from Namespace: '%s'.", namespace)
+		// Return Service Accounts
+		return serviceAccounts, err
 	}
-
-	return object, nil
 
 }
 
+// Get OpenShift Service Account by Name from Namespace
 func (c Openshift) GetServiceAccount(name string, namespace string) (*v1.ServiceAccount, error) {
+	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.ServiceAccount{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	object, err := cluster.CoreV1().ServiceAccounts(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	// Get OpenShift Service Account By Name from Namespace
+	serviceAccount, err := cluster.CoreV1().ServiceAccounts(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting OpenShift Service Account By Name & Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Service Account with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
 		return &v1.ServiceAccount{}, err
+	} else {
+		// Success: Getting OpenShift Service Account By Name & Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Service Account with Name: '%s' from Namespace: '%s'.", name, namespace)
+		// Return Service Account
+		return serviceAccount, err
 	}
-
-	return object, nil
 }
