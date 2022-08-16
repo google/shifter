@@ -315,7 +315,14 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
+
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -342,7 +349,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -369,7 +382,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -396,7 +415,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -423,7 +448,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -450,7 +481,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -477,7 +514,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -504,7 +547,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -531,7 +580,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -558,7 +613,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -585,7 +646,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -612,7 +679,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -639,7 +712,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
@@ -666,7 +745,13 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
 			rl.Error = err
 		}
-		writer.Flush()
+		err = writer.Flush()
+		if err != nil {
+			// Error: Writing to the Byte Buffer
+			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
+			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			rl.Error = err
+		}
 		rl.Payload = *buff
 		resourcelist = append(resourcelist, rl)
 	}
