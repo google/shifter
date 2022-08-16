@@ -17,6 +17,7 @@ import (
 	"archive/zip"
 	"errors"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -82,19 +83,28 @@ func Archive(srcPath string, fileName string) error {
 func Archive(sourcePath string, outputPath string, suid SUID) error {
 
 	if _, err := os.Stat(outputPath + "/"); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(outputPath+"/"), 0700) // Create output directory
+		err := os.MkdirAll(filepath.Dir(outputPath+"/"), 0600) // Create output directory
+		if err != nil {
+			// Error: Creating Directories in Archive
+			log.Printf("🧰 ❌ ERROR: Creating Directories in Archive.")
+			return (err)
+		}
 	}
 	file, err := os.Create(outputPath + "/" + suid.DownloadId + ".zip")
 	if err != nil {
+		// Error: Creating Archive File
+		log.Printf("🧰 ❌ ERROR: Creating Archive File.")
 		return (err)
 	}
-	defer file.Close()
+	defer file.Close() // TODO - Fix gosec error
 
 	w := zip.NewWriter(file)
-	defer w.Close()
+	defer w.Close() // TODO - Fix gosec error
 
 	walker := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
+			// Error: Traversing Directory
+			log.Printf("🧰 ❌ ERROR: Creating Archive File.")
 			return err
 		}
 		if info.IsDir() {
@@ -102,9 +112,11 @@ func Archive(sourcePath string, outputPath string, suid SUID) error {
 		}
 		file, err := os.Open(path)
 		if err != nil {
+			// Error: Opening File
+			log.Printf("🧰 ❌ ERROR: Opening Archive File.")
 			return err
 		}
-		defer file.Close()
+		defer file.Close() // TODO - Fix gosec error
 
 		// Ensure that `path` is not absolute; it should not start with "/".
 		// This snippet happens to work because I don't use
@@ -112,17 +124,23 @@ func Archive(sourcePath string, outputPath string, suid SUID) error {
 		// transforms path into a zip-root relative path.
 		f, err := w.Create(path)
 		if err != nil {
+			// Error: Creating File within Archive
+			log.Printf("🧰 ❌ ERROR: Creating File within Archive.")
 			return err
 		}
 
 		_, err = io.Copy(f, file)
 		if err != nil {
+			// Error: Creating Coping Buffer content to Archive File
+			log.Printf("🧰 ❌ ERROR: Writing Archive File.")
 			return err
 		}
 		return nil
 	}
 	err = filepath.Walk(sourcePath+"/"+suid.DirectoryName+"/", walker)
 	if err != nil {
+		// Error: Unable to resolve or find Download ID
+		log.Printf("🧰 ❌ ERROR: Unable to resolve or find Download ID.")
 		return errors.New("Unable to resolve or find Download ID")
 	}
 	return nil

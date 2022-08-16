@@ -40,8 +40,7 @@ func (fileObj *FileObject) WriteLCLFile() error {
 
 	// Create New File Name
 	fileName := fileObj.Path + "." + fileObj.Ext
-
-	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		// Error: Unable to Create New File
 		log.Printf("🧰 ❌ ERROR: Creating New File: '%s'.", fileName)
@@ -50,7 +49,9 @@ func (fileObj *FileObject) WriteLCLFile() error {
 		// Success: Creating New File
 		log.Printf("🧰 ✅ SUCCESS: Creating New File: '%s'.", fileName)
 	}
-	defer f.Close()
+
+	defer f.Close() // TODO - Address goSec Error
+
 	f.WriteString("---\n")
 	// Write the Bytes Buffer to File
 	_, err = f.Write(fileObj.Content.Bytes())
@@ -62,7 +63,12 @@ func (fileObj *FileObject) WriteLCLFile() error {
 		// Success: Writing New File
 		log.Printf("🧰 ✅ SUCCESS: Writing Content to File: '%s'.", fileName)
 	}
-	f.Sync()
+	err = f.Sync()
+	if err != nil {
+		// Error: Unable to Write New File
+		log.Printf("🧰 ❌ ERROR: Writing Content to File: '%s'.", fileName)
+		return err
+	}
 
 	// Successfull Writen file to Local File System
 	log.Printf("🧰 ✅ SUCCESS: File written to Local File System: '%s'.", fileName)
@@ -81,7 +87,7 @@ func (fileObj *FileObject) LoadLCLFile() error {
 	}
 
 	log.Printf("🧰 💡 INFO: Reading Shifter File - '%s'", fileObj.Path)
-	defer file.Close()
+	defer file.Close() // TODO - Address goSec Error
 
 	fileinfo, err := file.Stat()
 	if err != nil {
