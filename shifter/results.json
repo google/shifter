@@ -1,0 +1,524 @@
+{
+	"Golang errors": {},
+	"Issues": [
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "43: \n44: \tf, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)\n45: \tif err != nil {\n",
+			"line": "44",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/Users/thiatt/shifter/shifter/ops/archive.go",
+			"code": "102: \t\t}\n103: \t\tfile, err := os.Open(path)\n104: \t\tif err != nil {\n",
+			"line": "103",
+			"column": "16",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/Users/thiatt/shifter/shifter/ops/archive.go",
+			"code": "86: \t}\n87: \tfile, err := os.Create(outputPath + \"/\" + suid.DownloadId + \".zip\")\n88: \tif err != nil {\n",
+			"line": "87",
+			"column": "15",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G302",
+			"details": "Expect file permissions to be 0600 or less",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "43: \n44: \tf, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)\n45: \tif err != nil {\n",
+			"line": "44",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G307",
+			"details": "Deferring unsafe method \"Close\" on type \"*os.File\"",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "83: \tlog.Printf(\"🧰 💡 INFO: Reading Shifter File - '%s'\", fileObj.Path)\n84: \tdefer file.Close()\n85: \n",
+			"line": "84",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G307",
+			"details": "Deferring unsafe method \"Close\" on type \"*os.File\"",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "52: \t}\n53: \tdefer f.Close()\n54: \tf.WriteString(\"---\\n\")\n",
+			"line": "53",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G307",
+			"details": "Deferring unsafe method \"Close\" on type \"*os.File\"",
+			"file": "/Users/thiatt/shifter/shifter/ops/archive.go",
+			"code": "106: \t\t}\n107: \t\tdefer file.Close()\n108: \n",
+			"line": "107",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G307",
+			"details": "Deferring unsafe method \"Close\" on type \"*os.File\"",
+			"file": "/Users/thiatt/shifter/shifter/ops/archive.go",
+			"code": "90: \t}\n91: \tdefer file.Close()\n92: \n",
+			"line": "91",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "64: \t}\n65: \tf.Sync()\n66: \n",
+			"line": "65",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/ops/local.go",
+			"code": "53: \tdefer f.Close()\n54: \tf.WriteString(\"---\\n\")\n55: \t// Write the Bytes Buffer to File\n",
+			"line": "54",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/ops/convert.go",
+			"code": "107: \tfor _, file := range converter.SourceFiles {\n108: \t\tfile.LoadFile()\n109: \t}\n",
+			"line": "108",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/ops/convert.go",
+			"code": "82: \tif len(converter.SourceFiles) \u003e 0 {\n83: \t\tconverter.LoadSourceFiles()\n84: \t}\n",
+			"line": "83",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/ops/archive.go",
+			"code": "84: \tif _, err := os.Stat(outputPath + \"/\"); os.IsNotExist(err) {\n85: \t\tos.MkdirAll(filepath.Dir(outputPath+\"/\"), 0700) // Create output directory\n86: \t}\n",
+			"line": "85",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "290: \ttemplatev1.AddToScheme(scheme.Scheme)\n291: \tuserv1.AddToScheme(scheme.Scheme)\n292: \n",
+			"line": "291",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "289: \tsecurityv1.AddToScheme(scheme.Scheme)\n290: \ttemplatev1.AddToScheme(scheme.Scheme)\n291: \tuserv1.AddToScheme(scheme.Scheme)\n",
+			"line": "290",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "288: \troutev1.AddToScheme(scheme.Scheme)\n289: \tsecurityv1.AddToScheme(scheme.Scheme)\n290: \ttemplatev1.AddToScheme(scheme.Scheme)\n",
+			"line": "289",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "287: \tquotav1.AddToScheme(scheme.Scheme)\n288: \troutev1.AddToScheme(scheme.Scheme)\n289: \tsecurityv1.AddToScheme(scheme.Scheme)\n",
+			"line": "288",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "286: \tprojectv1.AddToScheme(scheme.Scheme)\n287: \tquotav1.AddToScheme(scheme.Scheme)\n288: \troutev1.AddToScheme(scheme.Scheme)\n",
+			"line": "287",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "285: \toauthv1.AddToScheme(scheme.Scheme)\n286: \tprojectv1.AddToScheme(scheme.Scheme)\n287: \tquotav1.AddToScheme(scheme.Scheme)\n",
+			"line": "286",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "284: \tnetworkv1.AddToScheme(scheme.Scheme)\n285: \toauthv1.AddToScheme(scheme.Scheme)\n286: \tprojectv1.AddToScheme(scheme.Scheme)\n",
+			"line": "285",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "283: \timagev1.AddToScheme(scheme.Scheme)\n284: \tnetworkv1.AddToScheme(scheme.Scheme)\n285: \toauthv1.AddToScheme(scheme.Scheme)\n",
+			"line": "284",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "282: \tbuildv1.AddToScheme(scheme.Scheme)\n283: \timagev1.AddToScheme(scheme.Scheme)\n284: \tnetworkv1.AddToScheme(scheme.Scheme)\n",
+			"line": "283",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "281: \tauthorizationv1.AddToScheme(scheme.Scheme)\n282: \tbuildv1.AddToScheme(scheme.Scheme)\n283: \timagev1.AddToScheme(scheme.Scheme)\n",
+			"line": "282",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "280: \tappsv1.AddToScheme(scheme.Scheme)\n281: \tauthorizationv1.AddToScheme(scheme.Scheme)\n282: \tbuildv1.AddToScheme(scheme.Scheme)\n",
+			"line": "281",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/openshift/openshift.go",
+			"code": "279: \t// Add OpenShift specific types to the json schemes\n280: \tappsv1.AddToScheme(scheme.Scheme)\n281: \tauthorizationv1.AddToScheme(scheme.Scheme)\n",
+			"line": "280",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/generator/yaml.go",
+			"code": "43: \t\t}\n44: \t\twriter.Flush()\n45: \n",
+			"line": "44",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/generator/helm.go",
+			"code": "74: \t\t}\n75: \t\twriter.Flush()\n76: \t\tc := mod(buff.Bytes())\n",
+			"line": "75",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/cmd/convert.go",
+			"code": "107: \tconvertCmd.MarkFlagRequired(\"input-format\")\n108: \tconvertCmd.MarkFlagRequired(\"output-format\")\n109: }\n",
+			"line": "108",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/cmd/convert.go",
+			"code": "106: \tconvertCmd.Flags().BoolVarP(\u0026useIstio, \"istio\", \"m\", false, \"Use istio for routes conversion\")\n107: \tconvertCmd.MarkFlagRequired(\"input-format\")\n108: \tconvertCmd.MarkFlagRequired(\"output-format\")\n",
+			"line": "107",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/cmd/clusterConvert.go",
+			"code": "79: \n80: \tclusterConvertCmd.MarkFlagRequired(\"output-format\")\n81: \tclusterConvertCmd.MarkFlagsMutuallyExclusive(\"namespace\", \"all-namespaces\")\n",
+			"line": "80",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/cmd/cluster.go",
+			"code": "64: \tclusterCmd.MarkPersistentFlagRequired(\"cluster-endpoint\")\n65: \tclusterCmd.MarkPersistentFlagRequired(\"token\")\n66: }\n",
+			"line": "65",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/Users/thiatt/shifter/shifter/cmd/cluster.go",
+			"code": "63: \tclusterCmd.PersistentFlags().StringVarP(\u0026bearertoken, \"token\", \"t\", \"\", \"OpenShift cluster authentication token\")\n64: \tclusterCmd.MarkPersistentFlagRequired(\"cluster-endpoint\")\n65: \tclusterCmd.MarkPersistentFlagRequired(\"token\")\n",
+			"line": "64",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		}
+	],
+	"Stats": {
+		"files": 58,
+		"lines": 6017,
+		"nosec": 0,
+		"found": 32
+	},
+	"GosecVersion": "dev"
+}
