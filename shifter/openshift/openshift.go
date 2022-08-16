@@ -295,6 +295,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 	routes, _ := c.GetAllRoutes(namespace)
 	//log.Println(reflect.TypeOf(routes))
 	for _, y := range routes.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = ROUTE
@@ -329,6 +330,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	services, _ := c.GetAllServices(namespace)
 	for _, y := range services.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = SERVICE
@@ -362,6 +364,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	deploymentconfigs, _ := c.GetAllDeploymentConfigs(namespace)
 	for _, y := range deploymentconfigs.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = DEPLOYMENTCONFIG
@@ -395,6 +398,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	deployments, _ := c.GetAllDeployments(namespace)
 	for _, y := range deployments.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = DEPLOYMENT
@@ -428,6 +432,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	serviceaccounts, _ := c.GetAllServiceAccounts(namespace)
 	for _, y := range serviceaccounts.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = SERVICEACCOUNT
@@ -461,6 +466,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	statefulsets, _ := c.GetAllStatefulSets(namespace)
 	for _, y := range statefulsets.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = STATEFULSET
@@ -494,6 +500,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	build, _ := c.GetAllBuilds(namespace)
 	for _, y := range build.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = BUILD
@@ -527,6 +534,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	configmap, _ := c.GetAllConfigMaps(namespace)
 	for _, y := range configmap.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = CONFIGMAP
@@ -560,6 +568,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	imagestream, _ := c.GetAllImageStreams(namespace)
 	for _, y := range imagestream.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = IMAGESTREAM
@@ -593,6 +602,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	templates, _ := c.GetAllTemplates(namespace)
 	for _, y := range templates.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = TEMPLATE
@@ -626,6 +636,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	jobs, _ := c.GetAllJobs(namespace)
 	for _, y := range jobs.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = JOB
@@ -659,6 +670,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	pvc, _ := c.GetAllPVC(namespace)
 	for _, y := range pvc.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = PERSISTENTVOLUMECLAIM
@@ -692,6 +704,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	pv, _ := c.GetAllPV(namespace)
 	for _, y := range pv.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = PERSISTENTVOLUME
@@ -725,6 +738,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 
 	secret, _ := c.GetAllSecrets(namespace)
 	for _, y := range secret.Items {
+		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
 		rl.Kind = SECRET
