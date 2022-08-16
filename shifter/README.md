@@ -17,7 +17,7 @@ Shifter has extensible methods for inputs and generators.
 </br>
 
 ## Shifter Cluster
-Connect to a running OpenShift cluster and interacte with OpenShift objects.
+Connect to a running OpenShift cluster and interact with OpenShift objects.
 #### Usage 
 ```
 shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
@@ -42,6 +42,42 @@ shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces ./
 ```
 </br>
 
+## Shifter Cluster - List
+Connect to a running OpenShift cluster and List all resources supported by shifter in the target Openshift cluster.
+#### Usage 
+```
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list
+```
+
+#### Flags 
+```
+-e --cluster-endpoint   OpenShift cluster endpoint                [Required]
+-t --token              OpenShift cluster authentication token    [Required]
+-n --namespace          OpenShift cluster namespace               
+-n --all-namespaces     OpenShift all Namespaces or Projects  
+   --csv                CSV Output      
+```
+
+#### Examples 
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
+
+// List All OpenShift Cluster Resources from the Default OpenShift Namespace in CSV format
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --namespace default --csv
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces in Table format and output to a text file.
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces > <FILENAME>.txt
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces in CSV format and output to a CSV file.
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces --csv > <FILENAME>.csv
+
+```
+</br>
+
 ## Shifter Cluster - Convert
 Convert takes all the resources from a OpenShift cluster endpoint and converts them to the desired output format on your local disk or GCS bucket
 #### Usage 
@@ -60,6 +96,7 @@ shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert
 #### Notes
 
 - Supported output-formats include (YAML & HELM)
+- Output Directory is required. eg "./ouput/directory/path/"
 
 #### Examples 
 ```
@@ -67,7 +104,7 @@ export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
 export BEARER_TOKEN="<BEARER_TOKEN>"
 
 // Convert All OpenShift Cluster Resources from All OpenShift Namespaces
-shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert --all-namespaces --output-format <FORMAT> ./output/directory/path
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert --all-namespaces --output-format <FORMAT> <OUTPUT_DIRECTORY>
 ```
 </br>
 
@@ -87,13 +124,16 @@ shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export
 -n --all-namespaces     OpenShift all Namespaces or Projects      
 ```
 
+#### Notes
+- Output Directory is required. eg "./ouput/directory/path/"
+
 #### Examples 
 ```
 export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
 export BEARER_TOKEN="<BEARER_TOKEN>"
 
 // Export All OpenShift Cluster Resources from All OpenShift Namespaces
-shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces ./output/directory/path
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces <OUTPUT_DIRECTORY>
 ```
 </br>
 

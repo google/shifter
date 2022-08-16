@@ -1,0 +1,43 @@
++---------+------------------+------------------------------------------+---------+-------+
+| PROJECT | KIND             | NAME                                     | PAYLOAD | ERROR |
++---------+------------------+------------------------------------------+---------+-------+
+| default | Route            | docker-registry                          |     990 | <nil> |
+| default | Route            | registry-console                         |     995 | <nil> |
+| default | Service          | docker-registry                          |     794 | <nil> |
+| default | Service          | kubernetes                               |     871 | <nil> |
+| default | Service          | registry-console                         |    1234 | <nil> |
+| default | Service          | router                                   |    1209 | <nil> |
+| default | DeploymentConfig | docker-registry                          |    5512 | <nil> |
+| default | DeploymentConfig | registry-console                         |    5940 | <nil> |
+| default | DeploymentConfig | router                                   |    7901 | <nil> |
+| default | ServiceAccount   | builder                                  |     475 | <nil> |
+| default | ServiceAccount   | default                                  |     527 | <nil> |
+| default | ServiceAccount   | deployer                                 |     480 | <nil> |
+| default | ServiceAccount   | registry                                 |     532 | <nil> |
+| default | ServiceAccount   | robot                                    |     467 | <nil> |
+| default | ServiceAccount   | router                                   |     471 | <nil> |
+| default | PersistentVolume | pvc-33f5a731-bff6-11ec-b9cc-42010a000003 |    1334 | <nil> |
+| default | PersistentVolume | pvc-99747b96-e8cb-11ec-b9cc-42010a000003 |    1338 | <nil> |
+| default | PersistentVolume | pvc-bf027679-e2c7-11ec-b9cc-42010a000003 |    1333 | <nil> |
+| default | Secret           | builder-dockercfg-bc6vh                  |    9940 | <nil> |
+| default | Secret           | builder-token-l8sbd                      |    6081 | <nil> |
+| default | Secret           | builder-token-rjx9p                      |    6156 | <nil> |
+| default | Secret           | default-dockercfg-zn6hl                  |    9940 | <nil> |
+| default | Secret           | default-token-6lgwj                      |    6081 | <nil> |
+| default | Secret           | default-token-c9gnz                      |    6156 | <nil> |
+| default | Secret           | deployer-dockercfg-c5csm                 |    9980 | <nil> |
+| default | Secret           | deployer-token-6x2ns                     |    6163 | <nil> |
+| default | Secret           | deployer-token-h85qh                     |    6088 | <nil> |
+| default | Secret           | registry-certificates                    |    7186 | <nil> |
+| default | Secret           | registry-dockercfg-bldb7                 |    9980 | <nil> |
+| default | Secret           | registry-token-hthtt                     |    6164 | <nil> |
+| default | Secret           | registry-token-kf8cr                     |    6089 | <nil> |
+| default | Secret           | robot-dockercfg-dcbv9                    |    9845 | <nil> |
+| default | Secret           | robot-token-8hwwm                        |    6065 | <nil> |
+| default | Secret           | robot-token-wkkf9                        |    6140 | <nil> |
+| default | Secret           | router-certs                             |    9229 | <nil> |
+| default | Secret           | router-dockercfg-f47qc                   |    9900 | <nil> |
+| default | Secret           | router-metrics-tls                       |    6253 | <nil> |
+| default | Secret           | router-token-kqbmp                       |    6075 | <nil> |
+| default | Secret           | router-token-t49fx                       |    6150 | <nil> |
++---------+------------------+------------------------------------------+---------+-------+

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+imagePullSecrets:
+- name: deployer-dockercfg-2mmqp
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2022-06-14T07:29:35Z"
+  name: deployer
+  namespace: anz-bank
+  resourceVersion: "11135875"
+  selfLink: /api/v1/namespaces/anz-bank/serviceaccounts/deployer
+  uid: bdc34e90-ebb3-11ec-b9cc-42010a000003
+secrets:
+- name: deployer-token-jr6pd
+- name: deployer-dockercfg-2mmqp
