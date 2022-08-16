@@ -89,15 +89,29 @@ docker-compose -f docker-compose.yml up
 
 ### Run The Latest Shifter Version Locally wth the CLI
 
-1) Run the Latest Docker Release (With an Action)
+1) Run the Latest Docker Release (With List Action)
 ```
 export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
 export BEARER_TOKEN="<BEARER_TOKEN>"
 
 docker run \
 images.shifter.cloud/shifter:latest \
-./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION> --all-namespaces
+./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
 ```
+
+2) Run the Latest Docker Release (With an Export Action)
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+docker run \
+-v 'pwd':/output \
+images.shifter.cloud/shifter:latest \
+./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces /output
+
+```
+
+
 
 ## Stargazers over time
 
