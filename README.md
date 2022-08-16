@@ -108,7 +108,6 @@ docker run \
 -v 'pwd':/output \
 images.shifter.cloud/shifter:latest \
 ./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces /output
-
 ```
 
 
