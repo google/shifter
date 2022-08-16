@@ -80,7 +80,11 @@ func NewConverter(inputType string, sourcePath string, generator string, outputP
 	// Set Converter Files
 	converter.SourceFiles = files
 	if len(converter.SourceFiles) > 0 {
-		converter.LoadSourceFiles()
+		err := converter.LoadSourceFiles()
+		if err != nil {
+			// Error: Error Loading Source Files
+			return converter, err
+		}
 	}
 
 	// Success Creating Shifter Converter
@@ -105,7 +109,11 @@ func (converter *Converter) LoadSourceFiles() error {
 	log.Printf("🧰 💡 INFO: Loading all Source Files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
-		file.LoadFile()
+		err := file.LoadFile()
+		if err != nil {
+			// Error: Error Loading File
+			return err
+		}
 	}
 	// Success - Loading Source Files
 	return nil
