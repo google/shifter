@@ -15,56 +15,102 @@ package processor
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
+	"shifter/lib"
+
 	osappsv1 "github.com/openshift/api/apps/v1"
 	osroutev1 "github.com/openshift/api/route/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	apiv1 "k8s.io/api/core/v1"
-	runtime "k8s.io/apimachinery/pkg/runtime"
-	kjson "k8s.io/apimachinery/pkg/runtime/serializer/json"
-	"os"
-	"shifter/lib"
+)
+
+const (
+	SECRET                = "Secret"
+	PERSISTENTVOLUME      = "PersistentVolume"
+	PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim"
+	GATEWAY               = "Gateway"
+	JOB                   = "Job"
+	TEMPLATE              = "Template"
+	IMAGESTREAM           = "ImageStream"
+	CONFIGMAP             = "ConfigMap"
+	BUILD                 = "Build"
+	STATEFULSET           = "StatefulSet"
+	SERVICEACCOUNT        = "ServiceAccount"
+	DAEMONSET             = "DaemonSet"
+	DEPLOYMENT            = "Deployment"
+	DEPLOYMENTCONFIG      = "DeploymentConfig"
+	SERVICE               = "Service"
+	ROUTE                 = "Route"
+	VIRTUALSERVICE        = "VirtualService"
+	INGRESS               = "Ingress"
 )
 
 func int32Ptr(i int32) *int32 { return &i }
 func int64Ptr(i int64) *int64 { return &i }
 
-func Processor(input []byte, kind interface{}, flags map[string]string) []lib.K8sobject {
+func Processor(input []byte, kind interface{}, flags map[string]string) ([]lib.K8sobject, error) {
 	// Use our K8sobject which is a generic json interface for kubernetes objects
 	var processed []lib.K8sobject
 
 	switch kind {
-	case "DeploymentConfig":
+	case DEPLOYMENTCONFIG:
 		var object osappsv1.DeploymentConfig
-		json.Unmarshal(input, &object)
+		err := json.Unmarshal(input, &object)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertDeploymentConfigToDeployment(object, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "Deployment":
+	case DEPLOYMENT:
 		var object appsv1.Deployment
-		json.Unmarshal(input, &object)
+		err := json.Unmarshal(input, &object)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertDeploymentToDeployment(object, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "StatefulSet":
+	case STATEFULSET:
 		var object appsv1.StatefulSet
-		json.Unmarshal(input, &object)
+		err := json.Unmarshal(input, &object)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertStatefulSetToStatefulSet(object, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "DaemonSet":
+	case DAEMONSET:
 		var object appsv1.DaemonSet
-		json.Unmarshal(input, &object)
+		err := json.Unmarshal(input, &object)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertDaemonSetToDaemonSet(object, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "Route":
+	case ROUTE:
 		var route osroutev1.Route
-		json.Unmarshal(input, &route)
+		err := json.Unmarshal(input, &route)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 
 		if flags["istio"] == "true" {
 			if flags["create-istio-gateway"] == "Y" {
@@ -72,39 +118,57 @@ func Processor(input []byte, kind interface{}, flags map[string]string) []lib.K8
 			}
 
 			processed = append(processed, convertRouteToIstioVirtualService(route, flags))
-			return processed
+			return processed, nil // Success
 			break
 		} else {
 			processed := append(processed, convertRouteToIngress(route, flags))
-			return processed
+			return processed, nil // Success
 			break
 		}
 
-	case "Service":
+	case SERVICE:
 		var service apiv1.Service
-		json.Unmarshal(input, &service)
+		err := json.Unmarshal(input, &service)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertServiceToService(service, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "ConfigMap":
+	case CONFIGMAP:
 		var cfgMap apiv1.ConfigMap
-		json.Unmarshal(input, &cfgMap)
+		err := json.Unmarshal(input, &cfgMap)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertConfigMapToConfigMap(cfgMap, flags))
-		return processed
+		return processed, nil // Success
 		break
 
-	case "ServiceAccount":
+	case SERVICEACCOUNT:
 		var sa apiv1.ServiceAccount
-		json.Unmarshal(input, &sa)
+		err := json.Unmarshal(input, &sa)
+		if err != nil {
+			// Error: Unmarshalling JSON Data
+			log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data for Kind: '%s'.", kind)
+			return processed, err
+		}
 		processed := append(processed, convertServiceAccountToServiceAccount(sa, flags))
-		return processed
+		return processed, nil // Success
 		break
 	}
 
-	return processed
+	// Error Unsupported Processor Type
+	return processed, errors.New(fmt.Sprintf("🧰 ❌ ERROR: Unsupported Processor Type: '%s'", kind))
 }
 
+// TODO - Remove Function
+/*
 func serializer(input runtime.Object) {
 	fmt.Println("---")
 	e := kjson.NewYAMLSerializer(kjson.DefaultMetaFactory, nil, nil)
@@ -113,4 +177,4 @@ func serializer(input runtime.Object) {
 	if err != nil {
 		fmt.Println(err)
 	}
-}
+}*/

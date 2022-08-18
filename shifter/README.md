@@ -1,7 +1,7 @@
-# Shifter - Openshift to Kubernetes Migration Accelerator
-## Server & CLI
+# Shifter Core 
+## Openshift to Kubernetes Migration Accelerator
 
-Shifter is a tool which accelerates the migration from OpenShift 3.x / 4.x by translating the applications for Kubernetes, GKE & Anthos and supports migrating to Service Mesh with ASM + Istio Support.
+Shifter Core is a tool which accelerates the migration from OpenShift 3.x / 4.x by translating the applications for Kubernetes, GKE & Anthos and supports migrating to Service Mesh with ASM + Istio Support.
 
 <p float="left">
 	<img src="../assets/logo.png" alt="shifter logo" />
@@ -9,7 +9,182 @@ Shifter is a tool which accelerates the migration from OpenShift 3.x / 4.x by tr
 
 Shifter has extensible methods for inputs and generators.
 
----
+</br>
+
+# Shifter Core CLI
+
+## Shifter
+</br>
+
+## Shifter Cluster
+Connect to a running OpenShift cluster and interact with OpenShift objects.
+#### Usage 
+```
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
+```
+
+#### Flags 
+```
+-e --cluster-endpoint   OpenShift cluster endpoint                [Required]
+-t --token              OpenShift cluster authentication token    [Required]
+```
+
+#### Examples 
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
+
+// Export All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces ./output/directory/path
+```
+</br>
+
+## Shifter Cluster - List
+Connect to a running OpenShift cluster and List all resources supported by shifter in the target Openshift cluster.
+#### Usage 
+```
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list
+```
+
+#### Flags 
+```
+-e --cluster-endpoint   OpenShift cluster endpoint                [Required]
+-t --token              OpenShift cluster authentication token    [Required]
+-n --namespace          OpenShift cluster namespace               
+-n --all-namespaces     OpenShift all Namespaces or Projects  
+   --csv                CSV Output      
+```
+
+#### Examples 
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
+
+// List All OpenShift Cluster Resources from the Default OpenShift Namespace in CSV format
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --namespace default --csv
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces in Table format and output to a text file.
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces > <FILENAME>.txt
+
+// List All OpenShift Cluster Resources from All OpenShift Namespaces in CSV format and output to a CSV file.
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces --csv > <FILENAME>.csv
+
+```
+</br>
+
+## Shifter Cluster - Convert
+Convert takes all the resources from a OpenShift cluster endpoint and converts them to the desired output format on your local disk or GCS bucket
+#### Usage 
+```
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert
+```
+
+#### Flags 
+```
+-e --cluster-endpoint   OpenShift cluster endpoint                [Required]
+-t --token              OpenShift cluster authentication token    [Required]
+-n --namespace          OpenShift cluster namespace               
+-n --all-namespaces     OpenShift all Namespaces or Projects      
+-o --output-format      Output format (YAML/HELM)                 [Required]
+```
+#### Notes
+
+- Supported output-formats include (YAML & HELM)
+- Output Directory is required. eg "./ouput/directory/path/"
+
+#### Examples 
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+// Convert All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert --all-namespaces --output-format <FORMAT> <OUTPUT_DIRECTORY>
+```
+</br>
+
+
+## Shifter Cluster - Export
+Export takes the resources 'as-is' from a OpenShift cluster endpoint and exports them in yaml format so the manifests can be fed into the shifter conversion process.
+#### Usage 
+```
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export
+```
+
+#### Flags 
+```
+-e --cluster-endpoint   OpenShift cluster endpoint                [Required]
+-t --token              OpenShift cluster authentication token    [Required]
+-n --namespace          OpenShift cluster namespace               
+-n --all-namespaces     OpenShift all Namespaces or Projects      
+```
+
+#### Notes
+- Output Directory is required. eg "./ouput/directory/path/"
+
+#### Examples 
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+// Export All OpenShift Cluster Resources from All OpenShift Namespaces
+shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces <OUTPUT_DIRECTORY>
+```
+</br>
+
+## Shifter Server
+Run Shifter Core in Server mode. Allows users to execute API calls to Shifter Core and convert supplied or select objects. In addition to this Shifter Core running in server mode is the backend for Shifter UI.
+#### Usage 
+```
+shifter server 
+```
+
+#### Flags 
+```
+-p --port             Shifter Server Running Port           [Default: 8080   ]
+-a --host-address     Shifter Server Running Host Address   [Default: 0.0.0.0]
+-f --source-path      Source Relative Local Path               
+-o --output-path      Output Relative Local Path      
+```
+
+#### Examples 
+```
+// Run Shifter Core in Server Mode with Defaults
+shifter server
+
+// Run Shifter Core on Port 9090
+shifter server -p 9090
+```
+</br>
+
+## Shifter Version
+Show the version number of Shifter Core that is currently being executed.
+#### Usage 
+```
+shifter version 
+```
+
+#### Flags 
+None
+
+#### Examples 
+```
+// Output Shifter Core's Version
+shifter version
+```
+</br>
+
+## Shifter Help
+</br>
+
+</br>
+
+# Shifter Core Components
 
 ## Processor
 
@@ -112,30 +287,3 @@ shifter convert
   `./shifter convert --input-format template --source-path gs://bucket/path --output-path gs://bucket/path --output-format helm `
 
 ---
-
-## Shifter Server
-
-Shifter also contains a under development Rest API Sever.
-
-### Server Usage
-
-#### Flags
-
-```
-shifter server
-    -p --port Server Port. Default: 8080
-    -a --host-address Server Address. Default: 0.0.0.0
-
-    -f --source-path Relative Local Path (./data/source) or Google Cloud Storage Bucket Path (gs://XXXXXXX/source/) for Source Files to be Written
-    -o --output-path Relative Local Path (./data/output) or Google Cloud Storage Bucket Path (gs://XXXXXXX/output/) for Converted Files to be Written
-```
-
-#### Server Examples:
-
-- Running with Local Storage
-
-  `./shifter server --port 8080 --source-path ./data/source --output-path ./data/output `
-
-- Running with GCP Bucket
-
-  `./shifter server --port 8080 --source-path gs://bucket/source --output-path gs://bucket/output `

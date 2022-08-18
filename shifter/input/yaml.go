@@ -15,24 +15,22 @@ package input
 
 import (
 	"bytes"
-	gyaml "github.com/ghodss/yaml"
-	yaml "gopkg.in/yaml.v3"
 	"io"
-	"io/ioutil"
 	"log"
 	"shifter/lib"
 	"shifter/processor"
-	"strings"
+
+	gyaml "github.com/ghodss/yaml"
+	yaml "gopkg.in/yaml.v3"
 )
 
 type Spec struct {
 	Kind string `yaml:"kind"`
 }
 
-func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
+func Yaml(input bytes.Buffer, flags map[string]string) ([]lib.K8sobject, error) {
 
 	//nestedQuotedStringHack(fileName)
-
 	f := bytes.NewReader(input.Bytes())
 	d := yaml.NewDecoder(f)
 	objects := make([]lib.K8sobject, 0)
@@ -43,7 +41,8 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 		err := d.Decode(&doc)
 		if err != nil {
 			if err != io.EOF {
-				log.Println(err)
+				log.Printf("🧰 ❌ ERROR: Parsing YAML.")
+				return nil, err
 			}
 		}
 
@@ -53,22 +52,37 @@ func Yaml(input bytes.Buffer, flags map[string]string) []lib.K8sobject {
 
 		val, err := yaml.Marshal(doc)
 		if err != nil {
-			log.Println(err)
+			// Error: Unable to Marshal YAML
+			log.Printf("🧰 ❌ ERROR: Unable to Marshal YAML.")
+			return nil, err
 		}
 
 		jsonBody, err := gyaml.YAMLToJSON(val)
 		if err != nil {
-			log.Println(err)
+			// Error: Unable to Parse YAML to JSON
+			log.Printf("🧰 ❌ ERROR: Unable to Parse YAML to JSON.")
+			return nil, err
 		}
 
-		processedDocument := processor.Processor(jsonBody, doc["kind"], flags)
+		processedDocument, err := processor.Processor(jsonBody, doc["kind"], flags)
+		if err != nil {
+			// Error: Unable to Create Shifter 'YAML' Processor
+			log.Printf("🧰 ❌ ERROR: Creating Shifter 'YAML' Processor.")
+			return nil, err
+		} else {
+			// Succes: Creating Shifter 'YAML' Processor
+			log.Printf("🧰 ✅ SUCCESS: Shifter 'YAML' Processor Successufly Created.")
+		}
 		for _, v := range processedDocument {
 			objects = append(objects, v)
 		}
 	}
-	return objects
+	// Success
+	return objects, nil
 }
 
+// TODO - Remove this Function
+/*
 func nestedQuotedStringHack(fileName string) {
 	input, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -95,4 +109,4 @@ func nestedQuotedStringHack(fileName string) {
 	if err != nil {
 		log.Println(err)
 	}
-}
+}*/

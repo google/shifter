@@ -14,15 +14,16 @@ limitations under the license.
 package processor
 
 import (
+	"shifter/lib"
+
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"shifter/lib"
 )
 
 func convertServiceAccountToServiceAccount(OSServiceAccount apiv1.ServiceAccount, flags map[string]string) lib.K8sobject {
 	sa := &apiv1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "ServiceAccount",
+			Kind:       SERVICEACCOUNT,
 			APIVersion: "v1",
 		},
 		ObjectMeta:                   OSServiceAccount.ObjectMeta,
@@ -31,7 +32,7 @@ func convertServiceAccountToServiceAccount(OSServiceAccount apiv1.ServiceAccount
 		AutomountServiceAccountToken: OSServiceAccount.AutomountServiceAccountToken,
 	}
 	var k lib.K8sobject
-	k.Kind = "ServiceAccount"
+	k.Kind = SERVICEACCOUNT
 	k.Object = sa
 
 	return k

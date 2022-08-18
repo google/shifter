@@ -15,9 +15,11 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
+	"os"
 	openshift "shifter/openshift"
+
+	"github.com/spf13/cobra"
 )
 
 // clusterListCmd represents the clusterList command
@@ -28,10 +30,10 @@ var clusterExportCmd = &cobra.Command{
 
 Examples:
 	Export all resources from a given namespace into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export -n $NAMESPACE ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export -n $NAMESPACE ./output/directory/path
 
 	Export all resources from all namespaces into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN export --all-namespaces ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces ./output/directory/path
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -45,18 +47,25 @@ Examples:
 ----------------------------------------
 `)
 		if len(args) != 1 {
-			log.Fatal("Please specify the destination path.")
+			log.Fatal("🧰 ❌ ERROR: Please specify the destination path.")
 		}
 
 		outputPath = args[0]
 
-		log.Println("Connecting to cluster: ", endpoint)
-		log.Println("Exporting cluster resources")
+		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
+		log.Printf("🧰 💡 INFO: Exporting cluster resources.")
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		openshift.ExportNSResources(namespace, outputPath)
-		log.Println("Export Complete")
+		// Export OpenShift Resources
+		err := openshift.ExportNSResources(namespace, outputPath)
+		if err != nil {
+			// Error: Exporting Resource List
+			log.Printf("🧰 ❌ ERROR: Exporting Resource List: '%s'. ", err.Error())
+			os.Exit(1)
+		}
+		log.Printf("🧰 ✅ SUCCESS: Export Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

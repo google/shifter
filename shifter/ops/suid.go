@@ -17,13 +17,14 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-//Used for String Splitting Pre and Post Hash
+// Used for String Splitting Pre and Post Hash
 const seperator string = "#!#"
 
 type SUID struct {
@@ -43,25 +44,23 @@ func (s *SUID) name() string {
 }
 
 func (s *SUID) hash() {
+	// Constructing the SUID HASH
 	s.nameHash = base64.StdEncoding.EncodeToString([]byte(s.longname))
 }
 
-func (s *SUID) Meta() {
-	fmt.Println("_+_+_+_+_+_+_+_+_+_+_+_+_+_")
-	fmt.Println("_+_+_+_+_+_+_+_+_+_+_+_+_+_")
-	fmt.Println(s.UUID)
-	fmt.Println(s.Name)
-	fmt.Println(s.TimeStamp)
-	fmt.Println(s.DisplayName)
-	fmt.Println(s.longname)
-	fmt.Println(s.nameHash)
-	fmt.Println("_+_+_+_+_+_+_+_+_+_+_+_+_+_")
-	fmt.Println("_+_+_+_+_+_+_+_+_+_+_+_+_+_")
-	fmt.Println("")
+// Display SUID Object Content for Debugging.
+func (suid *SUID) Meta() {
+	// Log SUID Object Data.
+	log.Printf("🌐 📜 INFO: Shifter SUID Object \n[\nUUID: %s, \nName: %s, \nTimeStamp: %s, \nDisplay Name: %s, \nLong Name: %s, \nName HASH: %s \n]",
+		suid.UUID,
+		suid.Name,
+		suid.TimeStamp,
+		suid.DisplayName,
+		suid.nameHash,
+	)
 }
 
 func CreateSUID(customName string) SUID {
-
 	// Create SUID Object
 	suid := SUID{}
 	// Assign Variables for Uniqueness
@@ -85,6 +84,8 @@ func CreateSUID(customName string) SUID {
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.nameHash
 	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
+
+	// SUID Created, Return Return SUID
 	return suid
 }
 
@@ -92,17 +93,30 @@ func ResolveSUID(downloadId string) (SUID, error) {
 	// Create New SUID Object
 	suid := SUID{}
 	if downloadId == "" {
-		return suid, errors.New("Download ID or Filename Hash must be provided when Resolving SUID")
+		// Error - Download ID is NUll
+		return suid, errors.New("🌐 ❌ ERROR: Download ID or Filename Hash must be provided when Resolving SUID")
+	} else {
+		// Log Shifter SUID Name Hash
+		log.Printf("🌐 📜 INFO: Set Shifter SUID Name")
+		suid.nameHash = downloadId
 	}
-	suid.nameHash = downloadId
+
 	decoded, err := base64.StdEncoding.DecodeString(suid.nameHash)
 	if err != nil {
+		// Error: Unable Decode Name Hash
+		log.Printf("🌐 ❌ ERROR: Unable to Decode SUID Hash")
 		return suid, err
+	} else {
+		// Log Shifter SUID Long Name
+		log.Printf("🌐 📜 INFO: Set Shifter SUID Long Name")
+		suid.longname = string(decoded)
 	}
-	suid.longname = string(decoded)
+
+	// Split the SUID Long Name by Seperator
 	items := strings.Split(suid.longname, seperator)
 	t, err := time.Parse(time.RFC1123, items[0])
 	if err != nil {
+		log.Printf("🌐 ❌ ERROR: Unable Parse Shifter SUID TimeStamp")
 		return suid, err
 	}
 	suid.TimeStamp = t
@@ -111,6 +125,7 @@ func ResolveSUID(downloadId string) (SUID, error) {
 	suid.DisplayName = fmt.Sprintf("%s - %s", suid.TimeStamp.Format(time.RFC1123), suid.Name)
 	suid.DirectoryName = suid.nameHash
 	suid.DownloadId = suid.DirectoryName
-	return suid, nil
 
+	// SUID Resolved, Return
+	return suid, nil
 }

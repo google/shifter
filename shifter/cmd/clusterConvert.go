@@ -14,24 +14,25 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"fmt"
 	"log"
 	os "shifter/openshift"
+
+	"github.com/spf13/cobra"
 )
 
 // clusterExportCmd represents the clusterExport command
 var clusterConvertCmd = &cobra.Command{
 	Use:   "convert",
-	Short: "Convert all resources or resources from a namepace from the cluster.",
-	Long: `Convert takes all the resources from a OpenShift cluster endpoint and converts them to the desired output format
-on your local disk or GCS bucket.
+	Short: "Convert all OpenShift resources from a namepace from the OpenShift cluster.",
+	Long: `Convert takes all the resources from a OpenShift cluster endpoint and converts them to the desired output format on your local disk or GCS bucket.
 
 Examples:
 	Convert all resources from a given namespace into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN convert -n $NAMESPACE -o yaml ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert -n $NAMESPACE -o yaml ./output/directory/path
 
 	Convert all resources from all namespaces into yaml files:
-	shifter cluster -e $OPENSHIFT_ENDPOINT -t $OPENSHIFT_TOKEN convert --all-namespaces -o yaml ./output/directory/path
+	shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN convert --all-namespaces -o yaml ./output/directory/path
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
@@ -45,20 +46,27 @@ Examples:
 `)
 
 		if len(args) != 1 {
-			log.Fatal("Please specify the destination path.")
+			log.Fatal("🧰 ❌ ERROR: Please specify the destination path.")
 		}
 
 		outputPath = args[0]
 
-		log.Println("Connecting to cluster: ", endpoint)
-		log.Println("Converting cluster resources")
+		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
+		log.Printf("🧰 💡 INFO: Converting cluster resources.")
 		procflags := ProcFlags(pFlags)
 
 		var openshift os.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
-		openshift.ConvertNSResources(namespace, procflags, outputPath)
+		// Convert OpenShift Resources
+		err := openshift.ConvertNSResources(namespace, procflags, outputPath)
+		if err != nil {
+			// Error: Converting Resource List
+			log.Fatal(fmt.Sprintf("🧰 ❌ ERROR: Converting Resource List: '%s'. ", err.Error()))
+		}
 		log.Println("Conversion Complete")
+		log.Printf("🧰 ✅ SUCCESS: Conversion Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

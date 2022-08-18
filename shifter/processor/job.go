@@ -22,7 +22,7 @@ import (
 func convertJobtoJob(OSJob v1.Job, flags map[string]string) lib.K8sobject {
 	job := &v1.Job{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "Job",
+			Kind:       JOB,
 			APIVersion: "batch/v1",
 		},
 		ObjectMeta: OSJob.ObjectMeta,
@@ -30,7 +30,7 @@ func convertJobtoJob(OSJob v1.Job, flags map[string]string) lib.K8sobject {
 	}
 
 	var k lib.K8sobject
-	k.Kind = "Job"
+	k.Kind = JOB
 	k.Object = job
 
 	return k

@@ -22,35 +22,57 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Get all OpenShift Routes by Namespace
 func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.RouteList{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get All OpenShift Routes By Namespace
 	routeList, err := cluster.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting All OpenShift Routes By Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Routes from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
 		return &v1.RouteList{}, err
+	} else {
+		// Success: Getting All OpenShift Routes By Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Routes from Namespace: '%s'.", namespace)
+		// Return Routes
+		return routeList, err
 	}
-
-	return routeList, nil
 
 }
 
+// Get OpenShift Route by Name from Namespace
 func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
+	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		// Error: Getting Cluster Configuration
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
 		return &v1.Route{}, err
+	} else {
+		// Success: Getting Cluster Configuration
+		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
+	// Get OpenShift Route By Name from Namespace
 	route, err := cluster.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		// Error: Getting OpenShift Route By Name & Namespace
+		log.Printf("🧰 ❌ ERROR: Getting OpenShift Route with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
 		return &v1.Route{}, err
+	} else {
+		// Success: Getting OpenShift Route By Name & Namespace
+		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Route with Name: '%s' from Namespace: '%s'.", name, namespace)
+		// Return Route
+		return route, err
 	}
-
-	return route, nil
 }

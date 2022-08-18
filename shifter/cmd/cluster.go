@@ -14,8 +14,9 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
+
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -59,7 +60,7 @@ Usage: shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
 func init() {
 	rootCmd.AddCommand(clusterCmd)
 	clusterCmd.PersistentFlags().StringVarP(&endpoint, "cluster-endpoint", "e", "", "OpenShift cluster endpoint")
-	clusterCmd.PersistentFlags().StringVarP(&bearertoken, "token", "t", "", "Cluster authentication token")
+	clusterCmd.PersistentFlags().StringVarP(&bearertoken, "token", "t", "", "OpenShift cluster authentication token")
 	clusterCmd.MarkPersistentFlagRequired("cluster-endpoint")
 	clusterCmd.MarkPersistentFlagRequired("token")
 }

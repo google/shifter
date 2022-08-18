@@ -15,22 +15,18 @@ limitations under the license.
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"shifter/openshift"
+
+	"github.com/spf13/cobra"
 )
 
 // clusterListCmd represents the clusterList command
 var clusterListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "Lists all resources supported by shifter in the target Openshift cluster.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  "Lists all resources supported by shifter in the target Openshift cluster.",
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(`
    _____ __    _ ______
@@ -41,16 +37,24 @@ to quickly create a Cobra application.`,
 
 ----------------------------------------
 `)
-		log.Println("Connecting to cluster: ", endpoint)
+		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
 
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
 		if namespace == "" && allnamespaces == false {
-			log.Println("Choose either all-namespaces or specify a namespace")
+			log.Printf("🧰 ❌ ERROR: Please Choose either all-namespaces or specify a namespace")
 			os.Exit(1)
 		}
-		openshift.ListNSResources(csvoutput, namespace)
+		// List OpenShift Resources
+		err := openshift.ListNSResources(csvoutput, namespace)
+		if err != nil {
+			// Error: Building Resource List
+			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
+			os.Exit(1)
+		}
+		log.Printf("🧰 ✅ SUCCESS: OpenShift Resource Listing Complete")
+		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
 	},
 }
 

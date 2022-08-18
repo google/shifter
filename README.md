@@ -41,19 +41,23 @@ contributors to follow.
 
 For development see [DEVELOPMENT.md](DEVELOPMENT.md) for details on pre-requisites and style guides.
 
-
 ## Components
 
 Shifter can either be ran via the command line or via a web ui front end.
 
-### Shifter
+### Shifter Core (CLI & API Server)
 
 Provides the backend service required by the front-end application and also provides the CLI tooling if the front-end web interface is not required.
+
+### Shifter UI
+
+A front end Vue3 Application that interacts with the Shifter Core API Server to provide a simple user interface for managing OpenShift to GKE & Anthos conversions.
 
 ##### Releases
 
 *  Binaries - [https://github.com/google/shifter/releases](https://github.com/google/shifter/releases)
-*  Docker Image - []()
+*  Shifter Core Docker Image - docker pull images.shifter.cloud/shifter:latest
+*  Shifter UI   Docker Image - docker pull images.shifter.cloud/shifter-ui:latest
 
 ##### Documentation 
 
@@ -67,21 +71,46 @@ Read the detailed documentation at [shifter/README.md](shifter/README.md)
 
 ### Shifter-UI
 
-Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see ![shifter-ui/readme.md](shifter-ui/README.md)
-##### Run The Latest Version Locally 
+Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see [shifter-ui/readme.md](shifter-ui/README.md)
 
-1) Get the Source & Run Latest the latest Docker Release
+## Run Shifter
+
+### Run The Latest Shifter Version Locally with the UI
+
+1) Get the Source & Run Latest Docker Release
 ```
-
 git clone https://github.com/google/shifter 
 cd shifter
 docker-compose -f docker-compose.yml up
-
 ```
 
-## Google Cloud Deployment
+2) Open a browser and go to [http://localhost:9090](http://localhost:9090)
 
-Deployment to other cloud providers should be possible but has not been tested.
+
+### Run The Latest Shifter Version Locally wth the CLI
+
+1) Run the Latest Docker Release (With List Action)
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+docker run \
+images.shifter.cloud/shifter:latest \
+./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
+```
+
+2) Run the Latest Docker Release (With an Export Action)
+```
+export CLUSTER_ENDPOINT="https://console.okd.<CLUSTER_DOMAIN>:8443"
+export BEARER_TOKEN="<BEARER_TOKEN>"
+
+docker run \
+-v 'pwd':/output \
+images.shifter.cloud/shifter:latest \
+./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces /output
+```
+
+
 
 ## Stargazers over time
 

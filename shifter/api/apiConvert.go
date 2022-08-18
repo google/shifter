@@ -15,7 +15,9 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	generator "shifter/generator"
 	lib "shifter/lib"
@@ -57,66 +59,180 @@ type ClusterConfig struct {
 }
 
 func (server *Server) Convert(ctx *gin.Context) {
+
 	// Create API Unique RUN ID
-	//uuid := uuid.New().String()
-	suid := ops.CreateSUID("")
+	suid := ops.CreateSUID("") //NESTED TODO - Error Handling
+
+	// Log SUID
+	suid.Meta()
+
+	// Instanciate a Shifter Convert Structure
 	convert := Convert{}
-	// using BindJson method to serialize body with struct
+	// using BindJSON method to serialize API Request Body with struct
 	if err := ctx.BindJSON(&convert); err != nil {
+		// Error: Unable to Parse Request JSON -> Convert Struct
+		log.Printf("🌐 ❌ ERROR: Unable to Parse API Request JSON -> Convert Struct, Returning: Status %d.", http.StatusBadRequest)
+		// Return Error JSON Response to API Call
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
+	} else {
+		// Succes: Parsed Request JSON -> Convert Struct
+		log.Printf("🌐 ✅ SUCCESS: Parsed Request JSON -> Convert Struct.")
 	}
 
+	// TODO - Turn this into a Global Function called at the beginign of all API Calls with Validations and Responses
 	var openshift os.Openshift
 	openshift.Endpoint = convert.Shifter.ClusterConfig.BaseUrl
 	openshift.AuthToken = convert.Shifter.ClusterConfig.BearerToken
 	openshift.Username = convert.Shifter.ClusterConfig.Username
 	openshift.Password = convert.Shifter.ClusterConfig.Password
 
-	// Process Each Item
-	for _, item := range convert.Items {
-
-		// Confirm Project/Namespace Exists
-		deploymentConfig, err := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		}
-
-		u, err := json.Marshal(deploymentConfig)
-		if err != nil {
-			panic(err)
-		}
-
-		// Handle the Conversion of the Manifests and File Writing
-		//var generator generator.Generator
-		var objs []lib.K8sobject
-		obj := processor.Processor(u, "DeploymentConfig", nil)
-		for _, v := range obj {
-			objs = append(objs, v)
-		}
-		convertedObjects := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
-		for _, conObj := range convertedObjects {
-			fileObj := &ops.FileObject{
-				StorageType:   server.config.serverStorage.storageType,
-				Path:          (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
-				Ext:           "yaml",
-				Content:       conObj.Payload,
-				ContentLength: conObj.Payload.Len(),
-			}
-			fileObj.WriteFile()
-		}
-	}
-
-	// Zip / Package Converted Objects
-	err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
-	if err != nil {
+	// Check that API Request contains Items for Conversion
+	if len(convert.Items) <= 0 {
+		// Error: No items provided for conversion.
+		log.Printf("🌐 ❌ ERROR: No items have been provided for conversion. Returning: Status %d.", http.StatusBadRequest)
+		// Create Error
+		err := errors.New("No items have been provided for conversion")
+		// Return Error JSON Response to API Call
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-	}
+		return
+	} else {
+		/*
+			Process Conversion Items
+			Details: When this API endpoint is called by a client, it will contain an array of items
+			that need to be converted and returned.
+		*/
+		for _, item := range convert.Items {
 
-	// Construct API Endpoint Response
-	r := ResponseConvert{
-		SUID:    suid,
-		Message: "Converted..." + fmt.Sprint(len(convert.Items)) + " Objects",
+			// Validate that the provided namespace is valid in the cluster.
+			deploymentConfig, err := openshift.GetDeploymentConfig(item.Namespace.ObjectMeta.Name, item.DeploymentConfig.ObjectMeta.Name)
+			// TODO - BULK Error Catch [Long Comment EOF]
+			if err != nil {
+				// Error validating provided OpenShift Namespace
+				log.Printf("🌐 ❌ ERROR: Unable to locate the provided requested OpenShift DeploymentConfig: %s within OpenShift Namespace: %s", item.DeploymentConfig.ObjectMeta.Name, item.Namespace.ObjectMeta.Name)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				return
+			} else {
+				// Succes: Parsed OpenShift DeploymentConfig Object to JSON object
+				log.Printf("🌐 ✅ SUCCESS: Located the provided requested OpenShift DeploymentConfig: %s within OpenShift Namespace: %s", item.DeploymentConfig.ObjectMeta.Name, item.Namespace.ObjectMeta.Name)
+			}
+
+			// JSON Marshal the Contents of the OpenShift DeploymentConfig Object to JSON
+			osDeploymentConfig, err := json.Marshal(deploymentConfig)
+			if err != nil {
+				// Error: Unable to Parse OpenShift DeploymentConfig Object to JSON object
+				log.Printf("🌐 ❌ ERROR: Unable to Parse OpenShift DeploymentConfig Object -> JSON, Returning: Status %d.", http.StatusBadRequest)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				return
+			} else {
+				// Succes: Parsed OpenShift DeploymentConfig Object to JSON object
+				log.Printf("🌐 ✅ SUCCESS: Parsed OpenShift DeploymentConfig Object to JSON object.")
+			}
+
+			// Handle the Conversion of the Manifests and File Writing
+			//var generator generator.Generator
+			var objs []lib.K8sobject
+			obj, err := processor.Processor(osDeploymentConfig, "DeploymentConfig", nil)
+			if err != nil {
+				// Error: Unable to Create Shifter DeploymentConfig Processor
+				log.Printf("🌐 ❌ ERROR: Create Shifter Processor, Returning: Status %d.", http.StatusBadRequest)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			} else {
+				// Succes: Creating Shifter DeploymentConfig Processor
+				log.Printf("🧰 ✅ SUCCESS: Creating Shifter Processor.")
+			}
+			for _, v := range obj {
+				objs = append(objs, v)
+			}
+
+			// Log Info
+			log.Printf("🌐 💡 INFO: Preparing to Convert %d OpenShift DeploymentConfigs", len(objs))
+
+			// Create Shifer Generator
+			convertedObjects, err := generator.NewGenerator("yaml", item.DeploymentConfig.ObjectMeta.Name, objs)
+			if err != nil {
+				// Error: Unable to Create Shifter Generator
+				log.Printf("🌐 ❌ ERROR: Create Shifter Generator, Returning: Status %d.", http.StatusBadRequest)
+				// Return Error JSON Response to API Call
+				ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				return
+			} else {
+				// Succes: Creating Shifter Generator
+				log.Printf("🌐 ✅ SUCCESS: Shifter Generator Successufly Created.")
+			}
+
+			// Loop Through Each ConvertedObject and create File Object
+			for _, conObj := range convertedObjects {
+				// Create File Object
+				fileObj := &ops.FileObject{
+					StorageType:   server.config.serverStorage.storageType,
+					Path:          (server.config.serverStorage.sourcePath + "/" + suid.DirectoryName + "/" + item.Namespace.ObjectMeta.Name + "/" + item.DeploymentConfig.ObjectMeta.Name),
+					Ext:           "yaml",
+					Content:       conObj.Payload,
+					ContentLength: conObj.Payload.Len(),
+				}
+				// Log FileObject
+				fileObj.Meta()
+
+				err := fileObj.WriteFile()
+				if err != nil {
+					// Error: Error Writing File
+					log.Printf("🌐 ❌ ERROR: Unable to Write File Objects, Returning: Status %d.", http.StatusBadRequest)
+					ctx.JSON(http.StatusBadRequest, errorResponse(err))
+				}
+			}
+		}
+
+		// Zip / Package Converted Objects
+		//NESTED TODO - Error Handling in Archive Call
+		err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
+		if err != nil {
+			// Error: Unable to Archive Directory of Objects
+			log.Printf("🌐 ❌ ERROR: Unable to Archive Directory of Objects, Returning: Status %d.", http.StatusBadRequest)
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		} else {
+			// Succes: Archived Directory of Objects
+			log.Printf("🌐 ✅ SUCCESS: Archived Directory of Converted Objects.")
+		}
+
+		// API Convert Endpoint Successful
+		log.Printf("✅ SUCCESS: API Convert - %d Objects Converted", len(convert.Items))
+		// Return API JSON Response
+		ctx.JSON(
+			http.StatusOK,
+			// Construct API Endpoint Response
+			ResponseConvert{
+				SUID:    suid,
+				Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
+			})
 	}
-	ctx.JSON(http.StatusOK, r)
+	// API Convert Endpoint Completed
+	return
 }
+
+/*
+	----------------------------------------------------
+		TODO - BULK Error Catch [Long Comment EOF]
+	----------------------------------------------------
+	Currently the API call for convert will take a set of items to be converted. The moment one
+	of these falls over of fails at an point in "the loop". The API call will terminate in error and return.
+
+	Problems with approach:
+		- If you have multiple errors you need to solve each error just to see the next one.
+		- Bad user experience.
+		- Lack of ability for parallel processing and conversion of objects
+
+	Possible Solution:
+		- Construct an error array and allow the loop to complete converting as many objects as possible
+		- Catching all the conversion/lookup/validation records along the way only converting successful objects
+		- Returning successful objects as planned in a downloadable file.
+		- Also enabling us to write out conversion logs and provide them as part of the archive.
+
+	Best Long term Solution:
+		- All of the above +
+		- Factory in Object by Object customization (Object level Flags, Route Changes, Container Re-Writes/tags)
+		- Convert to background job with the ability to list running jobs on the UI with link to completed download archive.
+*/

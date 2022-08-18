@@ -15,12 +15,14 @@ package input
 
 import (
 	"bytes"
+
 	gyaml "github.com/ghodss/yaml"
+
 	//"io/ioutil"
 	"log"
-	"os"
 	"shifter/lib"
 	"shifter/processor"
+
 	"sigs.k8s.io/yaml"
 )
 
@@ -59,20 +61,20 @@ type OSTemplateParams struct {
 	}
 }
 
-func Template(input bytes.Buffer, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
+func Template(input bytes.Buffer, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, err error) {
 	template := OSTemplate{}
-	err := yaml.Unmarshal(input.Bytes(), &template)
+	err = yaml.Unmarshal(input.Bytes(), &template)
 	if err != nil {
-		log.Println(err)
+		// Error: Unmarshalling JSON Data
+		log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data")
+		return objects, parameters, err
 	}
 	return parse(template, flags)
 }
 
-func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams) {
+func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobject, parameters []lib.OSTemplateParams, err error) {
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
-
-	//tplname := template.Metadata.Name
 
 	//iterate over the objects inside the template
 	for _, o := range template.Objects {
@@ -80,11 +82,21 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 
 		jsonBody, err := gyaml.YAMLToJSON(y)
 		if err != nil {
-			log.Println(err)
-			os.Exit(1)
+			// Error: Unable to Parse YAML to JSON
+			log.Printf("🧰 ❌ ERROR: Unable to Parse YAML to JSON.")
+			return k8s, params, err
 		}
-		log.Print("Converting object " + o.Kind)
-		processedDocument := processor.Processor(jsonBody, o.Kind, flags)
+		// Log Opbject Conversion
+		log.Printf("🧰 🚀 INFO: Converting OpenShift object of type: '%s'", o.Kind)
+		processedDocument, err := processor.Processor(jsonBody, o.Kind, flags)
+		if err != nil {
+			// Error: Unable to Create Shifter 'TEMPLATE' Processor
+			log.Printf("🧰 ❌ ERROR: Creating Shifter 'TEMPLATE' Processor.")
+			return k8s, params, err
+		} else {
+			// Succes: Creating Shifter 'TEMPLATE' Processor
+			log.Printf("🧰 ✅ SUCCESS: Shifter 'TEMPLATE' Processor Successufly Created.")
+		}
 		for _, v := range processedDocument {
 			if v.Kind != nil {
 				k8s = append(k8s, v)
@@ -99,5 +111,5 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 	}
 
 	// return the converted resources and parameterized values
-	return k8s, params
+	return k8s, params, nil
 }
