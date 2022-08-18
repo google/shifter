@@ -15,11 +15,11 @@ limitations under the license.
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"shifter/lib"
 	openshift "shifter/openshift"
-
-	"github.com/spf13/cobra"
 )
 
 // clusterListCmd represents the clusterList command
@@ -37,35 +37,39 @@ Examples:
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
  ___/ / / / / / __/ /_/  __/ /
 /____/_/ /_/_/_/  \__/\___/_/
 
-----------------------------------------
-`)
+-----------------------------------
+` + "\033[0m")
+
 		if len(args) != 1 {
-			log.Fatal("🧰 ❌ ERROR: Please specify the destination path.")
+			lib.CLog("error", "Please specify the destination path")
+			os.Exit(1)
 		}
 
 		outputPath = args[0]
 
-		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
-		log.Printf("🧰 💡 INFO: Exporting cluster resources.")
+		lib.CLog("info", "Connecting to cluster: "+endpoint)
+		lib.CLog("info", "Converting cluster resources.")
+
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
+
 		// Export OpenShift Resources
 		err := openshift.ExportNSResources(namespace, outputPath)
 		if err != nil {
 			// Error: Exporting Resource List
-			log.Printf("🧰 ❌ ERROR: Exporting Resource List: '%s'. ", err.Error())
+			lib.CLog("error", "Exporting cluster resources: ", err)
 			os.Exit(1)
 		}
-		log.Printf("🧰 ✅ SUCCESS: Export Complete")
-		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
+
+		lib.CLog("info", "Export Complete")
 	},
 }
 

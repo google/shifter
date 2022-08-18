@@ -15,65 +15,41 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
-// Get all OpenShift Jobs by Namespace
 func (c Openshift) GetAllJobs(namespace string) (*v1.JobList, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.JobList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift Jobs By Namespace
 	jobList, err := cluster.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Jobs By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Jobs from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting Jobs from Namespace: "+namespace, err)
 		return &v1.JobList{}, err
-	} else {
-		// Success: Getting All OpenShift Jobs By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Jobs from Namespace: '%s'.", namespace)
-		// Return Jobs
-		return jobList, err
 	}
-
+	lib.CLog("debug", "Getting Jobs from Namespace: "+namespace)
+	return jobList, err
 }
 
-// Get OpenShift Job by Name from Namespace
 func (c Openshift) GetJob(name string, namespace string) (*v1.Job, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Job{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Job By Name from Namespace
 	job, err := cluster.BatchV1().Jobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Job By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Job with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting Job with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Job{}, err
-	} else {
-		// Success: Getting OpenShift Job By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Job with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Job
-		return job, err
 	}
-
+	lib.CLog("info", "Getting Job with Name: "+name+" from Namespace: "+namespace)
+	return job, err
 }

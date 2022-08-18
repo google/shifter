@@ -14,23 +14,30 @@ limitations under the license.
 package processor
 
 import (
+	"encoding/json"
 	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"shifter/lib"
 )
 
-func convertJobtoJob(OSJob v1.Job, flags map[string]string) lib.K8sobject {
+func (p Proc) Job(input []byte, flags map[string]string) lib.K8sobject {
+	var object v1.Job
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: Job", err)
+	}
+
 	job := &v1.Job{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       JOB,
+			Kind:       "Job",
 			APIVersion: "batch/v1",
 		},
-		ObjectMeta: OSJob.ObjectMeta,
-		Spec:       OSJob.Spec,
+		ObjectMeta: object.ObjectMeta,
+		Spec:       object.Spec,
 	}
 
 	var k lib.K8sobject
-	k.Kind = JOB
+	k.Kind = job.TypeMeta.Kind
 	k.Object = job
 
 	return k

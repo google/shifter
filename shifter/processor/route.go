@@ -14,6 +14,7 @@ limitations under the license.
 package processor
 
 import (
+	"encoding/json"
 	"log"
 	"shifter/lib"
 
@@ -25,18 +26,40 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+func (p Proc) Route(input []byte, flags map[string]string) lib.K8sobject {
+	var route osroutev1.Route
+	var processed lib.K8sobject
+
+	err := json.Unmarshal(input, &route)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind Route", err)
+	}
+
+	if flags["istio"] == "true" {
+		if flags["create-istio-gateway"] == "Y" {
+			processed = createIstioIngressGateway(route, flags)
+		}
+
+		processed = convertRouteToIstioVirtualService(route, flags)
+		return processed
+	} else {
+		processed = convertRouteToIngress(route, flags)
+		return processed
+	}
+}
+
 func createIstioIngressGateway(OSRoute osroutev1.Route, flags map[string]string) lib.K8sobject {
 	gw := &v1beta1.Gateway{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.istio.io/v1beta1",
-			Kind:       GATEWAY,
+			Kind:       "Gateway",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       io.Gateway{},
 	}
 
 	var k lib.K8sobject
-	k.Kind = GATEWAY
+	k.Kind = gw.TypeMeta.Kind
 	k.Object = gw
 
 	return k
@@ -48,7 +71,7 @@ func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string
 	vs := &v1beta1.VirtualService{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.istio.io/v1beta1",
-			Kind:       VIRTUALSERVICE,
+			Kind:       "VirtualService",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       io.VirtualService{},
@@ -83,7 +106,7 @@ func convertRouteToIstioVirtualService(OSRoute osroutev1.Route, flags map[string
 	vs.Spec = vsSpec
 
 	var k lib.K8sobject
-	k.Kind = VIRTUALSERVICE
+	k.Kind = vs.TypeMeta.Kind
 	k.Object = vs
 
 	return k
@@ -96,7 +119,7 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 	ingress := &v1.Ingress{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "networking.k8s.io/v1",
-			Kind:       INGRESS,
+			Kind:       "Ingress",
 		},
 		ObjectMeta: OSRoute.ObjectMeta,
 		Spec:       v1.IngressSpec{},
@@ -165,7 +188,7 @@ func convertRouteToIngress(OSRoute osroutev1.Route, flags map[string]string) lib
 	}
 
 	var k lib.K8sobject
-	k.Kind = INGRESS
+	k.Kind = ingress.TypeMeta.Kind
 	k.Object = ingress
 
 	return k

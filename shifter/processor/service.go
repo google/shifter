@@ -14,22 +14,29 @@ limitations under the license.
 package processor
 
 import (
+	"encoding/json"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"shifter/lib"
 )
 
-func convertServiceToService(OSService apiv1.Service, flags map[string]string) lib.K8sobject {
+func (p Proc) Service(input []byte, flags map[string]string) lib.K8sobject {
+	var object apiv1.Service
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: Service", err)
+	}
+
 	service := &apiv1.Service{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       SERVICE,
+			Kind:       "Service",
 			APIVersion: "v1",
 		},
-		ObjectMeta: OSService.ObjectMeta,
-		Spec:       OSService.Spec,
+		ObjectMeta: object.ObjectMeta,
+		Spec:       object.Spec,
 	}
 	var k lib.K8sobject
-	k.Kind = SERVICE
+	k.Kind = service.TypeMeta.Kind
 	k.Object = service
 
 	return k

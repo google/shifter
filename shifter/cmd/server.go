@@ -14,10 +14,10 @@ limitations under the license.
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"log"
 	api "shifter/api"
-
-	"github.com/spf13/cobra"
+	"shifter/lib"
 )
 
 var (
@@ -29,45 +29,40 @@ var serverCmd = &cobra.Command{
 	Use:   "server",
 	Short: "Convert Openshift Resources to Kubernetes native formats via Shifter API",
 	Long: `
-
-	 _____ __    _ ______            
-	/ ___// /_  (_) __/ /____  _____       ___   ____ ____ ______  ___    ___   ____
-	\__ \/ __ \/ / /_/ __/ _ \/ ___/      / _ \ / __// __//_  __/ / _ |  / _ \ /  _/
-   ___/ / / / / / __/ /_/  __/ /         / , _// _/ _\ \   / /   / __ | / ___/_/ /
-  /____/_/ /_/_/_/  \__/\___/_/         /_/|_|/___//___/  /_/   /_/ |_|/_/   /___/ 
-                                 
-
-Convert OpenShift resources to kubernetes native formats
-
-Usage: shifter server
-
-`,
-	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
    _____ __    _ ______            
   / ___// /_  (_) __/ /____  _____       ___   ____ ____ ______  ___    ___   ____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/      / _ \ / __// __//_  __/ / _ |  / _ \ /  _/
  ___/ / / / / / __/ /_/  __/ /         / , _// _/ _\ \   / /   / __ | / ___/_/ /
 /____/_/ /_/_/_/  \__/\___/_/         /_/|_|/___//___/  /_/   /_/ |_|/_/   /___/ 
                                  
--------------------------------------------------------------------------------------
-			`)
+Convert OpenShift resources to kubernetes native formats
 
-		// Welcome Banners
-		log.Printf("👋 INFO: Welcome to Shifter Server")
-		log.Printf("🎬 INFO: Let's Start Shifting...")
+Usage: shifter server
+
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Println("\033[31m" + `
+
+   _____ __    _ ______            
+  / ___// /_  (_) __/ /____  _____       ___   ____ ____ ______  ___    ___   ____
+  \__ \/ __ \/ / /_/ __/ _ \/ ___/      / _ \ / __// __//_  __/ / _ |  / _ \ /  _/
+ ___/ / / / / / __/ /_/  __/ /         / , _// _/ _\ \   / /   / __ | / ___/_/ /
+/____/_/ /_/_/_/  \__/\___/_/         /_/|_|/___//___/  /_/   /_/ |_|/_/   /___/ 
+                               
+-------------------------------------------------------------------------------------
+			` + "\033[0m")
 
 		// Instanciate Shifter Server Instance
 		server, err := api.InitServer(serverAddress, serverPort, sourcePath, outputPath)
 		if err != nil {
 			// Unable to instanciate Shifter HTTP Server
-			log.Fatal("🌐 ❌ ERROR: Cannot Create Shifter HTTP Server:", err)
+			lib.CLog("error", "Cannot create shifter server: ", err)
 		}
 		// Start Shifter Server Instance
 		err = server.Start()
 		if err != nil {
 			// Unable to start Shifter HTTP Server
-			log.Fatal("🌐 ❌ ERROR: Cannot Start Shiter HTTP Server:", err)
+			lib.CLog("error", "Cannot start shifter server: ", err)
 		}
 	},
 }

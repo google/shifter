@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	osappsv1 "github.com/openshift/api/apps/v1"
 	os "github.com/openshift/client-go/apps/clientset/versioned"
@@ -24,110 +24,68 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// Get all OpenShift Deployments by Namespace
 func (c Openshift) GetAllDeployments(namespace string) (*v1.DeploymentList, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.DeploymentList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift Deployments By Namespace
 	deploymentList, err := cluster.AppsV1().Deployments(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Deployments By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Deployments from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting Deployments from Namespace: "+namespace, err)
 		return &v1.DeploymentList{}, err
-	} else {
-		// Success: Getting All OpenShift Deployments By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Deployments from Namespace: '%s'.", namespace)
-		// Return Deployments
-		return deploymentList, err
 	}
+	lib.CLog("debug", "Getting Deployments from Namespace: "+namespace)
+	return deploymentList, nil
 }
 
-// Get OpenShift Deployment by Name from Namespace
 func (c Openshift) GetDeployment(name string, namespace string) (*v1.Deployment, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Deployment{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Deployment By Name from Namespace
 	deployment, err := cluster.AppsV1().Deployments(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Deployment By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Deployment with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting Deployment with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Deployment{}, err
-	} else {
-		// Success: Getting OpenShift Deployment By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Deployment with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Deployment
-		return deployment, err
 	}
+
+	lib.CLog("debug", "Getting Deployment with Name: "+name+" from Namespace: "+namespace)
+	return deployment, nil
 }
 
-// Get All OpenShift DeploymentConfigs by Namespace
 func (c Openshift) GetAllDeploymentConfigs(namespace string) (*osappsv1.DeploymentConfigList, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &osappsv1.DeploymentConfigList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All Deployment Configs from Namespace
 	depCfgLst, err := cluster.AppsV1().DeploymentConfigs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Deployment Configurations By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting All OpenShift Deployment Configurations by Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting All DeploymentConfigs from Namespace: "+namespace, err)
 		return &osappsv1.DeploymentConfigList{}, err
-	} else {
-		// Success: Getting All OpenShift Deployment Configurations By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting All OpenShift Deployment Configurations by Namespace: '%s'.", namespace)
-		// Return Deployment Configs
-		return depCfgLst, err
 	}
+
+	lib.CLog("debug", "Getting DeploymentConfigs from Namespace: "+namespace)
+	return depCfgLst, nil
 }
 
-// Get OpenShift DeploymentConfig by Name from Namespace
 func (c Openshift) GetDeploymentConfig(namespace string, name string) (*osappsv1.DeploymentConfig, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &osappsv1.DeploymentConfig{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All Deployment Config By Name from Namespace
 	depCfg, err := cluster.AppsV1().DeploymentConfigs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Deployment Configuration By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Deployment Configuration with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting DeploymentConfig with Name: "+name+" from Namespace: "+namespace, err)
 		return &osappsv1.DeploymentConfig{}, err
-	} else {
-		// Success: Getting OpenShift Deployment Configuration By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Deployment Configuration with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Deployment Config
-		return depCfg, err
 	}
+	lib.CLog("debug", "Getting DeploymentConfig with Name: "+name+" from Namespace: "+namespace)
+	return depCfg, nil
 }

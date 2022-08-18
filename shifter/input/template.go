@@ -15,14 +15,9 @@ package input
 
 import (
 	"bytes"
-
 	gyaml "github.com/ghodss/yaml"
-
-	//"io/ioutil"
-	"log"
 	"shifter/lib"
 	"shifter/processor"
-
 	"sigs.k8s.io/yaml"
 )
 
@@ -65,8 +60,7 @@ func Template(input bytes.Buffer, flags map[string]string) (objects []lib.K8sobj
 	template := OSTemplate{}
 	err = yaml.Unmarshal(input.Bytes(), &template)
 	if err != nil {
-		// Error: Unmarshalling JSON Data
-		log.Printf("🧰 ❌ ERROR: Unable to Parse Input Data")
+		lib.CLog("error", "Unable to parse template input data", err)
 		return objects, parameters, err
 	}
 	return parse(template, flags)
@@ -76,40 +70,32 @@ func parse(template OSTemplate, flags map[string]string) (objects []lib.K8sobjec
 	var k8s []lib.K8sobject
 	var params []lib.OSTemplateParams
 
-	//iterate over the objects inside the template
 	for _, o := range template.Objects {
 		y, _ := yaml.Marshal(o)
 
 		jsonBody, err := gyaml.YAMLToJSON(y)
 		if err != nil {
-			// Error: Unable to Parse YAML to JSON
-			log.Printf("🧰 ❌ ERROR: Unable to Parse YAML to JSON.")
+			lib.CLog("error", "Unable to convert yaml to json", err)
 			return k8s, params, err
 		}
 		// Log Opbject Conversion
-		log.Printf("🧰 🚀 INFO: Converting OpenShift object of type: '%s'", o.Kind)
+		lib.CLog("info", "Converting OpenShift object of type: "+o.Kind)
 		processedDocument, err := processor.Processor(jsonBody, o.Kind, flags)
 		if err != nil {
-			// Error: Unable to Create Shifter 'TEMPLATE' Processor
-			log.Printf("🧰 ❌ ERROR: Creating Shifter 'TEMPLATE' Processor.")
+			lib.CLog("error", "Creating shifter processor", err)
 			return k8s, params, err
-		} else {
-			// Succes: Creating Shifter 'TEMPLATE' Processor
-			log.Printf("🧰 ✅ SUCCESS: Shifter 'TEMPLATE' Processor Successufly Created.")
 		}
+
 		for _, v := range processedDocument {
 			if v.Kind != nil {
 				k8s = append(k8s, v)
 			}
-
 		}
 	}
 
-	// get the parameters from the template and store in a slice array
 	for _, y := range template.Parameters {
 		params = append(params, y)
 	}
 
-	// return the converted resources and parameterized values
 	return k8s, params, nil
 }

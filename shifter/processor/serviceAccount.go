@@ -14,25 +14,32 @@ limitations under the license.
 package processor
 
 import (
+	"encoding/json"
 	"shifter/lib"
 
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func convertServiceAccountToServiceAccount(OSServiceAccount apiv1.ServiceAccount, flags map[string]string) lib.K8sobject {
+func (p Proc) ServiceAccount(input []byte, flags map[string]string) lib.K8sobject {
+	var object apiv1.ServiceAccount
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: ServiceAccount", err)
+	}
+
 	sa := &apiv1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       SERVICEACCOUNT,
+			Kind:       "ServiceAccount",
 			APIVersion: "v1",
 		},
-		ObjectMeta:                   OSServiceAccount.ObjectMeta,
-		Secrets:                      OSServiceAccount.Secrets,
-		ImagePullSecrets:             OSServiceAccount.ImagePullSecrets,
-		AutomountServiceAccountToken: OSServiceAccount.AutomountServiceAccountToken,
+		ObjectMeta:                   object.ObjectMeta,
+		Secrets:                      object.Secrets,
+		ImagePullSecrets:             object.ImagePullSecrets,
+		AutomountServiceAccountToken: object.AutomountServiceAccountToken,
 	}
 	var k lib.K8sobject
-	k.Kind = SERVICEACCOUNT
+	k.Kind = sa.TypeMeta.Kind
 	k.Object = sa
 
 	return k

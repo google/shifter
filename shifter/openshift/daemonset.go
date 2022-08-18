@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -24,56 +24,35 @@ import (
 
 // Get all OpenShift Daemon Sets by Namespace
 func (c Openshift) GetAllDaemonSets(namespace string) (*v1.DaemonSetList, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.DaemonSetList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
 	// Get All OpenShift Daemon Sets By Namespace
 	daemonSets, err := cluster.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Daemon Sets By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Daemon Sets from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting DaemonSets from Namespace: "+namespace, err)
 		return &v1.DaemonSetList{}, err
-	} else {
-		// Success: Getting All OpenShift Daemon Sets By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Daemon Sets from Namespace: '%s'.", namespace)
-		// Return Daemon Sets
-		return daemonSets, err
 	}
-
+	lib.CLog("debug", "Getting DaemonSets from Namespace: "+namespace)
+	return daemonSets, err
 }
 
-// Get OpenShift Daemon Set by Name from Namespace
 func (c Openshift) GetDaemonSet(name string, namespace string) (*v1.DaemonSet, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.DaemonSet{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Daemon Set By Name from Namespace
 	daemonSet, err := cluster.AppsV1().DaemonSets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Daemon Set By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Daemon Set with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting DaemonSet with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.DaemonSet{}, err
-	} else {
-		// Success: Getting OpenShift Daemon Set By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Daemon Set with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Daemon Set
-		return daemonSet, err
 	}
 
+	lib.CLog("info", "Getting DaemonSet with Name: "+name+" from Namespace: "+namespace)
+	return daemonSet, err
 }

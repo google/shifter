@@ -14,10 +14,10 @@ limitations under the license.
 package cmd
 
 import (
-	"log"
-	ops "shifter/ops"
-
 	"github.com/spf13/cobra"
+	"log"
+	"shifter/lib"
+	"shifter/ops"
 )
 
 var (
@@ -46,7 +46,7 @@ Convert OpenShift resources to kubernetes native formats
 Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/file
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -54,19 +54,14 @@ Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/fi
 /____/_/ /_/_/_/  \__/\___/_/
 
 ----------------------------------------
-			`)
-
-		// Welcome Banners
-		log.Printf("👋 INFO: Welcome to Shifter Converter")
-		log.Printf("🎬 INFO: Let's Start Shifting...")
-
+			` + "\033[0m")
 		if len(args) != 2 {
-			log.Fatal("🧰 ❌ ERROR: Please specify source and destination arguments.")
+			lib.CLog("error", "Please specify the source and destination arguments.")
 		}
 		sourcePath = args[0]
 		outputPath = args[1]
 
-		log.Println("🧰 🚀 Converting", inputType, sourcePath, "to", generator, outputPath)
+		lib.CLog("info", "Converting "+inputType+" "+sourcePath+" to "+generator+" "+outputPath)
 		procflags := ProcFlags(pFlags)
 		if useIstio == true {
 			procflags["istio"] = "true"
@@ -76,25 +71,16 @@ Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/fi
 		con, err := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
 		if err != nil {
 			// Error: Creating New Shifter Converter
-			log.Printf("🧰 ❌ ERROR: Creating Shifter Converter, Unable to continue.")
-			log.Printf("🧰 ❌ ERROR: '%s'.", err)
+			lib.CLog("error", "Creating instance of the converter.", err)
 			return
-		} else {
-			// Success: Creating New Shifter Converter
-			log.Printf("🧰 ✅ SUCCESS: Creating Shifter Converter")
 		}
+
 		err = con.ConvertFiles()
 		if err != nil {
-			// Error: Converting Files
-			log.Printf("🧰 ❌ ERROR: Converterting provided files, Unable to continue.")
-			log.Printf("🧰 ❌ ERROR: '%s'.", err)
+			lib.CLog("error", "Converting provided file.", err)
 			return
-		} else {
-			// Success: Files Converted
-			log.Printf("🧰 ✅ SUCCESS: Provided files converted")
 		}
-		log.Printf("✅ SUCCESS: Shifter Conversion Complete")
-		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
+		lib.CLog("info", "Conversion Complete")
 	},
 }
 

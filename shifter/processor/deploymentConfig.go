@@ -15,6 +15,7 @@ package processor
 
 import (
 	//"fmt"
+	"encoding/json"
 	"log"
 	"shifter/lib"
 	"strings"
@@ -25,48 +26,53 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentConfig, flags map[string]string) lib.K8sobject {
+func (p Proc) DeploymentConfig(input []byte, flags map[string]string) lib.K8sobject {
+	var object osappsv1.DeploymentConfig
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: DeploymentConfig", err)
+	}
 
 	flagImageRepo := flags["image-repo"]
 	//fmt.Println(OSDeploymentConfig)
 	// Create the body of our kubernetes deployment
 	deployment := &appsv1.Deployment{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       DEPLOYMENT,
+			Kind:       "Deployment",
 			APIVersion: "apps/v1",
 		},
-		ObjectMeta: OSDeploymentConfig.ObjectMeta,
+		ObjectMeta: object.ObjectMeta,
 		Spec: appsv1.DeploymentSpec{
-			Replicas: int32Ptr(OSDeploymentConfig.Spec.Replicas),
+			Replicas: int32Ptr(object.Spec.Replicas),
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{},
 			},
 			Template: apiv1.PodTemplateSpec{
-				ObjectMeta: OSDeploymentConfig.Spec.Template.ObjectMeta,
+				ObjectMeta: object.Spec.Template.ObjectMeta,
 				Spec: apiv1.PodSpec{
 					SecurityContext: &apiv1.PodSecurityContext{},
 					Containers:      []apiv1.Container{},
-					Volumes:         OSDeploymentConfig.Spec.Template.Spec.Volumes,
+					Volumes:         object.Spec.Template.Spec.Volumes,
 				},
 			},
 		},
 	}
 
 	// Add the selectors to our matchlabels section in deployment.spec.selector.matchlabels
-	for k, v := range OSDeploymentConfig.Spec.Selector {
+	for k, v := range object.Spec.Selector {
 		deployment.Spec.Selector.MatchLabels[k] = v
 	}
 
 	// Add Volumes
 
 	// Add Spec
-	deployment.Spec.Template.Spec = OSDeploymentConfig.Spec.Template.Spec
+	deployment.Spec.Template.Spec = object.Spec.Template.Spec
 
 	// Add security context
-	deployment.Spec.Template.Spec.SecurityContext = OSDeploymentConfig.Spec.Template.Spec.SecurityContext
+	deployment.Spec.Template.Spec.SecurityContext = object.Spec.Template.Spec.SecurityContext
 
 	// Add containers
-	deployment.Spec.Template.Spec.Containers = OSDeploymentConfig.Spec.Template.Spec.Containers
+	deployment.Spec.Template.Spec.Containers = object.Spec.Template.Spec.Containers
 	for i, containers := range deployment.Spec.Template.Spec.Containers {
 		if flagImageRepo != "" {
 			newImg := strings.Split(containers.Image, "/")
@@ -79,7 +85,7 @@ func convertDeploymentConfigToDeployment(OSDeploymentConfig osappsv1.DeploymentC
 	}
 
 	var k lib.K8sobject
-	k.Kind = DEPLOYMENT
+	k.Kind = deployment.TypeMeta.Kind
 	k.Object = deployment
 
 	return k
