@@ -15,63 +15,40 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/project/v1"
 	projectv1 "github.com/openshift/client-go/project/clientset/versioned/typed/project/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// Get all OpenShift Projects by Namespace
 func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ProjectList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift Projects By Namespace
 	projectList, err := cluster.Projects().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Projects By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Projects. Error Text: '%s'. ", err.Error())
+		lib.CLog("error", "Getting Projects from Cluster", err)
 		return &v1.ProjectList{}, err
-	} else {
-		// Success: Getting All OpenShift Projects By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Projects from Cluster.")
-		// Return Projects
-		return projectList, err
 	}
+	return projectList, err
 }
 
-// Get OpenShift Project by Name from Namespace
 func (c Openshift) GetProject(name string) (*v1.Project, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Project{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Project By Name from Namespace
 	project, err := cluster.Projects().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Project By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Project with Name: '%s'. Error Text: '%s'. ", name, err.Error())
+		lib.CLog("error", "Getting Project from Cluster: "+name, err)
 		return &v1.Project{}, err
-	} else {
-		// Success: Getting OpenShift Project By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Project with Name: '%s'.", name)
-		// Return Project
-		return project, err
 	}
+	lib.CLog("debug", "Getting Project from Cluster: "+name)
+	return project, err
 }

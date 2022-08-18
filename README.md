@@ -49,29 +49,26 @@ Shifter can either be ran via the command line or via a web ui front end.
 
 Provides the backend service required by the front-end application and also provides the CLI tooling if the front-end web interface is not required.
 
-### Shifter UI
-
-A front end Vue3 Application that interacts with the Shifter Core API Server to provide a simple user interface for managing OpenShift to GKE & Anthos conversions.
-
-##### Releases
-
-*  Binaries - [https://github.com/google/shifter/releases](https://github.com/google/shifter/releases)
-*  Shifter Core Docker Image - docker pull images.shifter.cloud/shifter:latest
-*  Shifter UI   Docker Image - docker pull images.shifter.cloud/shifter-ui:latest
-
-##### Documentation 
+#### Documentation 
 
 Read the detailed documentation at [shifter/README.md](shifter/README.md)
 
-##### Demo
+#### Demo
 
 <p float="left">
 	<img src="assets/shifter-cluster-demo.gif" alt="shifter demo 1" />
 </p>
 
-### Shifter-UI
+
+### Shifter UI
 
 Provides a front-end application written in Vue that connects to the Shfiter API's, for more information see [shifter-ui/readme.md](shifter-ui/README.md)
+
+## Releases
+
+*  Binaries - [https://github.com/google/shifter/releases](https://github.com/google/shifter/releases)
+*  Shifter Core Docker Image - docker pull images.shifter.cloud/shifter:latest
+*  Shifter UI   Docker Image - docker pull images.shifter.cloud/shifter-ui:latest
 
 ## Run Shifter
 
@@ -96,7 +93,7 @@ export BEARER_TOKEN="<BEARER_TOKEN>"
 
 docker run \
 images.shifter.cloud/shifter:latest \
-./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN list --all-namespaces
+./shifter cluster -e $OKD_ENDPOINT -t $OKD_TOKEN list --all-namespaces
 ```
 
 2) Run the Latest Docker Release (With an Export Action)
@@ -109,8 +106,6 @@ docker run \
 images.shifter.cloud/shifter:latest \
 ./shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN export --all-namespaces /output
 ```
-
-
 
 ## Stargazers over time
 

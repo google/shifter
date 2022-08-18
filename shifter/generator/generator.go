@@ -14,22 +14,12 @@ limitations under the license.
 package generator
 
 import (
-	//"github.com/instrumenta/kubeval/kubeval"
 	"reflect"
 	"shifter/lib"
 	"strings"
 )
 
-type Generator struct {
-	/*
-		OutputType string
-		Name       string
-		Input      struct {
-			Object     []lib.K8sobject
-			Parameters []lib.OSTemplateParams
-		}
-	*/
-}
+type Generator struct{}
 
 type Input struct {
 	Object []lib.K8sobject
@@ -48,6 +38,5 @@ func NewGenerator(outputType string, args ...interface{}) ([]lib.Converted, erro
 	var result []lib.Converted
 	result = val[0].Interface().([]lib.Converted)
 
-	// Success, New Generator Created
 	return result, nil
 }

@@ -15,65 +15,41 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/template/v1"
 	templatev1 "github.com/openshift/client-go/template/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// Get all OpenShift Template by Namespace
 func (c Openshift) GetAllTemplates(namespace string) (*v1.TemplateList, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.TemplateList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift Templates By Namespace
 	templates, err := cluster.TemplateV1().Templates(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Templates By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Templates from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting Templates from Namespace: "+namespace, err)
 		return &v1.TemplateList{}, err
-	} else {
-		// Success: Getting All OpenShift Templates By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Templates from Namespace: '%s'.", namespace)
-		// Return Templates
-		return templates, err
 	}
-
+	lib.CLog("debug", "Getting Templates from Namespace: "+namespace)
+	return templates, err
 }
 
-// Get OpenShift Template by Name from Namespace
 func (c Openshift) GetTemplate(name string, namespace string) (*v1.Template, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Template{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Template By Name from Namespace
 	template, err := cluster.TemplateV1().Templates(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Template By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Template with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting Template with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Template{}, err
-	} else {
-		// Success: Getting OpenShift Template By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Template with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Template
-		return template, err
 	}
-
+	lib.CLog("info", "Getting Template with Name: "+name+" from Namespace: "+namespace)
+	return template, err
 }

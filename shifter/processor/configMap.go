@@ -14,23 +14,30 @@ limitations under the license.
 package processor
 
 import (
+	"encoding/json"
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"shifter/lib"
 )
 
-func convertConfigMapToConfigMap(OSConfigMap apiv1.ConfigMap, flags map[string]string) lib.K8sobject {
+func (p Proc) ConfigMap(input []byte, flags map[string]string) lib.K8sobject {
+	var object apiv1.ConfigMap
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: ConfigMap", err)
+	}
+
 	cfgMap := &apiv1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       CONFIGMAP,
+			Kind:       "ConfigMap",
 			APIVersion: "v1",
 		},
-		ObjectMeta: OSConfigMap.ObjectMeta,
-		Data:       OSConfigMap.Data,
-		BinaryData: OSConfigMap.BinaryData,
+		ObjectMeta: object.ObjectMeta,
+		Data:       object.Data,
+		BinaryData: object.BinaryData,
 	}
 	var k lib.K8sobject
-	k.Kind = CONFIGMAP
+	k.Kind = cfgMap.TypeMeta.Kind
 	k.Object = cfgMap
 
 	return k

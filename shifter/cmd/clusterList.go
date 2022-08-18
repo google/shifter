@@ -15,11 +15,11 @@ limitations under the license.
 package cmd
 
 import (
+	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"shifter/lib"
 	"shifter/openshift"
-
-	"github.com/spf13/cobra"
 )
 
 // clusterListCmd represents the clusterList command
@@ -28,7 +28,7 @@ var clusterListCmd = &cobra.Command{
 	Short: "Lists all resources supported by shifter in the target Openshift cluster.",
 	Long:  "Lists all resources supported by shifter in the target Openshift cluster.",
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -36,25 +36,27 @@ var clusterListCmd = &cobra.Command{
 /____/_/ /_/_/_/  \__/\___/_/
 
 ----------------------------------------
-`)
-		log.Printf("🧰 💡 INFO: Connecting to cluster: '%s'", endpoint)
+` + "\033[0m")
+
+		lib.CLog("info", "Connecting to cluster: "+endpoint)
 
 		var openshift openshift.Openshift
 		openshift.Endpoint = endpoint
 		openshift.AuthToken = bearertoken
+
 		if namespace == "" && allnamespaces == false {
-			log.Printf("🧰 ❌ ERROR: Please Choose either all-namespaces or specify a namespace")
+			lib.CLog("error", "Please Choose either all-namespaces or specify a namespace")
 			os.Exit(1)
 		}
+
 		// List OpenShift Resources
 		err := openshift.ListNSResources(csvoutput, namespace)
 		if err != nil {
 			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
+			lib.CLog("error", "Error building resource list: ", err)
 			os.Exit(1)
 		}
-		log.Printf("🧰 ✅ SUCCESS: OpenShift Resource Listing Complete")
-		log.Printf("👋 INFO: Thats all Folks.. Bye Bye!")
+		lib.CLog("info", "Resource List Complete")
 	},
 }
 
