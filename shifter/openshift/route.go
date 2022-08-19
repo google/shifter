@@ -15,64 +15,41 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/route/v1"
 	os "github.com/openshift/client-go/route/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// Get all OpenShift Routes by Namespace
 func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.RouteList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift Routes By Namespace
 	routeList, err := cluster.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift Routes By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Routes from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting Routes from Namespace: "+namespace, err)
 		return &v1.RouteList{}, err
-	} else {
-		// Success: Getting All OpenShift Routes By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Routes from Namespace: '%s'.", namespace)
-		// Return Routes
-		return routeList, err
 	}
-
+	lib.CLog("debug", "Getting Routes from Namespace: "+namespace)
+	return routeList, err
 }
 
-// Get OpenShift Route by Name from Namespace
 func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
-	// Uses Custom OpenShift Structs
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Route{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift Route By Name from Namespace
 	route, err := cluster.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift Route By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Route with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting Route with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Route{}, err
-	} else {
-		// Success: Getting OpenShift Route By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift Route with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return Route
-		return route, err
 	}
+	lib.CLog("info", "Getting Route with Name: "+name+" from Namespace: "+namespace)
+	return route, err
 }

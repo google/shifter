@@ -56,7 +56,6 @@ func (generator Generator) Helm(name string, objects []lib.K8sobject, parameters
 
 	helmChart = append(helmChart, createChart(name))
 
-	// Templates
 	for _, v := range objects {
 		//no := strconv.Itoa(k)
 		kind := fmt.Sprintf("%v", v.Kind)
@@ -114,7 +113,6 @@ func createValues(parameters []lib.OSTemplateParams) lib.Converted {
 }
 
 func createChart(name string) lib.Converted {
-	// Chart
 	var chart Chart
 	var version string = "v1.0"
 

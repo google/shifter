@@ -14,24 +14,32 @@ limitations under the license.
 package processor
 
 import (
-	apiv1 "k8s.io/api/core/v1"
+	"encoding/json"
+	"shifter/lib"
+
+	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func convertPvcToPvc(OSPersistentVolumeClaim apiv1.PersistentVolumeClaim, flags map[string]string) apiv1.PersistentVolumeClaim {
-
-	pvc := &apiv1.PersistentVolumeClaim{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "PersistentVolumeClaim",
-			APIVersion: "v1",
-		},
-		ObjectMeta: OSPersistentVolumeClaim.ObjectMeta,
-		Spec:       apiv1.PersistentVolumeClaimSpec{},
+func (p Proc) Deployment(input []byte, flags map[string]string) lib.K8sobject {
+	var object v1.Deployment
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: Deployment", err)
 	}
 
-	var spec apiv1.PersistentVolumeClaimSpec
-	spec = OSPersistentVolumeClaim.Spec
-	pvc.Spec = spec
+	deployment := &v1.Deployment{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Deployment",
+			APIVersion: "apps/v1",
+		},
+		ObjectMeta: object.ObjectMeta,
+		Spec:       object.Spec,
+	}
 
-	return *pvc
+	var k lib.K8sobject
+	k.Kind = deployment.TypeMeta.Kind
+	k.Object = deployment
+
+	return k
 }

@@ -45,7 +45,7 @@ Convert OpenShift resources to kubernetes native formats
 Usage: shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -53,7 +53,7 @@ Usage: shifter cluster -e $CLUSTER_ENDPOINT -t $BEARER_TOKEN <ACTION>
 /____/_/ /_/_/_/  \__/\___/_/
 
 ----------------------------------------
-			`)
+			` + "\033[0m")
 	},
 }
 

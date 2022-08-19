@@ -15,64 +15,42 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
-// Get all OpenShift ConfigMaps by Namespace
 func (c Openshift) GetAllConfigMaps(namespace string) (*v1.ConfigMapList, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ConfigMapList{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get All OpenShift ConfigMaps By Namespace
 	configmapList, err := cluster.CoreV1().ConfigMaps(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		// Error: Getting All OpenShift ConfigMaps By Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift ConfigMaps from Namespace: '%s'. Error Text: '%s'. ", namespace, err.Error())
+		lib.CLog("error", "Getting ConfigMaps from Namespace: "+namespace, err)
 		return &v1.ConfigMapList{}, err
-	} else {
-		// Success: Getting All OpenShift ConfigMaps By Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift ConfigMaps from Namespace: '%s'.", namespace)
-		// Return ConfigMaps
-		return configmapList, err
 	}
-
+	lib.CLog("debug", "Getting ConfigMaps from Namespace: "+namespace)
+	return configmapList, err
 }
 
-// Get OpenShift ConfigMap by Name from Namespace
 func (c Openshift) GetConfigMap(name string, namespace string) (*v1.ConfigMap, error) {
-	// Uses KNative Structs
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		// Error: Getting Cluster Configuration
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift Cluster Configuration")
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ConfigMap{}, err
-	} else {
-		// Success: Getting Cluster Configuration
-		log.Printf("🧰 ✅ SUCCESS: Getting Cluster Configuration")
 	}
 
-	// Get OpenShift ConfigMap By Name from Namespace
 	configmap, err := cluster.CoreV1().ConfigMaps(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		// Error: Getting OpenShift ConfigMap By Name & Namespace
-		log.Printf("🧰 ❌ ERROR: Getting OpenShift ConfigMap with Name: '%s' from Namespace: '%s'. Error Text: '%s'. ", name, namespace, err.Error())
+		lib.CLog("error", "Getting ConfigMap with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.ConfigMap{}, err
-	} else {
-		// Success: Getting OpenShift ConfigMap By Name & Namespace
-		log.Printf("🧰 ✅ SUCCESS: Getting OpenShift ConfigMap with Name: '%s' from Namespace: '%s'.", name, namespace)
-		// Return ConfigMap
-		return configmap, err
 	}
+	lib.CLog("info", "Getting ConfigMap with Name: "+name+" from Namespace: "+namespace)
+	return configmap, err
+
 }

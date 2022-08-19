@@ -15,88 +15,66 @@ package ops
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"path/filepath"
+	"shifter/lib"
 )
 
 // Write bytes.Buffer to Local File System
 func (fileObj *FileObject) WriteLCLFile() error {
-	log.Printf("🧰 📜 INFO: Writing Shifter File Object to Local Filesystem")
+	lib.CLog("debug", "Writing file object to local file system")
 
 	// Check if Output Directory Exits, IF Not, Make output Directory
-	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
-		log.Printf("🧰 📁 INFO: Proposed Output Directory Does Not Exist, Creating Directory")
-		err := os.MkdirAll(filepath.Dir(fileObj.Path), 0700) // Create output directory
+	lib.CLog("debug", "Path: "+filepath.Dir(fileObj.Path))
+	if _, err := os.Stat(filepath.Dir(fileObj.Path)); os.IsNotExist(err) {
+		lib.CLog("info", "Output directory does not exist... creating")
+		err := os.MkdirAll(filepath.Dir(fileObj.Path), 0700)
 		if err != nil {
-			// Error: Unable to Create Missing Output Directory
-			log.Printf("🧰 ❌ ERROR: Unable to Create Output Directory: '%s'.", fileObj.Path)
+			lib.CLog("error", "Unable to create output directory", err)
 			return err
-		} else {
-			// Success: Created Missing Output Directory
-			log.Printf("🧰 ✅ SUCCESS: Created Missing Output Directory: '%s'.", fileObj.Path)
 		}
 	}
 
-	// Create New File Name
 	fileName := fileObj.Path + "." + fileObj.Ext
 	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		// Error: Unable to Create New File
-		log.Printf("🧰 ❌ ERROR: Creating New File: '%s'.", fileName)
+		lib.CLog("error", "creating new file"+fileName, err)
 		return err
-	} else {
-		// Success: Creating New File
-		log.Printf("🧰 ✅ SUCCESS: Creating New File: '%s'.", fileName)
 	}
 
 	defer f.Close() // TODO - Address goSec Error
 
 	f.WriteString("---\n")
-	// Write the Bytes Buffer to File
 	_, err = f.Write(fileObj.Content.Bytes())
 	if err != nil {
-		// Error: Unable to Write New File
-		log.Printf("🧰 ❌ ERROR: Writing Content to File: '%s'.", fileName)
-		return err
-	} else {
-		// Success: Writing New File
-		log.Printf("🧰 ✅ SUCCESS: Writing Content to File: '%s'.", fileName)
-	}
-	err = f.Sync()
-	if err != nil {
-		// Error: Unable to Write New File
-		log.Printf("🧰 ❌ ERROR: Writing Content to File: '%s'.", fileName)
+		lib.CLog("error", "Writing content to file "+fileName, err)
 		return err
 	}
 
-	// Successfull Writen file to Local File System
-	log.Printf("🧰 ✅ SUCCESS: File written to Local File System: '%s'.", fileName)
+	err = f.Sync()
+	if err != nil {
+		lib.CLog("error", "Writing content to file "+fileName, err)
+		return err
+	}
+
+	lib.CLog("debug", "Files written to local file system")
 	return nil
 }
 
 func (fileObj *FileObject) LoadLCLFile() error {
-	log.Printf("🧰 💡 INFO: Loading Shifter File Object from Local Filesystem")
-
 	file, err := os.Open(fileObj.Path)
 	if err != nil {
-		log.Printf("🧰 ❌ ERROR: Opening file on Local File System: '%s'.", fileObj.Path)
+		lib.CLog("error", "Opening file from local file system: "+fileObj.Path, err)
 		return err
-	} else {
-		log.Printf("🧰 ✅ SUCCESS: Opening file on Local File System: '%s'.", fileObj.Path)
 	}
 
-	log.Printf("🧰 💡 INFO: Reading Shifter File - '%s'", fileObj.Path)
+	lib.CLog("debug", "Reading file - "+fileObj.Path)
 	defer file.Close() // TODO - Address goSec Error
 
 	fileinfo, err := file.Stat()
 	if err != nil {
-		// ERROR: Obtaining Statistical Information about Local File System File
-		log.Printf("🧰 ❌ ERROR: Getting file information: '%s'.", fileObj.Path)
+		lib.CLog("error", "Getting file information for file: "+fileObj.Path, err)
 		return err
-	} else {
-		// SCUCCESS: Obtaining Statistical Information about Local File System File
-		log.Printf("🧰 ✅ SUCCESS: Obtaining file information: '%s'.", fileObj.Path)
 	}
 
 	filesize := fileinfo.Size()
@@ -104,77 +82,57 @@ func (fileObj *FileObject) LoadLCLFile() error {
 
 	bytesread, err := file.Read(buffer)
 	if err != nil {
-		// ERROR: Reading file contents into Bytes Buffer
-		log.Printf("🧰 ❌ ERROR: Reading file contents into Buffer.")
+		lib.CLog("error", "Error reading source file", err)
 		return err
 	} else {
-		// Success: Reading file contents into Buffer
-		log.Printf("🧰 ✅ SUCCESS: Reading file contents into Buffer.")
+		lib.CLog("debug", "File contents loaded into Buffer.")
 	}
 
-	// Set FileObject Content & Length MetaData
 	fileObj.Content = *bytes.NewBuffer(buffer)
 	fileObj.ContentLength = bytesread
 
-	// SCUCCESS: Reading Local File System File
-	log.Printf("🧰 ✅ SUCCESS: Reading Shifter File Object from Local Filesystem.")
 	return nil
 }
 
 func ProcessLCLPath(path string) ([]*FileObject, error) {
 	var files []*FileObject
-	//Get File Info on Path
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		// ERROR: Obtaining Statistical Information about Local File System File
-		log.Printf("🧰 ❌ ERROR: Getting file information: '%s'.", path)
+		lib.CLog("error", "Unable to get file information for "+path, err)
 		return files, err
-	} else {
-		// SCUCCESS: Obtaining Statistical Information about Local File System File
-		log.Printf("🧰 ✅ SUCCESS: Obtaining file information: '%s'.", path)
 	}
+	lib.CLog("debug", "Reading file information from: "+path)
 
-	// Check File or Directory
 	switch mode := fileInfo.Mode(); {
 
-	// Is Directory
 	case mode.IsDir():
 		err := filepath.Walk(path, func(filePath string, f os.FileInfo, err error) error {
 			if !f.IsDir() {
-				// Create File Object for every file in Directory
 				fileObj := &FileObject{
 					StorageType: LCL,
 					Path:        filePath,
 					Ext:         filepath.Ext(filePath),
 					Filename:    filepath.Base(filePath),
 				}
-				// Add File Object to Array of Files
 				files = append(files, fileObj)
 			}
-			// Bubble Up File Walk Error
 			return err
 		})
 		if err != nil {
-			// Error: Traversing Filepath
-			log.Printf("🧰 ❌ ERROR: Unable to Traverse Filepath.")
+			lib.CLog("error", "Unable to traverse filepath", err)
 			return files, err
 		}
-		//Success Processing Directory in FileWalk.
 		return files, err
 
-	// Is A File
 	case mode.IsRegular():
-		// Create File Object for file
 		fileObj := &FileObject{
 			StorageType: LCL,
 			Path:        path,
 			Ext:         filepath.Ext(path),
 			Filename:    filepath.Base(path),
 		}
-		// Add File Object to Array of Files
 		files = append(files, fileObj)
 	}
 
-	// Success Processing LCL File Path - Return Array of Files
 	return files, nil
 }

@@ -16,7 +16,6 @@ package openshift
 import (
 	"bufio"
 	"bytes"
-	"log"
 	"os"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -43,7 +42,7 @@ import (
 
 	"k8s.io/client-go/kubernetes/scheme"
 
-	//"shifter/lib"
+	"shifter/lib"
 	//"reflect"
 	"shifter/ops"
 )
@@ -63,76 +62,34 @@ type ResourceList struct {
 	Error     error
 }
 
-const (
-	SECRET                = "Secret"
-	PERSISTENTVOLUME      = "PersistentVolume"
-	PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim"
-	JOB                   = "Job"
-	TEMPLATE              = "Template"
-	IMAGESTREAM           = "ImageStream"
-	CONFIGMAP             = "ConfigMap"
-	BUILD                 = "Build"
-	STATEFULSET           = "StatefulSet"
-	SERVICEACCOUNT        = "ServiceAccount"
-	DEPLOYMENT            = "Deployment"
-	DEPLOYMENTCONFIG      = "DeploymentConfig"
-	SERVICE               = "Service"
-	ROUTE                 = "Route"
-)
-
 func (c *Openshift) clusterClient() *restclientcmdapi.Config {
-
-	// Instantiating Kubernetes CLI Configuration
-	log.Printf("🧰 💡 INFO: Instantiating Kubernetes CLI Config")
 	config := clientcmdapi.NewConfig()
 	config.Clusters["cluster"] = &clientcmdapi.Cluster{
 		InsecureSkipTLSVerify: true,
 		Server:                c.Endpoint,
 	}
 
-	// Validate the OpenShift Cluster Token
-	log.Printf("🧰 💡 INFO: Validating the OpenShift Cluster Token")
 	if len(c.AuthToken) <= 5 {
-		// Error the OpenShift Cluster Token
-		log.Printf("🧰 ❌ ERROR: Invalid OpenShift Token, Unable to continue. ")
+		lib.CLog("error", "Invalid OpenShift Token", nil)
 		os.Exit(1) // TODO - RETURN ERROR
-	} else {
-		// Valid OpenShift Cluster Token Provided
-		log.Printf("🧰 ✅ SUCCESS: Valid OpenShift Token Provided. ")
 	}
 
-	// Setting Kubernetes Config Cluster Auth
-	log.Printf("🧰 💡 INFO: Setting Kubernetes Config Cluster Auth")
 	config.AuthInfos["cluster-auth"] = &clientcmdapi.AuthInfo{
-		Token:    c.AuthToken,
-		Username: c.Username,
-		Password: c.Password,
+		Token: c.AuthToken,
 	}
 
-	// Setting Kubernetes Config Contexts
-	log.Printf("🧰 💡 INFO: Setting Kubernetes Config Contexts")
 	config.Contexts["ctx"] = &clientcmdapi.Context{
 		Cluster:  "cluster",
 		AuthInfo: "cluster-auth",
 	}
 
-	// Setting Kubernetes Current Context = CTX
 	config.CurrentContext = "ctx"
-	log.Printf("🧰 💡 INFO: Creating New Non Interatcive Client Config for Kubernetes")
 	clusterConfig := clientcmd.NewNonInteractiveClientConfig(*config, "ctx", &clientcmd.ConfigOverrides{}, nil)
 
-	// Configuring the OpenShift Cluster Client
-	log.Printf("🧰 💡 INFO: Configuring OpenShift Cluster Client")
 	cl, err := clusterConfig.ClientConfig()
 	if err != nil {
-		// Error: Configuring OpenShift Cluster Client
-		log.Printf("🧰 ❌ ERROR: Configuring OpenShift Cluster Client: '%s'. ", err.Error())
-		os.Exit(1) // TODO - RETURN ERROR
-	} else {
-		// Success: Configuring OpenShift Cluster Client
-		log.Printf("🧰 ✅ SUCCESS: OpenShift Cluster Client Configured.")
+		lib.CLog("error", "Configuring OpenShift Cluster Client", err)
 	}
-	// Return Cluster Configuration
 	return cl
 }
 
@@ -144,8 +101,7 @@ func (c *Openshift) ExportNSResources(namespace string, outputPath string) error
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
-			// Error: Unable to get All OpenShift Project
-			log.Printf("🧰 ❌ ERROR: Unable to get All OpenShift Project.")
+			lib.CLog("error", "Unable to get all projects", err)
 			return err
 		}
 		for _, p := range projects.Items {
@@ -157,7 +113,7 @@ func (c *Openshift) ExportNSResources(namespace string, outputPath string) error
 	}
 	for _, res := range resourcelist {
 		// TODO - Hard Coded Values (YAML - LOCAL)
-		log.Printf("🧰 💡 INFO: Exporting object: " + res.Namespace + "\\" + res.Name + " of kind " + res.Kind)
+		lib.CLog("info", "Exporting object: "+res.Namespace+"\\"+res.Name+" of kind "+res.Kind)
 		fileObj := &ops.FileObject{
 			StorageType:   "local",
 			Path:          (outputPath + "/" + res.Namespace + "/" + res.Name),
@@ -167,11 +123,10 @@ func (c *Openshift) ExportNSResources(namespace string, outputPath string) error
 		}
 		err := fileObj.WriteFile()
 		if err != nil {
-			// Error: Error Writing File
 			return err
 		}
 	}
-	// All Successful.
+
 	return nil
 }
 
@@ -183,8 +138,7 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
-			// Error: Unable to get All OpenShift Project
-			log.Printf("🧰 ❌ ERROR: Unable to get All OpenShift Project.")
+			lib.CLog("error", "Unable to get projects", err)
 			return err
 		}
 		for _, p := range projects.Items {
@@ -196,27 +150,20 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 	}
 
 	for _, res := range resourcelist {
-		log.Println("🧰 💡 INFO: Converting object: " + res.Namespace + "\\" + res.Name + " of kind " + res.Kind)
-		// Create Shifter Processor
+		lib.CLog("info", "Converting object: "+res.Namespace+"\\"+res.Name+" of kind "+res.Kind)
+
 		obj, err := processor.Processor(res.Payload.Bytes(), res.Kind, flags)
 		if err != nil {
-			// Error: Unable to Create Shifter Processor
-			log.Printf("🧰 ❌ ERROR: Create Shifter Processor.")
+			lib.CLog("error", "Cannot create shifter processor.", err)
 			return err
-		} else {
-			// Succes: Creating Shifter Processor
-			log.Printf("🧰 ✅ SUCCESS: Shifter Processor Successufly Created.")
 		}
-		// Create Shifer Generator
+
 		convertedObject, err := generator.NewGenerator("yaml", res.Name, obj)
 		if err != nil {
-			// Error: Unable to Create Shifter Generator
-			log.Printf("🧰 ❌ ERROR: Create Shifter Generator.")
+			lib.CLog("error", "Cannot create shifter generator.", err)
 			return err
-		} else {
-			// Succes: Creating Shifter Generator
-			log.Printf("🧰 ✅ SUCCESS: Shifter Generator Successufly Created.")
 		}
+		// TODO - Hard Coded Values (YAML - LOCAL)
 		for _, conObj := range convertedObject {
 			fileObj := &ops.FileObject{
 				StorageType:   "local",
@@ -227,7 +174,6 @@ func (c *Openshift) ConvertNSResources(namespace string, flags map[string]string
 			}
 			err := fileObj.WriteFile()
 			if err != nil {
-				// Error: Error Writing File
 				return err
 			}
 		}
@@ -243,8 +189,7 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
 	} else {
 		projects, err := c.GetAllProjects()
 		if err != nil {
-			// Error: Unable to get All OpenShift Project
-			log.Printf("🧰 ❌ ERROR: Unable to get All OpenShift Project.")
+			lib.CLog("error", "Unable to access OpenShift Project", err)
 			return err
 		}
 		for _, p := range projects.Items {
@@ -256,7 +201,7 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
 	}
 
 	t := table.NewWriter()
-	//t.SetStyle(table.StyleColoredBright)
+	t.SetStyle(table.StyleColoredBright)
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Project", "Kind", "Name", "Payload", "Error"})
 
@@ -269,7 +214,6 @@ func (c *Openshift) ListNSResources(csvoutput bool, namespace string) error {
 		t.RenderCSV()
 	}
 
-	// All Successful
 	return nil
 }
 
@@ -290,15 +234,14 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 	templatev1.AddToScheme(scheme.Scheme)
 	userv1.AddToScheme(scheme.Scheme)
 
-	log.Println("🧰 💡 INFO: Discovering resources from OpenShift Namespace/Project " + namespace)
+	lib.CLog("info", "Discovering resources from OpenShift Namespace "+namespace)
 
 	routes, _ := c.GetAllRoutes(namespace)
-	//log.Println(reflect.TypeOf(routes))
 	for _, y := range routes.Items {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = ROUTE
+		rl.Kind = "Route"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -311,16 +254,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 
@@ -333,7 +272,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = SERVICE
+		rl.Kind = "Service"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -346,16 +285,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -367,7 +302,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = DEPLOYMENTCONFIG
+		rl.Kind = "DeploymentConfig"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -380,16 +315,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -401,7 +332,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = DEPLOYMENT
+		rl.Kind = "Deployment"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -414,16 +345,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -435,7 +362,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = SERVICEACCOUNT
+		rl.Kind = "ServiceAccount"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -448,16 +375,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -469,7 +392,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = STATEFULSET
+		rl.Kind = "StatefulSet"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -482,16 +405,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -503,7 +422,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = BUILD
+		rl.Kind = "Build"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -516,16 +435,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -537,7 +452,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = CONFIGMAP
+		rl.Kind = "ConfigMap"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -550,16 +465,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -571,7 +482,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = IMAGESTREAM
+		rl.Kind = "ImageStream"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -584,16 +495,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -605,7 +512,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = TEMPLATE
+		rl.Kind = "Template"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -618,16 +525,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -639,7 +542,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = JOB
+		rl.Kind = "Job"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -652,16 +555,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -673,7 +572,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = PERSISTENTVOLUMECLAIM
+		rl.Kind = "PersistentVolumeClaim"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -686,16 +585,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -707,7 +602,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = PERSISTENTVOLUME
+		rl.Kind = "PersistentVolume"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -720,16 +615,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
@@ -741,7 +632,7 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		y := y
 		var rl ResourceList
 		rl.Namespace = namespace
-		rl.Kind = SECRET
+		rl.Kind = "Secret"
 		rl.Name = y.ObjectMeta.Name
 		buff := new(bytes.Buffer)
 		writer := bufio.NewWriter(buff)
@@ -754,16 +645,12 @@ func (c *Openshift) getResources(namespace string, yaml bool) []ResourceList {
 		)
 		err := serializer.Encode(&y, writer)
 		if err != nil {
-			// Error: Building Resource List
-			log.Printf("🧰 ❌ ERROR: Building Resource List: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Building resource list for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		err = writer.Flush()
 		if err != nil {
-			// Error: Writing to the Byte Buffer
-			log.Printf("🧰 ❌ ERROR: Writing data to memory: '%s'. ", err.Error())
-			log.Printf("🧰 ❌ ERROR: Error Object Kind: '%s' and Name: '%s'. ", rl.Kind, rl.Name)
+			lib.CLog("error", "Unable to write to buffer for object: "+rl.Kind+" "+rl.Name, err)
 			rl.Error = err
 		}
 		rl.Payload = *buff
