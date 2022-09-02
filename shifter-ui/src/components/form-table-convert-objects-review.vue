@@ -15,7 +15,7 @@
 -->
 
 <template>
-  <div class="container flex-row mx-auto justify-center">
+  <div class="container flex-row mx-auto justify-center text-shifter-white-soft">
     <table class="container table-auto">
       <thead class="text-shifter-red-soft bg-shifter-black text-lg">
         <tr>
@@ -23,16 +23,16 @@
 		  <th>Resource Kind</th>
           <th>Resource Name</th>
           <!--<th>View</th>-->
-          <th>Select</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="r in all" :key="r.resource.UID">
+        <tr align="center" v-for="r in all" :key="r.resource.UID">
           <td>
             {{ r.resource.Namespace }}
           </td>
-		  <td>
-			{{ r.resource.Kind }}
+		      <td>
+			       {{ r.resource.Kind }}
           </td>
           <td>
             {{ r.resource.Name }}
