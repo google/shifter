@@ -12,11 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+	----------------------------------------------------
+		TODO - BULK Error Catch [Long Comment EOF]
+	----------------------------------------------------
+	Currently the API call for convert will take a set of items to be converted. The moment one
+	of these falls over of fails at an point in "the loop". The API call will terminate in error and return.
+
+	Problems with approach:
+		- If you have multiple errors you need to solve each error just to see the next one.
+		- Bad user experience.
+		- Lack of ability for parallel processing and conversion of objects
+
+	Possible Solution:
+		- Construct an error array and allow the loop to complete converting as many objects as possible
+		- Catching all the conversion/lookup/validation records along the way only converting successful objects
+		- Returning successful objects as planned in a downloadable file.
+		- Also enabling us to write out conversion logs and provide them as part of the archive.
+
+	Best Long term Solution:
+		- All of the above +
+		- Factory in Object by Object customization (Object level Flags, Route Changes, Container Re-Writes/tags)
+		- Convert to background job with the ability to list running jobs on the UI with link to completed download archive.
+*/
+
 package api
 
 import (
 	//"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"shifter/generator"
 	"shifter/lib"
@@ -61,13 +86,11 @@ type ConvertedFile struct {
 
 func (server *Server) Convert(ctx *gin.Context) {
 
-	// Create API Unique RUN ID
 	suuid := ops.CreateUUID("") //NESTED TODO - Error Handling
-
+	fmt.Println(suuid)
 	// Log SUID
 	suuid.Meta()
 
-	// Instanciate a Shifter Convert Structure
 	convert := Convert{}
 	if err := ctx.BindJSON(&convert); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -131,7 +154,7 @@ func (server *Server) Convert(ctx *gin.Context) {
 		for _, r := range c.Resource {
 			file := &ops.FileObject{
 				StorageType:   server.config.serverStorage.storageType,
-				Path:          (server.config.serverStorage.outputPath + "/" + c.Namespace + "/" + r.Name),
+				Path:          (server.config.serverStorage.outputPath + "/" + suuid.DirectoryName + "/" + c.Namespace + "/" + r.Name),
 				Ext:           "yaml",
 				Content:       r.Payload,
 				ContentLength: r.Payload.Len(),
@@ -143,59 +166,20 @@ func (server *Server) Convert(ctx *gin.Context) {
 			}
 		}
 	}
+
+	err := ops.Archive(server.config.serverStorage.outputPath, server.config.serverStorage.outputPath, suuid)
+	if err != nil {
+		lib.CLog("error", "Archiving files", err)
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		// Construct API Endpoint Response
+		ResponseConvert{
+			SUUID:   suuid,
+			Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
+		})
+
 	return
 }
-
-/*
-
-
-
-		// Zip / Package Converted Objects
-		//NESTED TODO - Error Handling in Archive Call
-		err := ops.Archive(server.config.serverStorage.sourcePath, server.config.serverStorage.outputPath, suid)
-		if err != nil {
-			// Error: Unable to Archive Directory of Objects
-			log.Printf("🌐 ❌ ERROR: Unable to Archive Directory of Objects, Returning: Status %d.", http.StatusBadRequest)
-			ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		} else {
-			// Succes: Archived Directory of Objects
-			log.Printf("🌐 ✅ SUCCESS: Archived Directory of Converted Objects.")
-		}
-
-		// API Convert Endpoint Successful
-		log.Printf("✅ SUCCESS: API Convert - %d Objects Converted", len(convert.Items))
-		// Return API JSON Response
-		ctx.JSON(
-			http.StatusOK,
-			// Construct API Endpoint Response
-			ResponseConvert{
-				SUID:    suid,
-				Message: "Converted " + fmt.Sprint(len(convert.Items)) + " Objects",
-			})
-	}
-*/
-// API Convert Endpoint Completed
-
-/*
-	----------------------------------------------------
-		TODO - BULK Error Catch [Long Comment EOF]
-	----------------------------------------------------
-	Currently the API call for convert will take a set of items to be converted. The moment one
-	of these falls over of fails at an point in "the loop". The API call will terminate in error and return.
-
-	Problems with approach:
-		- If you have multiple errors you need to solve each error just to see the next one.
-		- Bad user experience.
-		- Lack of ability for parallel processing and conversion of objects
-
-	Possible Solution:
-		- Construct an error array and allow the loop to complete converting as many objects as possible
-		- Catching all the conversion/lookup/validation records along the way only converting successful objects
-		- Returning successful objects as planned in a downloadable file.
-		- Also enabling us to write out conversion logs and provide them as part of the archive.
-
-	Best Long term Solution:
-		- All of the above +
-		- Factory in Object by Object customization (Object level Flags, Route Changes, Container Re-Writes/tags)
-		- Convert to background job with the ability to list running jobs on the UI with link to completed download archive.
-*/
