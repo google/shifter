@@ -22,7 +22,7 @@
       <!-- DOWNLOAD SELECTION -->
       <div class="container flex-row mx-auto justify-center py-12">
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">
             Download Conversion Files
           </div>
           <div class="flex justify-center text-baseline m-2">
