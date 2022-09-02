@@ -26,8 +26,8 @@ import (
 
 func Archive(sourcePath string, outputPath string, suuid SUUID) error {
 
-	lib.CLog("info", "Creating archive file of the results")
 	if _, err := os.Stat(outputPath + "/"); os.IsNotExist(err) {
+		lib.CLog("debug", "Creating archive directories in "+outputPath)
 		err := os.MkdirAll(filepath.Dir(outputPath+"/"), 0700)
 		if err != nil {
 			lib.CLog("error", "Creating archive directories", err)
@@ -35,9 +35,10 @@ func Archive(sourcePath string, outputPath string, suuid SUUID) error {
 		}
 	}
 
+	lib.CLog("debug", "Creating archive zip file in "+outputPath+"/"+suuid.DownloadId+".zip")
 	file, err := os.Create(outputPath + "/" + suuid.DownloadId + ".zip")
 	if err != nil {
-		lib.CLog("error", "Creating archive", err)
+		lib.CLog("error", "Creating archive file", err)
 		return (err)
 	}
 	defer file.Close() // TODO - Fix gosec error
@@ -47,8 +48,7 @@ func Archive(sourcePath string, outputPath string, suuid SUUID) error {
 
 	walker := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			// Error: Traversing Directory
-			log.Printf("🧰 ❌ ERROR: Creating Archive File.")
+			lib.CLog("error", "Walking path", err)
 			return err
 		}
 		if info.IsDir() {
