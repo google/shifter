@@ -15,20 +15,27 @@
  */
 
 module.exports = {
+  darkMode: 'class',
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     colors: {
-      "shifter-black": "#181818",
-      "shifter-black-soft": "#222222",
-      "shifter-black-mute": "#282828",
+      "shifter-black": "#121212",
+      "shifter-black-soft": "#282828",
+      "shifter-black-mute": "#121212",
+
+      "shifter-blur": "#121212",
+
+      "shifter-grey-background": "#fafafa",
 
       "shifter-white": "#ffffff",
-      "shifter-white-soft": "#f8f8f8",
+      "shifter-white-soft": "#e2e2e2",
       "shifter-white-mute": "#f2f2f2",
 
       "shifter-red": "#db212d",
       "shifter-red-soft": "#bd1c27",
       "shifter-red-muted": "#a61e27",
+
+      "shifter-blue": "#6200EE",
 
       "dummy-green": "#4cbd46",
       "dummy-blue": "#6995cf",

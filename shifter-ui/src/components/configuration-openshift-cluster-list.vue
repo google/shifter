@@ -29,7 +29,7 @@ import ConfigurationOpenshiftClusterListItem from "./configuration-openshift-clu
         :v-show="itemCount > 0"
       >
       </ConfigurationOpenshiftClusterListItem>
-      <p class="italic font-bold" v-show="itemCount === 0">
+      <p class="font-bold" v-show="itemCount === 0">
         No Openshift Cluster configurations found.
       </p>
     </div>

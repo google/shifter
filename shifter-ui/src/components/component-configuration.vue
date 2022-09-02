@@ -16,10 +16,10 @@
 
 <script setup>
 // Vue Component Imports
-import ClusterConfiguration from "../components/configutation-cluster-connections.vue";
+import ClusterConfiguration from "../components/configuration-cluster-connections.vue";
 import ShifterServerSettingz from "../components/configuration-shifter-server-settingz.vue";
-import ModalConfigurationOpenshiftClusterAdd from "./modal-configuration-openshift-cluster-add.vue";
-import ModalConfigurationOpenshiftClusterDelete from "./modal-configuration-openshift-cluster-delete.vue";
+import ModalConfigurationOpenshiftClusterAdd from "./modal-configuration-cluster-add.vue";
+import ModalConfigurationOpenshiftClusterDelete from "./modal-configuration-cluster-delete.vue";
 </script>
 
 <template>
@@ -69,11 +69,11 @@ export default {
       show: 0,
       tabs: [
         {
-          title: "Manage Cluster Connections",
+          title: "Cluster Connections",
           component: "ClusterConfiguration",
         },
         {
-          title: "Shifter Server Status",
+          title: "Shifter Server",
           component: "ShifterServerSettingz",
         },
       ],

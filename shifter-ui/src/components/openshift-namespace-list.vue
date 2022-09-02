@@ -21,8 +21,8 @@ import OpenshiftNamespaceListItem from "./openshift-namespace-list-item.vue";
 <template>
   <div class="container">
     <div class="flex items-center mx-6 mb-2">
-      <div class="text-xl font-bold">OpenShift Namespaces</div>
-      <div class="text-sm pl-2">({{ itemCount }})</div>
+      <div class="text-xl font-bold text-shifter-white-soft">Cluster Namespaces</div>
+      <div class="text-sm pl-2 text-shifter-white-soft">({{ itemCount }})</div>
     </div>
     <div class="flex flex-col">
       <OpenshiftNamespaceListItem

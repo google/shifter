@@ -33,7 +33,7 @@
       </div>
     </div>
     <table class="container table-auto">
-      <thead class="uppercase text-shifter-red-soft bg-shifter-black text-lg">
+      <thead class="text-shifter-red-soft bg-shifter-black text-lg">
         <tr>
           <th>Namespace/Project</th>
           <th>Deployment Name</th>
@@ -44,10 +44,14 @@
       <tbody>
         <tr v-for="dc in items" :key="dc.metadata.uid">
           <td>
+            <div class="flex justify-center">
             {{ dc.metadata.Namespace }}
+            </div>
           </td>
           <td>
+            <div class="flex justify-center">
             {{ dc.metadata.Name }}
+            </div>
           </td>
           <td>
             <div class="flex justify-center">

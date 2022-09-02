@@ -16,7 +16,7 @@
 
 <template>
   <div
-    class="z-50 fixed top-30 bg-shifter-red-soft flex items-center justify-center h-full w-screen"
+    class="z-50 fixed top-30 backdrop-blur-sm flex items-center justify-center h-full w-screen"
     :class="showModal ? 'visible' : 'invisible'"
   >
     <div
@@ -24,24 +24,24 @@
     >
       <div class="container flex flex-col mx-auto w-full gap-5">
         <div class="container flex flex-row mx-auto w-full justify-center">
-          <div class="flex flex-row text-xl text-center font-bold">
+          <div class="flex flex-row text-xl text-center font-bold  text-shifter-white-soft">
             Delete Selected Openshift Cluster Configuration
           </div>
         </div>
         <div
           class="container flex flex-row mx-auto w-full text-xl gap-5 justify-center"
         >
-          <div class="flex flex-col w-1/4">
+          <div class="flex flex-col w-1/4 text-shifter-white-soft">
             <a
               @click="deleteClusterConfig"
               class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft py-2 text-center font-bold text-sm"
-              >Yes</a
+              >Delete</a
             >
           </div>
           <div class="flex flex-col w-1/4">
             <a
               @click="closeModal"
-              class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft py-2 text-center font-bold text-sm"
+              class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft py-2 text-center font-bold text-sm  text-shifter-white-soft"
               >Cancel</a
             >
           </div>
