@@ -147,7 +147,7 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
         <div class="container flex-row justify-center items-center">
           <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">Convert</div>
           <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
-            Convert your selected workloads.
+            Convert your selected workloads for GKE & Anthos.
           </div>
         </div>
         <div class="container flex mx-auto justify-center my-4">
