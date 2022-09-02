@@ -17,9 +17,9 @@
 <template>
   <div class="container flex-row mx-auto justify-center">
     <table class="container table-auto">
-      <thead class="uppercase text-shifter-red-soft bg-shifter-black text-lg">
+      <thead class="text-shifter-red-soft bg-shifter-black text-lg">
         <tr>
-          <th>Namespace/Project</th>
+          <th>Namespace</th>
 		  <th>Resource Kind</th>
           <th>Resource Name</th>
           <!--<th>View</th>-->

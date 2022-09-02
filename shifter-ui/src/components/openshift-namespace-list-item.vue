@@ -77,7 +77,7 @@ import OpenshiftResourceList from "./openshift-resource-list.vue";
     <!-- Start Resources -->
     <div
       class="container flex flex-col bg-shifter-black-soft overflow-hidden"
-      v-show="isOpen"
+      v-show="isOpen"  text-shifter-white-soft
     >
       <OpenshiftResourceList 
 	:namespace="namespace.metadata.name"

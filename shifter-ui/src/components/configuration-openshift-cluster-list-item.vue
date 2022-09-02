@@ -21,12 +21,12 @@
     <div class="flex flex-row items-center my-4">
       <!-- Title -->
       <div class="container flex">
-        <p class="text-xl font-bold mx-6">
+        <p class="text-xl font-bold mx-6 text-shifter-white-soft">
           {{ clusterconfig.shifter.clusterConfig.connectionName }}
         </p>
       </div>
       <!-- Actions -->
-      <div class="container flex flex-row-reverse gap-3 mx-6">
+      <div class="container flex flex-row-reverse gap-3 mx-6 text-shifter-white-soft">
         <!-- Action: Delete Cluster Configuration -->
         <div class="flex">
           <!-- Material Design - SVG - trash-can -->
@@ -81,7 +81,7 @@
     >
       <div class="flex flex-col overflow-hidden">
         <div class="flex flex-row my-2">
-          <div class="w-2/6 font-bold">Cluster Connection Name</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Connection Name</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="flex flex-row my-2">
-          <div class="w-2/6 font-bold">Base URL</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Endpoint URL</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
@@ -105,7 +105,7 @@
           </div>
         </div>
         <div class="flex flex-row my-2 grow-0">
-          <div class="w-2/6 font-bold">Openshift User Bearer Token</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Authentication Token</div>
           <div class="w-3/6 overflow-x-auto">
             <textarea
               class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -126,11 +126,11 @@
     >
       <div class="flex flex-col overflow-hidden">
         <div class="flex flex-row my-2">
-          <div class="w-2/6 font-bold">Cluster Connection Name</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Connection Name</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-shifter-black bg-shifter-white-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.connectionName"
               v-model.trim.lazy="shifter.clusterConfig.connectionName"
@@ -138,11 +138,11 @@
           </div>
         </div>
         <div class="flex flex-row my-2">
-          <div class="w-2/6 font-bold">Base URL</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Endpoint URL</div>
           <div class="w-3/6 overflow-x-auto">
             <input
               type="text"
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-shifter-black bg-shifter-white-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlInput1"
               :placeholder="clusterconfig.shifter.clusterConfig.baseUrl"
               v-model.trim.lazy="shifter.clusterConfig.baseUrl"
@@ -150,10 +150,10 @@
           </div>
         </div>
         <div class="flex flex-row my-2 grow-0">
-          <div class="w-2/6 font-bold">Openshift User Bearer Token</div>
+          <div class="w-2/6 font-bold text-shifter-white-soft">Authentication Token</div>
           <div class="w-3/6 overflow-x-auto">
             <textarea
-              class="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-shifter-black-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              class="form-control block w-full px-3 py-1.5 text-base font-normal text-shifter-black bg-shifter-white-soft bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
               id="exampleFormControlTextarea1"
               rows="3"
               :placeholder="clusterconfig.shifter.clusterConfig.bearerToken"
@@ -163,16 +163,16 @@
         </div>
       </div>
       <div>
-        <div class="container flex mx-auto justify-end px-10 gap-4">
+        <div class="container flex mx-auto justify-end px-10 gap-4 text-shifter-white-soft">
           <a
-            class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
-            @click="commitEdit"
-            >Save</a
-          >
-          <a
-            class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+            class="rounded px-6 py-2 bg-shifter-red-soft hover:bg-shifter-red hover:animate-pulse"
             @click="cancelEdit"
             >Cancel</a
+          >
+          <a
+            class="rounded px-6 py-2 bg-shifter-red hover:bg-shifter-red hover:animate-pulse"
+            @click="commitEdit"
+            >Save</a
           >
         </div>
       </div>

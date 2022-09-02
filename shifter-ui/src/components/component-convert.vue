@@ -28,7 +28,7 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
       class="container flex-row mx-auto bg-shifter-black-mute justify-center rounded-2xl py-6"
     >
       <div
-        class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12"
+        class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12 text-shifter-white-soft"
       >
         <div
           v-for="step in activeSteps"
@@ -62,17 +62,16 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">
             Cluster Selection
           </div>
-          <div class="flex justify-center text-baseline m-2">
-            Select OpenShift cluster from which you would like to convert
-            workloads
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
+            Select the source cluster
           </div>
         </div>
         <div class="container flex mx-auto justify-center my-4">
           <select
-            class="flex justify-center w-1/4 p-2 m-2 bg-shifter-black rounded"
+            class="flex justify-center w-1/4 p-2 m-2 bg-shifter-white-soft text-shifter-black rounded"
             id="cluster"
             @change="changeCluster($event)"
             v-model="clusterId"
@@ -108,14 +107,14 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">
-            OpenShift Resource Selection
+          <div class="flex justify-center bold text-4xl m-2  text-shifter-white-soft">
+            Resource Selection
           </div>
-          <div class="flex justify-center text-baseline m-2">
+          <div class="flex justify-center text-baseline m-2  text-shifter-white-soft">
             Select the resources for migration.
           </div>
         </div>
-        <div class="container flex mx-auto justify-center my-4">
+        <div class="container flex mx-auto justify-center my-4  text-shifter-white-soft">
           <OpenshiftNamespaceList class="mx-4 w-full lg:w-1/2" />
           <!--<ListConvertNamespaceObjects />-->
           <!--<FormTableConvertObjects />-->
@@ -129,8 +128,8 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">Object Review</div>
-          <div class="flex justify-center text-baseline m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">Object Review</div>
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
             Review configurations selected for conversion.
           </div>
         </div>
@@ -146,8 +145,8 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">Convert</div>
-          <div class="flex justify-center text-baseline m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">Convert</div>
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
             Convert your selected workloads.
           </div>
         </div>
@@ -164,13 +163,13 @@ import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-j
       <div class="container flex mx-auto justify-end px-10 gap-4">
         <a
           v-show="currentStep > 1"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="uppercase rounded px-6 py-2 bg-shifter-black text-shifter-white-soft hover:bg-shifter-red hover:animate-pulse"
           :onclick="previousStep"
           >Previous</a
         >
         <a
           v-show="stepValid"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="uppercase rounded px-6 py-2 bg-shifter-black text-shifter-white-soft hover:bg-shifter-red hover:animate-pulse"
           :onclick="nextStep"
           >Next</a
         >
@@ -219,7 +218,7 @@ export default {
         {
           id: 5,
           title: "Results",
-          enabled: false,
+          enabled: true,
         },
       ],
     };
