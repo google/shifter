@@ -1,13 +1,29 @@
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
 <script setup>
 // Vue Component Imports
-import OpenshiftDeploymentConfigListItem from "./openshift-deploymentconfig-list-item.vue";
+import OpenshiftResourceListItem from "./openshift-resource-list-item.vue";
 </script>
 <template>
   <div class="container mb-4">
     <div class="flex flex-row items-center my-2">
       <!-- Title -->
       <div class="container flex">
-        <p class="font-bold mx-6">Deployment Configs ({{ itemCount }})</p>
+        <p class="font-bold mx-6">Resources ({{ itemCount }})</p>
       </div>
       <!-- Actions -->
       <div class="container flex flex-row-reverse gap-3 mx-6">
@@ -56,18 +72,12 @@ import OpenshiftDeploymentConfigListItem from "./openshift-deploymentconfig-list
         <!-- End Action -->
       </div>
     </div>
-    <!-- Start Deployment Configs Items -->
+    <!-- Start Resource Items -->
     <div class="flex flex-col ml-6" v-show="isOpen">
-      <OpenshiftDeploymentConfigListItem
-        v-for="deploymentConfig in osDeploymentConfigs"
-        :key="deploymentConfig.metadata.uid"
-        :deploymentconfig="deploymentConfig"
-        :v-show="itemCount > 0"
-      >
-      </OpenshiftDeploymentConfigListItem>
+      <OpenshiftResourceListItem v-for="resource in osResources" :key="resource.Name" :resource="resource" :v-show="itemCount > 0"></OpenshiftResourceListItem>
       <p v-show="itemCount === 0">No {{ itemType }} found in this Namespace</p>
     </div>
-    <!-- End Deployment Config Items -->
+    <!-- End Resource Items -->
   </div>
 </template>
 
@@ -79,7 +89,7 @@ import { notifyAxiosError } from "@/notifications";
 // Axios Imports
 import axios from "axios";
 // External Pinia Store Imports
-import { useConvertObjects } from "../stores/convert/convert";
+import { useConvertObjects } from "../stores/convert/convertv2";
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
 import { useConfigurationsLoading } from "../stores/configurations/loading";
 // Instansitate Pinia Store Objects
@@ -97,10 +107,11 @@ export default {
   },
   data() {
     return {
-      apiEndpoint: "/openshift/deploymentconfigs/",
-      itemType: "Deployment Configs",
+      apiEndpoint: "/openshift/",
+      apiEndpoint2: "/resources/",
+      itemType: "Resources",
       isOpen: false,
-      osDeploymentConfigs: [],
+      osResources: [],
     };
   },
   watch: {},
@@ -120,62 +131,50 @@ export default {
       // API Endpoint Configuration
       const config = {
         method: "post",
-        url: shifterConfig.API_BASE_URL + this.apiEndpoint + this.namespace,
+        url: shifterConfig.API_BASE_URL + this.apiEndpoint + "projects/" + this.namespace + this.apiEndpoint2,
         headers: {},
         data: {
-          ...storeConfigClusters.getCluster(
-            storeConvertObjects.selectedCluster.id
-          ),
+          ...storeConfigClusters.getCluster(storeConvertObjects.selectedCluster.id),
         },
         timeout: 2000,
       };
       try {
         /*storeConfigLoading.startLoading(
           "Loading...",
-          "Fetching OpenShift Deployment Configurations"
+          "Fetching OpenShift Resourcess"
         );*/
-        this.osDeploymentConfigs = [];
-        this.osDeploymentConfigs = await axios(config)
+        this.osResources = [];
+        this.osResources = await axios(config)
           .then((response) => {
             // handle success
             storeConfigLoading.endLoading();
-            return response.data.deploymentConfigs.items;
+	    console.log(response);
+            return response.data.Resources;
           })
           .catch((err) => {
             console.log(err);
-            notifyAxiosError(
-              err,
-              "Problem Loading OpenShift Deployment Configurations",
-              6000
-            );
+            notifyAxiosError(err, "Problem Loading OpenShift Resources", 6000);
             storeConfigLoading.endLoading();
             return err;
           });
       } catch (err) {
         console.log(err);
-        this.osDeploymentConfigs = [];
-        notifyAxiosError(
-          err,
-          "Problem Loading OpenShift Deployment Configurations",
-          6000
-        );
+        this.osResources = [];
+        notifyAxiosError(err, "Problem Loading OpenShift Resources", 6000);
         storeConfigLoading.endLoading();
         return err;
       }
     },
   },
-
   computed: {
     ...mapState(useConfigurationsClusters, {
       configurationClusters: "getActiveClusters",
     }),
 
     itemCount() {
-      if (
-        this.osDeploymentConfigs !== undefined &&
-        this.osDeploymentConfigs.length >= 0
-      ) {
-        return this.osDeploymentConfigs.length;
+      console.log(this.osResources.length);
+      if (this.osResources !== undefined && this.osResources.length >= 0) {
+        return this.osResources.length;
       }
       return 0;
     },

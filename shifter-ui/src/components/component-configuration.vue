@@ -1,9 +1,25 @@
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
 <script setup>
 // Vue Component Imports
-import ClusterConfiguration from "../components/configutation-cluster-connections.vue";
+import ClusterConfiguration from "../components/configuration-cluster-connections.vue";
 import ShifterServerSettingz from "../components/configuration-shifter-server-settingz.vue";
-import ModalConfigurationOpenshiftClusterAdd from "./modal-configuration-openshift-cluster-add.vue";
-import ModalConfigurationOpenshiftClusterDelete from "./modal-configuration-openshift-cluster-delete.vue";
+import ModalConfigurationOpenshiftClusterAdd from "./modal-configuration-cluster-add.vue";
+import ModalConfigurationOpenshiftClusterDelete from "./modal-configuration-cluster-delete.vue";
 </script>
 
 <template>
@@ -53,11 +69,11 @@ export default {
       show: 0,
       tabs: [
         {
-          title: "Manage Cluster Connections",
+          title: "Cluster Connections",
           component: "ClusterConfiguration",
         },
         {
-          title: "Shifter Server Status",
+          title: "Shifter Server",
           component: "ShifterServerSettingz",
         },
       ],
