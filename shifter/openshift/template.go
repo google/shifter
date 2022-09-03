@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/template/v1"
 	templatev1 "github.com/openshift/client-go/template/clientset/versioned"
@@ -25,31 +25,31 @@ import (
 func (c Openshift) GetAllTemplates(namespace string) (*v1.TemplateList, error) {
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.TemplateList{}, err
 	}
 
 	templates, err := cluster.TemplateV1().Templates(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Templates from Namespace: "+namespace, err)
 		return &v1.TemplateList{}, err
 	}
-
-	return templates, nil
+	lib.CLog("debug", "Getting Templates from Namespace: "+namespace)
+	return templates, err
 }
 
 func (c Openshift) GetTemplate(name string, namespace string) (*v1.Template, error) {
 	cluster, err := templatev1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Template{}, err
 	}
 
 	template, err := cluster.TemplateV1().Templates(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Template with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Template{}, err
 	}
-
-	return template, nil
+	lib.CLog("info", "Getting Template with Name: "+name+" from Namespace: "+namespace)
+	return template, err
 }

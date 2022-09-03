@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/route/v1"
 	os "github.com/openshift/client-go/route/clientset/versioned"
@@ -25,32 +25,31 @@ import (
 func (c Openshift) GetAllRoutes(namespace string) (*v1.RouteList, error) {
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.RouteList{}, err
 	}
 
 	routeList, err := cluster.RouteV1().Routes(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Routes from Namespace: "+namespace, err)
 		return &v1.RouteList{}, err
 	}
-
-	return routeList, nil
-
+	lib.CLog("debug", "Getting Routes from Namespace: "+namespace)
+	return routeList, err
 }
 
 func (c Openshift) GetRoute(name string, namespace string) (*v1.Route, error) {
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Route{}, err
 	}
 
 	route, err := cluster.RouteV1().Routes(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Route with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Route{}, err
 	}
-
-	return route, nil
+	lib.CLog("info", "Getting Route with Name: "+name+" from Namespace: "+namespace)
+	return route, err
 }

@@ -13,44 +13,43 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"shifter/lib"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
 func (c Openshift) GetAllServiceAccounts(namespace string) (*v1.ServiceAccountList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ServiceAccountList{}, err
 	}
 
-	object, err := cluster.CoreV1().ServiceAccounts(namespace).List(context.TODO(), metav1.ListOptions{})
+	serviceAccounts, err := cluster.CoreV1().ServiceAccounts(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting ServicesAccounts from Namespace: "+namespace, err)
 		return &v1.ServiceAccountList{}, err
 	}
-
-	return object, nil
-
+	lib.CLog("debug", "Getting ServiceAccounts from Namespace: "+namespace)
+	return serviceAccounts, err
 }
 
 func (c Openshift) GetServiceAccount(name string, namespace string) (*v1.ServiceAccount, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ServiceAccount{}, err
 	}
 
-	object, err := cluster.CoreV1().ServiceAccounts(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	serviceAccount, err := cluster.CoreV1().ServiceAccounts(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting ServiceAccount with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.ServiceAccount{}, err
 	}
-
-	return object, nil
+	lib.CLog("info", "Getting ServiceAccount with Name: "+name+" from Namespace: "+namespace)
+	return serviceAccount, err
 }

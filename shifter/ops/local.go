@@ -1,64 +1,81 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package ops
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"path/filepath"
+	"shifter/lib"
 )
 
-func (fileObj *FileObject) WriteLCLFile() {
+// Write bytes.Buffer to Local File System
+func (fileObj *FileObject) WriteLCLFile() error {
+	lib.CLog("debug", "Writing file object to local file system")
 
-	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
-		os.MkdirAll(filepath.Dir(fileObj.Path), 0700) // Create output directory
+	// Check if Output Directory Exits, IF Not, Make output Directory
+	lib.CLog("debug", "Path: "+filepath.Dir(fileObj.Path))
+	if _, err := os.Stat(filepath.Dir(fileObj.Path)); os.IsNotExist(err) {
+		lib.CLog("info", "Output directory does not exist... creating")
+		err := os.MkdirAll(filepath.Dir(fileObj.Path), 0700)
+		if err != nil {
+			lib.CLog("error", "Unable to create output directory", err)
+			return err
+		}
 	}
 
-	// Create New File
 	fileName := fileObj.Path + "." + fileObj.Ext
-	log.Println("Writing to " + fileName)
-	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0700)
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
-		log.Println(err)
-		return
+		lib.CLog("error", "creating new file"+fileName, err)
+		return err
 	}
-	defer f.Close()
+
+	defer f.Close() // TODO - Address goSec Error
+
 	f.WriteString("---\n")
-	// Write the Bytes Buffer to File
 	_, err = f.Write(fileObj.Content.Bytes())
 	if err != nil {
-		log.Println(err)
-		return
+		lib.CLog("error", "Writing content to file "+fileName, err)
+		return err
 	}
-	f.Sync()
+
+	err = f.Sync()
+	if err != nil {
+		lib.CLog("error", "Writing content to file "+fileName, err)
+		return err
+	}
+
+	lib.CLog("debug", "Files written to local file system")
+	return nil
 }
 
-func (fileObj *FileObject) LoadLCLFile() {
-
+func (fileObj *FileObject) LoadLCLFile() error {
 	file, err := os.Open(fileObj.Path)
 	if err != nil {
-		log.Println(err)
-		return
+		lib.CLog("error", "Opening file from local file system: "+fileObj.Path, err)
+		return err
 	}
-	log.Printf("Reading %v", fileObj.Path)
-	defer file.Close()
+
+	lib.CLog("debug", "Reading file - "+fileObj.Path)
+	defer file.Close() // TODO - Address goSec Error
 
 	fileinfo, err := file.Stat()
 	if err != nil {
-		log.Println(err)
-		return
+		lib.CLog("error", "Getting file information for file: "+fileObj.Path, err)
+		return err
 	}
 
 	filesize := fileinfo.Size()
@@ -66,61 +83,57 @@ func (fileObj *FileObject) LoadLCLFile() {
 
 	bytesread, err := file.Read(buffer)
 	if err != nil {
-		log.Println(err)
-		return
+		lib.CLog("error", "Error reading source file", err)
+		return err
+	} else {
+		lib.CLog("debug", "File contents loaded into Buffer.")
 	}
 
-	// Set FileObject Content & Length MetaData
 	fileObj.Content = *bytes.NewBuffer(buffer)
 	fileObj.ContentLength = bytesread
+
+	return nil
 }
 
 func ProcessLCLPath(path string) ([]*FileObject, error) {
 	var files []*FileObject
-	//Get File Info on Path
 	fileInfo, err := os.Stat(path)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		lib.CLog("error", "Unable to get file information for "+path, err)
+		return files, err
 	}
-	// Check File or Directory
+	lib.CLog("debug", "Reading file information from: "+path)
+
 	switch mode := fileInfo.Mode(); {
 
-	// Is Directory
 	case mode.IsDir():
 		err := filepath.Walk(path, func(filePath string, f os.FileInfo, err error) error {
 			if !f.IsDir() {
-				// Create File Object for every file in Directory
 				fileObj := &FileObject{
 					StorageType: LCL,
 					Path:        filePath,
 					Ext:         filepath.Ext(filePath),
 					Filename:    filepath.Base(filePath),
 				}
-				// Add File Object to Array of Files
 				files = append(files, fileObj)
 			}
 			return err
 		})
 		if err != nil {
-			log.Println(err)
+			lib.CLog("error", "Unable to traverse filepath", err)
 			return files, err
 		}
 		return files, err
 
-	// Is A File
 	case mode.IsRegular():
-		// Create File Object for file
 		fileObj := &FileObject{
 			StorageType: LCL,
 			Path:        path,
 			Ext:         filepath.Ext(path),
 			Filename:    filepath.Base(path),
 		}
-		// Add File Object to Array of Files
 		files = append(files, fileObj)
 	}
 
-	// Return Array of Files
 	return files, nil
 }

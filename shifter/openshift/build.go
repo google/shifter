@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/build/v1"
 	os "github.com/openshift/client-go/build/clientset/versioned"
@@ -25,32 +25,32 @@ import (
 func (c Openshift) GetAllBuilds(namespace string) (*v1.BuildList, error) {
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.BuildList{}, err
 	}
 
 	buildList, err := cluster.BuildV1().Builds(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Builds from Namespace: "+namespace, err)
 		return &v1.BuildList{}, err
 	}
-
-	return buildList, nil
-
+	lib.CLog("debug", "Getting Builds from Namespace: "+namespace)
+	return buildList, err
 }
 
 func (c Openshift) GetBuild(name string, namespace string) (*v1.Build, error) {
 	cluster, err := os.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Build{}, err
 	}
 
 	build, err := cluster.BuildV1().Builds(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Build with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Build{}, err
 	}
+	lib.CLog("info", "Getting Build with Name: "+name+" from Namespace: "+namespace)
 
 	return build, nil
 }

@@ -5,6 +5,7 @@ The Shifter Web UI is written in Vue3 with Vite as the Development server.
 ### Compile and Hot-Reload for Development
 
 ```sh
+npm install
 npm run dev
 ```
 

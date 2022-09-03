@@ -1,14 +1,46 @@
+# Copyright 2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 steps:
 - id: "Go Binary Test"
   name: golang
   args: ['make', 'test']
   waitFor: ['-']
+- id: "Gosec Security Scan"
+  name: golang
+  entrypoint: 'bash'
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    echo " ============= Running GoSec Scan =============" &&
+    go install github.com/securego/gosec/v2/cmd/gosec@latest &&
+    gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
 - id: "Go Binary Make"
   name: golang
+  entrypoint: 'bash'
   env:
   - 'GOOS=linux'
   - 'GOARCH=amd64'
-  args: ['make', 'build']
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    go install github.com/securego/gosec/v2/cmd/gosec@latest &&
+    make build
 - id: "Go Server Docker Image"
   name: "gcr.io/cloud-builders/docker"
   entrypoint: "sh"
@@ -21,3 +53,4 @@ artifacts:
   objects:
     location: gs://${PROJECT_ID}-builds/shifter-server/$BRANCH_NAME/
     paths: ['shifter_*']
+timeout: 3600s

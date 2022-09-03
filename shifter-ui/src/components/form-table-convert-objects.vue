@@ -1,3 +1,19 @@
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
 <template>
   <div class="container flex-row mx-auto justify-center">
     <div class="container flex-row mx-auto bg-shifter-black">
@@ -17,7 +33,7 @@
       </div>
     </div>
     <table class="container table-auto">
-      <thead class="uppercase text-shifter-red-soft bg-shifter-black text-lg">
+      <thead class="text-shifter-red-soft bg-shifter-black text-lg">
         <tr>
           <th>Namespace/Project</th>
           <th>Deployment Name</th>
@@ -28,10 +44,14 @@
       <tbody>
         <tr v-for="dc in items" :key="dc.metadata.uid">
           <td>
-            {{ dc.metadata.namespace }}
+            <div class="flex justify-center">
+            {{ dc.metadata.Namespace }}
+            </div>
           </td>
           <td>
-            {{ dc.metadata.name }}
+            <div class="flex justify-center">
+            {{ dc.metadata.Name }}
+            </div>
           </td>
           <td>
             <div class="flex justify-center">
@@ -66,8 +86,8 @@
 
 <script>
 // Pinia Store Imports
-import { useOSDeploymentConfigs } from "../stores/openshift/deployment-configs";
-import { useConvertObjects } from "../stores/convert/convert";
+import { useOSResources } from "../stores/openshift/resources";
+import { useConvertObjects } from "../stores/convert/convertv2";
 import { useJSONModal } from "../stores/convert/jsonModal";
 // Plugin & Package Imports
 import { mapActions, mapState } from "pinia";
@@ -100,9 +120,9 @@ export default {
     ...mapState(useConvertObjects, {
       isSelected: "isSelected",
     }),
-    ...mapState(useOSDeploymentConfigs, { all: "all" }),
-    loadedDeploymentConfigs() {
-      return this.osDeploymentConfigs;
+    ...mapState(useOSResources, { all: "all" }),
+    loadedResources() {
+      return this.osResources;
     },
 
     items() {
@@ -119,6 +139,7 @@ export default {
 
     itemsTo() {
       if (this.all.length <= this.itemsFrom + this.itemsMax) {
+		console.log(this.all.length);
         return this.all.length;
       }
       return this.itemsFrom + this.itemsMax - 1;

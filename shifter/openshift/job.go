@@ -13,44 +13,43 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"shifter/lib"
+
 	v1 "k8s.io/api/batch/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
 func (c Openshift) GetAllJobs(namespace string) (*v1.JobList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.JobList{}, err
 	}
 
 	jobList, err := cluster.BatchV1().Jobs(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Jobs from Namespace: "+namespace, err)
 		return &v1.JobList{}, err
 	}
-
-	return jobList, nil
-
+	lib.CLog("debug", "Getting Jobs from Namespace: "+namespace)
+	return jobList, err
 }
 
 func (c Openshift) GetJob(name string, namespace string) (*v1.Job, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Job{}, err
 	}
 
 	job, err := cluster.BatchV1().Jobs(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Job with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.Job{}, err
 	}
-
-	return job, nil
+	lib.CLog("info", "Getting Job with Name: "+name+" from Namespace: "+namespace)
+	return job, err
 }

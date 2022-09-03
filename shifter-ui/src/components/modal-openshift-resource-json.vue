@@ -1,26 +1,34 @@
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
 <template>
   <div
     class="container flex-row absolute items-center w-full h-full bg-shifter-black-soft border rounded-2xl overflow-y-auto"
     :class="showJSONModal ? 'visible' : 'invisible'"
   >
-    <div class="container flex-row mx-auto bg-shifter-black- text-xl">
+    <div class="container flex-row mx-auto backdrop-blur-sm text-xl">
       <div
         class="container flex mx-auto justify-end p-4 bg-shifter-black-mute gap-4"
       >
-        <a
-          @click="closeModal"
-          class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft hover:animate-pulse"
-          >Close</a
-        >
+      <div class="container flex font-bold hover:animate-pulse cursor cursor-pointer text-shifter-white-soft justify-left">Resource Source</div>
+        <a @click="closeModal" class="rounded bg-shifter-red-soft rounded border border-shifter-red-soft px-6 my-1 hover:bg-shifter-red-soft over:animate-pulse">Close</a>
       </div>
     </div>
     <div class="container flex mx-auto justify-end px-4 py-10">
       <div class="container flex flex-row mx-auto">
-        <div
-          class="container flex w-1/4 mr-4 text-lg font-bold hover:animate-pulse cursor cursor-pointer"
-        >
-          Deployment Config JSON
-        </div>
         <div class="container flex w-3/4 bg-shifter-black-soft text-sm">
           <pre v-html="content"></pre>
         </div>

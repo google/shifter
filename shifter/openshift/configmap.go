@@ -13,44 +13,44 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"shifter/lib"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
 func (c Openshift) GetAllConfigMaps(namespace string) (*v1.ConfigMapList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ConfigMapList{}, err
 	}
 
 	configmapList, err := cluster.CoreV1().ConfigMaps(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting ConfigMaps from Namespace: "+namespace, err)
 		return &v1.ConfigMapList{}, err
 	}
-
-	return configmapList, nil
-
+	lib.CLog("debug", "Getting ConfigMaps from Namespace: "+namespace)
+	return configmapList, err
 }
 
 func (c Openshift) GetConfigMap(name string, namespace string) (*v1.ConfigMap, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ConfigMap{}, err
 	}
 
 	configmap, err := cluster.CoreV1().ConfigMaps(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting ConfigMap with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.ConfigMap{}, err
 	}
+	lib.CLog("info", "Getting ConfigMap with Name: "+name+" from Namespace: "+namespace)
+	return configmap, err
 
-	return configmap, nil
 }

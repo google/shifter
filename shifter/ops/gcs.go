@@ -1,15 +1,16 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package ops
 
@@ -26,6 +27,7 @@ import (
 	"google.golang.org/api/iterator"
 )
 
+// TODO - Error Handling
 // Takes GCS Bucket Path and Returns the Bucket & File Path
 func GCSPathDeconstruction(gscPath string) (string, string) {
 	route := strings.SplitN(strings.ReplaceAll(gscPath, "gs://", ""), "/", 2)
@@ -39,14 +41,20 @@ func GCSPathDeconstruction(gscPath string) (string, string) {
 }
 
 // Write bytes.Buffer to GSC Bucket as File
-func (fileObj *FileObject) WriteGCSFile() {
+func (fileObj *FileObject) WriteGCSFile() error {
+	log.Printf("🧰 💡 INFO: Writing Shifter File Object to GCS")
 
 	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Println("Error connecting to GCS")
+		// Error: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ❌ ERROR: Connecting to Provided GCS Bucket: '%s'.", fileObj.Path)
+		return err
+	} else {
+		// Success: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ✅ SUCCESS: Connecting to Provided GCS Bucket: '%s'.", fileObj.Path)
 	}
 	defer client.Close()
 
@@ -57,23 +65,43 @@ func (fileObj *FileObject) WriteGCSFile() {
 	wc.ChunkSize = 0
 
 	if _, err = io.Copy(wc, &fileObj.Content); err != nil {
-		log.Println("io.Copy: ", err)
+		// Error: Writing to GCS Bucket
+		log.Printf("🧰 ❌ ERROR: Writing Content to GCS Bucket: '%s'.", fileObj.Path)
+		return err
+	} else {
+		// Success: Writing to GCS Bucket
+		log.Printf("🧰 ✅ SUCCESS: Writing Content to GCS Bucket: '%s'.", fileObj.Path)
 	}
 
 	if err := wc.Close(); err != nil {
-		log.Println("Writer.Close: ", err)
+		// Error: Closing GCS Bucket Writer
+		log.Printf("🧰 ❌ ERROR: Unable to close GCS Bucket Writer.")
+		return err
+	} else {
+		// Success: GCS Writer Closed
+		log.Printf("🧰 ✅ SUCCESS: Closing GCS Bucket Writer: '%s'.", fileObj.Path)
 	}
+
+	// Successfull Writen file to GCS Bucket
+	log.Printf("🧰 ✅ SUCCESS: File written to GCS Bucket: '%s'.", fileObj.Path)
+	return nil
 }
 
 // Load GSC File from Bucket to bytes.Buffer
-func (fileObj *FileObject) LoadGCSFile() {
+func (fileObj *FileObject) LoadGCSFile() error {
+	log.Printf("🧰 💡 INFO: Loading Shifter File Object from GCS")
 
 	bucket, prefix := GCSPathDeconstruction(fileObj.Path)
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Fatal(err)
+		// Error: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ❌ ERROR: Connecting to Provided GCS Bucket File: '%s'.", fileObj.Path)
+		return err
+	} else {
+		// Success: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ✅ SUCCESS: Connecting to Provided GCS Bucket: '%s'.", fileObj.Path)
 	}
 
 	// Configure Client to Bucket Path
@@ -81,26 +109,43 @@ func (fileObj *FileObject) LoadGCSFile() {
 
 	rc, err := bkt.Object(prefix).NewReader(ctx)
 	if err != nil {
-		log.Println("readFile: unable to open file from bucket")
-		return
+		// Error: Unable to open file in GCS Bucket
+		log.Printf("🧰 ❌ ERROR: Unable to open file in GCS Bucket:'%s'", bucket)
+		return err
+	} else {
+		// Success: Opening file in GCS Bucket
+		log.Printf("🧰 ✅ SUCCESS: Opening file in GCS Bucket: '%s'.", fileObj.Path)
 	}
 	defer rc.Close()
 
+	// Attempt to Read File Contents to buffer.
 	r, err := bkt.Object(prefix).NewReader(ctx)
 	if err != nil {
-		log.Println(err)
-		return
-		// TODO: Handle error.
+		// ERROR: Reading GCS file contents into Bytes Buffer
+		log.Printf("🧰 ❌ ERROR: Reading GCS file contents into Buffer.")
+		return err
+	} else {
+		// SCUCCESS: Reading Local File System File
+		log.Printf("🧰 ✅ SUCCESS: Reading Shifter File Object from Local Filesystem.")
 	}
 	defer r.Close()
 
 	data, err := io.ReadAll(r)
 	if err != nil {
-		log.Println(err)
-		return
+		// ERROR: Reading file contents into Buffer
+		log.Printf("🧰 ❌ ERROR: Reading file contents into Buffer.")
+		return err
+	} else {
+		// Success: Reading file contents into Buffer
+		log.Printf("🧰 ✅ SUCCESS: Reading file contents into Buffer.")
 	}
+
 	fileObj.Content = *bytes.NewBuffer(data)
 	fileObj.ContentLength = len(data)
+
+	// SCUCCESS: Reading Local File System File
+	log.Printf("🧰 ✅ SUCCESS: Reading Shifter File Object from GCS Bucket.")
+	return nil
 }
 
 // Walk a GCS Path and Retrieve a list og Files
@@ -114,7 +159,12 @@ func ProcessGCSPath(path string) ([]*FileObject, error) {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Fatal(err)
+		// Error: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ❌ ERROR: Connecting to Provided GCS Bucket: '%s'.", bucket)
+		return files, err
+	} else {
+		// Success: Connecting to Provided GCS Bucket
+		log.Printf("🧰 ✅ SUCCESS: Connecting to Provided GCS Bucket: '%s'.", bucket)
 	}
 
 	// Configure Client to Bucket Path
@@ -128,7 +178,12 @@ func ProcessGCSPath(path string) ([]*FileObject, error) {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			// Error: Filtering GCS Bucket Contents
+			log.Printf("🧰 ❌ ERROR: Filtering GCS Bucket Contents.")
+			return files, err
+		} else {
+			// Success: Filtering GCS Bucket Contents
+			log.Printf("🧰 ✅ SUCCESS: Filtering GCS Bucket Contents")
 		}
 
 		// Create File Object for every file in Bucket
@@ -141,5 +196,6 @@ func ProcessGCSPath(path string) ([]*FileObject, error) {
 		files = append(files, fileObj)
 	}
 
+	// Success Processing GCS File Path
 	return files, nil
 }

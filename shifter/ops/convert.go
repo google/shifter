@@ -1,25 +1,28 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package ops
 
 import (
-	"github.com/google/uuid"
 	"log"
 	"path/filepath"
 	"shifter/generator"
 	"shifter/input"
 	"shifter/lib"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 type LogObject struct {
@@ -44,114 +47,136 @@ type DownloadFile struct {
 	Filename string `json:"filename"`
 }
 
-// Input Types
-const YAML string = "YAML"
-const TEMPLATE string = "template"
-
 // Create New Converter
-func NewConverter(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) *Converter {
-	// Create New Instance of Converter
+func NewConverter(inputType string, sourcePath string, generator string, outputPath string, flags map[string]string) (*Converter, error) {
 	converter := &Converter{}
-
-	// Create UUID for Converter
 	converter.UUID = uuid.New().String()
 
-	// Set all the Variables for the Converter
 	converter.InputType = inputType
 	converter.SourcePath = sourcePath
 	converter.Generator = generator
 	converter.OutputPath = outputPath
 	converter.Flags = flags
 
-	// Process the Path and Create Array of File Objects
 	files, err := ProcessPath(converter.SourcePath)
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Processing file source path", err)
+		return converter, err
 	}
 
-	// Set Converter Files
 	converter.SourceFiles = files
 	if len(converter.SourceFiles) > 0 {
-		converter.LoadSourceFiles()
+		err := converter.LoadSourceFiles()
+		if err != nil {
+			lib.CLog("error", "Loading source files", err)
+			return converter, err
+		}
 	}
 
-	return converter
+	return converter, nil
 }
 
-func (converter *Converter) WriteSourceFiles() {
+func (converter *Converter) WriteSourceFiles() error {
+	lib.CLog("info", "Writing to destination files")
+	for _, file := range converter.SourceFiles {
+		err := file.WriteFile()
+		if err != nil {
+			lib.CLog("error", "Loading source files", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func (converter *Converter) LoadSourceFiles() error {
+	lib.CLog("info", "Reading all source files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
-		file.WriteFile()
+		err := file.LoadFile()
+		if err != nil {
+			lib.CLog("error", "Loading source files", err)
+			return err
+		}
 	}
+	return nil
 }
 
-func (converter *Converter) LoadSourceFiles() {
-	// Process Input Objects
-	for _, file := range converter.SourceFiles {
-		file.LoadFile()
-	}
-}
-
-func (converter *Converter) ListSourceFiles() {
+func (converter *Converter) ListSourceFiles() error {
+	lib.CLog("info", "Listing all source files")
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
 		file.Meta()
 	}
+	return nil
 }
 
-func (converter *Converter) ListOutputFiles() {
+func (converter *Converter) ListOutputFiles() error {
+	log.Printf("🧰 💡 INFO: Listing all Output Files")
 	// Process Input Objects
 	for _, file := range converter.OutputFiles {
 		file.Meta()
 	}
+	return nil
 }
 
-func (converter *Converter) ConvertFiles() {
+func (converter *Converter) ConvertFiles() error {
 	// Process Input Objects
 	for _, file := range converter.SourceFiles {
 
-		var r []lib.Converted
-		switch converter.InputType {
+		var (
+			resources  []lib.Converted
+			err        error
+			sourceFile []lib.K8sobject
+			values     []lib.OSTemplateParams
+		)
+
+		switch strings.ToLower(converter.InputType) {
+		// Input Type == YAML
 		case "yaml":
-			sourceFile := input.Yaml(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile)
+			sourceFile, err := input.Yaml(file.Content, converter.Flags)
+			if err != nil {
+				lib.CLog("error", "Parsing yaml", err)
+				return err
+			}
+			resources, err = generator.NewGenerator(converter.Generator, file.Filename, sourceFile)
+			if err != nil {
+				lib.CLog("error", "Unable to create generator "+converter.Generator, err)
+				return err
+			}
 		case "template":
-			sourceFile, values := input.Template(file.Content, converter.Flags)
-			r = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
+			sourceFile, values, err = input.Template(file.Content, converter.Flags)
+			if err != nil {
+				lib.CLog("error", "Parsing template", err)
+				return err
+			}
+			resources, err = generator.NewGenerator(converter.Generator, file.Filename, sourceFile, values)
+			if err != nil {
+				lib.CLog("error", "unable to create generator "+converter.Generator, err)
+				return err
+			}
 		}
 
-		//outputFileName := fmt.Sprint(idx)
-		for k := range r {
+		for k := range resources {
 			fileObj := &FileObject{
 				StorageType: file.StorageType,
 				//SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
-				Path:          (converter.OutputPath + "/" + r[k].Path + r[k].Name),
+				Path:          (converter.OutputPath + "/" + resources[k].Path + resources[k].Name),
 				Filename:      file.Filename,
 				Ext:           filepath.Ext(file.Path),
-				Content:       r[k].Payload,
+				Content:       resources[k].Payload,
 				ContentLength: file.ContentLength,
 			}
 
-			// Write Converted File to Storage
-			log.Printf("Writing to file %v", fileObj.Filename)
-			fileObj.WriteFile()
+			err := fileObj.WriteFile()
+			if err != nil {
+				// Error: Error Writing File
+				lib.CLog("error", "Unable to write to file", err)
+				return err
+			}
 
-			// Add Converted File Object to Converter
 			converter.OutputFiles = append(converter.OutputFiles, fileObj)
 		}
 	}
-}
 
-func (converter *Converter) BuildDownloadFiles() []*DownloadFile {
-	var files []*DownloadFile
-
-	// Process Output Objects
-	for _, file := range converter.OutputFiles {
-		dlFile := &DownloadFile{}
-		dlFile.Link = "https://somefile.com"
-		dlFile.Filename = file.Filename
-		files = append(files, dlFile)
-	}
-
-	return files
+	return nil
 }

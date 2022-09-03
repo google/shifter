@@ -1,25 +1,27 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package api
 
 import (
-	"fmt"
+	//"errors"
+	"log"
 	"strings"
 
 	"github.com/gin-contrib/cors"
-
 	"github.com/gin-gonic/gin"
+	"shifter/lib"
 )
 
 type Server struct {
@@ -31,7 +33,7 @@ type ServerConfig struct {
 	serverAddress   string
 	serverPort      string
 	storagePlatform string
-	//gcsBucket       string
+	//gcsBucket       string //TODO ? What is this?
 	serverStorage ServerStorage
 }
 
@@ -42,71 +44,79 @@ type ServerStorage struct {
 	outputPath  string
 }
 
-// Instanciate gin-gonic HTTP Server
 func InitServer(serverAddress string, serverPort string, sourcePath string, outputPath string) (*Server, error) {
+	// Instantiate Shifter Server Struct
 	server := &Server{}
 
-	// Set Server Configuration
-	server.config.serverAddress = serverAddress
-	server.config.serverPort = serverPort
+	// Set Server Configuration Elements
+	// TODO - Need to tidy up and ensure default handling with constants
+	server.config.serverAddress = serverAddress // Set HTTP Server Address
+	server.config.serverPort = serverPort       // Set HTTP Server Port
 
-	// Configure Server Routes
-	server.setupRouter()
-	// Configure Server Storage
-	server.setupStorage(sourcePath, outputPath)
+	err := server.setupServer()
+	if err != nil {
+		lib.CLog("error", "Backend server error", err)
+		return server, err
+	}
 
-	// Return Server Instance
+	err = server.setupStorage(sourcePath, outputPath)
+	if err != nil {
+		lib.CLog("error", "Unable to configure server side storage", err)
+		return server, err
+	}
+
 	return server, nil
-
 }
 
-// Setup gin-gonic HTTP Server Routes
-func (server *Server) setupRouter() {
+func (server *Server) setupServer() error {
+	// TODO - Set Wrapper and CLI Flag for "DebugMode" and inlcude optional this in that flag
+	gin.SetMode(gin.ReleaseMode)
 
-	// Create Default Gin Router
-	router := gin.Default()
+	router := gin.Default() // TODO - Explore Non-Default options for Logging.
 
-	// Setup & Configure CORS
+	// CORS Configuration
 	config := cors.DefaultConfig()
 	config.AllowWildcard = true
-	config.AllowOrigins = []string{"*"}
+	config.AllowOrigins = []string{"*"} // TODO Enable the ability to limit this with CLI for Security
 	config.AddAllowMethods("OPTIONS", "GET", "POST")
 	config.AddAllowHeaders("Origin", "Accept", "Accept-Encoding", "Cache-Control", "X-Requested-With", "X-Custom-Header", "Content-Type", "Content-Length", "Authorization")
 	config.ExposeHeaders = []string{"Content-Length"}
 	config.AllowCredentials = true
 
-	// Appply CORS
 	router.Use(cors.New(config))
 
 	// Declare API V1 Route Group and Routes
+	lib.CLog("info", "API Endpoint created: /api/v1")
 	v1 := router.Group("/api/v1")
 	{
-		// Convert V1 API Endpoints
 		o := v1.Group("/openshift")
 		{
+			lib.CLog("info", "API Endpoint created: /api/v1/openshift/projects")
 			op := o.Group("/projects")
 			{
-				op.POST("/", server.SOSGetProjects)
-				op.POST("/:projectName", server.SOSGetProject)
+				op.POST("/", server.GetProjects)
+				op.POST("/:projectName", server.GetProject)
+				lib.CLog("info", "API Endpoint created: /api/v1/openshift/projects/{project}/resources")
+				rl := op.Group("/:projectName/resources")
+				{
+					rl.POST("/", server.GetResources)
+					rl.POST("/:resourceKind", server.GetResources)
+					rl.POST("/:resourceKind/:resourceName", server.GetResources)
+				}
 			}
-
-			dc := o.Group("/deploymentconfigs")
-			{
-				dc.POST("/", server.SOSGetDeploymentConfigs)
-				dc.POST("/:projectName", server.SOSGetDeploymentConfigsByProject)
-				dc.POST("/:projectName/:deploymentConfigName", server.SOSGetDeploymentConfig)
-			}
-
 		}
 
-		// Convert V1 API Endpoints
+		// Convert Shifter API Endpoints
+		lib.CLog("info", "API Endpoint created: /api/v1/shifter")
 		s := v1.Group("/shifter")
 		{
+			lib.CLog("info", "API Endpoint created: /api/v1/shifter/convert")
 			sc := s.Group("/convert")
 			{
 				sc.POST("/", server.Convert)
 			}
 
+			lib.CLog("info", "API Endpoint created: /api/v1/shifter/downloads")
 			sd := s.Group("/downloads")
 			{
 				sd.GET("/", server.Downloads)
@@ -115,33 +125,32 @@ func (server *Server) setupRouter() {
 			}
 		}
 
-		// Status V1 API Endpoints
+		// Convert Shifter Server Status API Endpoints
+		lib.CLog("info", "API Endpoint created: /api/v1/status/healthz")
+		lib.CLog("info", "API Endpoint created: /api/v1/status/settingz")
 		st := v1.Group("/status")
 		{
-			st.GET("/healthz", server.Healthz)   // Operations Health Check
-			st.GET("/settingz", server.Settingz) // Server Settingz
+			st.GET("/healthz", server.Healthz)
+			st.GET("/settingz", server.Settingz)
 		}
 	}
 
-	// Setup Server Router for Gin Server Instance.
 	server.router = router
+
+	return nil
 }
 
 // Setup Server Storage Data
-func (server *Server) setupStorage(sourcePath string, outputPath string) {
+func (server *Server) setupStorage(sourcePath string, outputPath string) error {
 
-	// Set Default Storage Type to LCL (Local Storage)
-	server.config.serverStorage.storageType = LCL
-	// Set Default Storage Source Path to "./data/source"
+	// TODO - Rework this Function to look at CLI Input and Defaults and Bolster this with Validations
 	server.config.serverStorage.sourcePath = "data/source"
-	// Set Default Storage Source Path to "./data/output"
 	server.config.serverStorage.outputPath = "data/output"
-	// Set Default Storage Description
 	server.config.serverStorage.description = "Shifter Server is Connected to Local Storage"
 
+	// Check if SourcePath is Configured for GCS
 	if strings.Contains(sourcePath, "gs://") {
-		// Using GCP Cloud Storage
-		fmt.Println("Storage: Using GCP Cloud Storage Bucket")
+		log.Printf("💡 INFO: Configuring Shifter to utilize GCP Cloud Storage Buckets")
 		server.config.serverStorage.storageType = GCS
 		server.config.serverStorage.description = "Shifter Server is Connected to Google Cloud Storage"
 
@@ -154,17 +163,38 @@ func (server *Server) setupStorage(sourcePath string, outputPath string) {
 		// Set Default Storage Source and Output GCS Bucket
 		server.config.serverStorage.sourcePath = sourcePath
 		server.config.serverStorage.outputPath = outputPath
+	} else {
+		// Not Using GCS. Use Local
+		log.Printf("💡 INFO: Configuring Shifter to utilize GCP Cloud Storage Buckets")
 	}
+
+	// Output all Storage Settings
+	log.Printf("🔧 DEBUG: [Shifter Storage Settings] - [Storage Type: %s]", server.config.serverStorage.storageType)
+	log.Printf("🔧 DEBUG: [Shifter Storage Settings] - [Description: %s]", server.config.serverStorage.description)
+	log.Printf("🔧 DEBUG: [Shifter Storage Settings] - [Source Path: %s]", server.config.serverStorage.sourcePath)
+	log.Printf("🔧 DEBUG: [Shifter Storage Settings] - [Output Path: %s]", server.config.serverStorage.outputPath)
+
+	return nil
 }
 
-// Start gin-gonic HTTP Server on Specific Address
 func (server *Server) Start() error {
-	// Run Server
-	fmt.Println(server.config)
-	return server.router.Run(server.config.serverAddress + ":" + server.config.serverPort)
+	lib.CLog("debug", "Shifter server starting")
+	lib.CLog("info", "Shifter server listening on "+server.config.serverAddress+":"+server.config.serverPort)
+
+	err := server.router.Run(server.config.serverAddress + ":" + server.config.serverPort)
+	if err != nil {
+		lib.CLog("error", "Failed to start Shifter server", err)
+		return err
+	}
+
+	lib.CLog("info", "Shifter server shutting down.")
+	return nil
 }
 
 // Standard API Error Response
 func errorResponse(err error) gin.H {
+	// Log the High Level Error
+	log.Printf("🌐 ❌ ERROR [API]: %s", err)
+	// Return Error that will be passed on to Client
 	return gin.H{"error": err.Error()}
 }

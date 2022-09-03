@@ -1,0 +1,96 @@
+# Basic set up for three package managers
+
+version: 2
+updates:
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      # Prefix all commit messages with "github"
+      prefix: "github"
+    # Specify labels for pull requests
+    labels:
+      - "github"
+      - "dependencies"
+    open-pull-requests-limit: 2
+    target-branch: "develop"
+    # Add reviewers
+    reviewers:
+      - "google/shifter-core-developers"
+
+  # Maintain dependencies for Shifter UI - NPM Modules
+  - package-ecosystem: "npm"
+    directory: "/shifter-ui"
+    schedule:
+      interval: "daily"
+    commit-message:
+      # Prefix all commit messages with "npm"
+      prefix: "npm"
+    # Specify labels for pull requests
+    labels:
+      - "npm"
+      - "dependencies"
+    open-pull-requests-limit: 2
+    target-branch: "develop"
+    # Add reviewers
+    reviewers:
+      - "google/shifter-core-developers"
+
+  # Maintain dependencies for Shifter UI - Dockerfiles
+  - package-ecosystem: "docker"
+    directory: "/shifter-ui"
+    schedule:
+      interval: "daily"
+    commit-message:
+      # Prefix all commit messages with "docker"
+      prefix: "docker"
+    # Specify labels for pull requests
+    labels:
+      - "docker"
+      - "dependencies"
+    open-pull-requests-limit: 2
+    target-branch: "develop"
+    # Add reviewers
+    reviewers:
+      - "google/shifter-core-developers"
+
+  # Maintain dependencies for Shifter Core - Go Modules
+  - package-ecosystem: "gomod"
+    directory: "/shifter"
+    schedule:
+      interval: "daily"
+    commit-message:
+      # Prefix all commit messages with "go-mod"
+      prefix: "go-mod"
+    # Specify labels for pull requests
+    labels:
+      - "go-mod"
+      - "dependencies"
+    open-pull-requests-limit: 2
+    target-branch: "develop"
+    # Add reviewers
+    reviewers:
+      - "google/shifter-core-developers"
+  
+  # Maintain dependencies for Shifter Core - Dockerfiles
+  - package-ecosystem: "docker"
+    directory: "/shifter"
+    schedule:
+      interval: "daily"
+    commit-message:
+      # Prefix all commit messages with "docker"
+      prefix: "docker"
+    # Specify labels for pull requests
+    labels:
+      - "docker"
+      - "dependencies"
+    open-pull-requests-limit: 2
+    target-branch: "develop"
+    # Add reviewers
+    reviewers:
+      - "google/shifter-core-developers"
+
+      

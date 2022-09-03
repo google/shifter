@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,65 +25,63 @@ import (
 func (c Openshift) GetAllPV(namespace string) (*v1.PersistentVolumeList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.PersistentVolumeList{}, err
 	}
 
-	buildList, err := cluster.CoreV1().PersistentVolumes().List(context.TODO(), metav1.ListOptions{})
+	pvs, err := cluster.CoreV1().PersistentVolumes().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting PersistentVolumes from Namespace: "+namespace, err)
 		return &v1.PersistentVolumeList{}, err
 	}
-
-	return buildList, nil
-
+	lib.CLog("debug", "Getting PersistentVolumes from Namespace: "+namespace)
+	return pvs, err
 }
 
 func (c Openshift) GetPV(name string, namespace string) (*v1.PersistentVolume, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.PersistentVolume{}, err
 	}
 
-	build, err := cluster.CoreV1().PersistentVolumes().Get(context.TODO(), name, metav1.GetOptions{})
+	pv, err := cluster.CoreV1().PersistentVolumes().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting PersistentVolume with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.PersistentVolume{}, err
 	}
-
-	return build, nil
+	lib.CLog("info", "Getting PersistentVolume with Name: "+name+" from Namespace: "+namespace)
+	return pv, err
 }
 
 func (c Openshift) GetAllPVC(namespace string) (*v1.PersistentVolumeClaimList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.PersistentVolumeClaimList{}, err
 	}
 
 	pvcList, err := cluster.CoreV1().PersistentVolumeClaims(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting PersistentVolumeClaims from Namespace: "+namespace, err)
 		return &v1.PersistentVolumeClaimList{}, err
 	}
-
-	return pvcList, nil
-
+	lib.CLog("debug", "Getting PersistentVolumeClaims from Namespace: "+namespace)
+	return pvcList, err
 }
 
 func (c Openshift) GetPVC(name string, namespace string) (*v1.PersistentVolumeClaim, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.PersistentVolumeClaim{}, err
 	}
 
 	pvc, err := cluster.CoreV1().PersistentVolumeClaims(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting PersistentVolumeClaim with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.PersistentVolumeClaim{}, err
 	}
-
-	return pvc, nil
+	lib.CLog("info", "Getting PersistentVolumeClaim with Name: "+name+" from Namespace: "+namespace)
+	return pvc, err
 }

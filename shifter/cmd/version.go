@@ -1,21 +1,22 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var (
@@ -30,10 +31,10 @@ func init() {
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version number of Shifter",
+	Short: "Show the version number of Shifter",
 	Long:  `This is the version of Shifter you are running`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -41,8 +42,8 @@ var versionCmd = &cobra.Command{
 /____/_/ /_/_/_/  \__/\___/_/
 
 ----------------------------------------
-https://github.com/google/shifter
-`)
-		fmt.Println("Shifter version " + Version + " " + Platform)
+			` + "\033[0m")
+		log.Println("https://github.com/google/shifter")
+		log.Println("Shifter version " + Version + " " + Platform)
 	},
 }

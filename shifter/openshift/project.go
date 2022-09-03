@@ -15,7 +15,7 @@ package openshift
 
 import (
 	"context"
-	"log"
+	"shifter/lib"
 
 	v1 "github.com/openshift/api/project/v1"
 	projectv1 "github.com/openshift/client-go/project/clientset/versioned/typed/project/v1"
@@ -25,31 +25,30 @@ import (
 func (c Openshift) GetAllProjects() (*v1.ProjectList, error) {
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.ProjectList{}, err
 	}
 
 	projectList, err := cluster.Projects().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Projects from Cluster", err)
 		return &v1.ProjectList{}, err
 	}
-
-	return projectList, nil
+	return projectList, err
 }
 
 func (c Openshift) GetProject(name string) (*v1.Project, error) {
 	cluster, err := projectv1.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.Project{}, err
 	}
 
 	project, err := cluster.Projects().Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting Project from Cluster: "+name, err)
 		return &v1.Project{}, err
 	}
-
-	return project, nil
+	lib.CLog("debug", "Getting Project from Cluster: "+name)
+	return project, err
 }

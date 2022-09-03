@@ -13,44 +13,43 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"shifter/lib"
+
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
 func (c Openshift) GetAllStatefulSets(namespace string) (*v1.StatefulSetList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.StatefulSetList{}, err
 	}
 
 	object, err := cluster.AppsV1().StatefulSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting StatefulSets from Namespace: "+namespace, err)
 		return &v1.StatefulSetList{}, err
 	}
-
-	return object, nil
-
+	lib.CLog("debug", "Getting StatefulSets from Namespace: "+namespace)
+	return object, err
 }
 
 func (c Openshift) GetStatefulSet(name string, namespace string) (*v1.StatefulSet, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.StatefulSet{}, err
 	}
 
 	object, err := cluster.AppsV1().StatefulSets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting StatefulSet with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.StatefulSet{}, err
 	}
-
-	return object, nil
+	lib.CLog("info", "Getting StatefulSet with Name: "+name+" from Namespace: "+namespace)
+	return object, err
 }

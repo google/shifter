@@ -1,22 +1,24 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package cmd
 
 import (
 	"github.com/spf13/cobra"
 	"log"
-	ops "shifter/ops"
+	"shifter/lib"
+	"shifter/ops"
 )
 
 var (
@@ -45,7 +47,7 @@ Convert OpenShift resources to kubernetes native formats
 Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/file
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(`
+		log.Println("\033[31m" + `
    _____ __    _ ______
   / ___// /_  (_) __/ /____  _____
   \__ \/ __ \/ / /_/ __/ _ \/ ___/
@@ -53,23 +55,33 @@ Usage: shifter convert -i yaml -k yaml source/folder/or/file output/folder/or/fi
 /____/_/ /_/_/_/  \__/\___/_/
 
 ----------------------------------------
-			`)
-
+			` + "\033[0m")
 		if len(args) != 2 {
-			log.Fatal("Please specify source and destination arguments.")
+			lib.CLog("error", "Please specify the source and destination arguments.")
 		}
 		sourcePath = args[0]
 		outputPath = args[1]
 
-		log.Println("Converting", inputType, sourcePath, "to", generator, outputPath)
+		lib.CLog("info", "Converting "+inputType+" "+sourcePath+" to "+generator+" "+outputPath)
 		procflags := ProcFlags(pFlags)
 		if useIstio == true {
 			procflags["istio"] = "true"
 		}
 
-		con := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
-		con.ConvertFiles()
-		log.Println("Conversion Complete")
+		// Create new Shifter Converter
+		con, err := ops.NewConverter(inputType, sourcePath, generator, outputPath, procflags)
+		if err != nil {
+			// Error: Creating New Shifter Converter
+			lib.CLog("error", "Creating instance of the converter.", err)
+			return
+		}
+
+		err = con.ConvertFiles()
+		if err != nil {
+			lib.CLog("error", "Converting provided file.", err)
+			return
+		}
+		lib.CLog("info", "Conversion Complete")
 	},
 }
 

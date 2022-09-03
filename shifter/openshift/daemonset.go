@@ -13,44 +13,46 @@ limitations under the license.
 
 package openshift
 
-// ConfigMaps are part of the core kubernetes api so we switch to using the upstream kubernetes client
 import (
 	"context"
+	"shifter/lib"
+
 	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"log"
 )
 
+// Get all OpenShift Daemon Sets by Namespace
 func (c Openshift) GetAllDaemonSets(namespace string) (*v1.DaemonSetList, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.DaemonSetList{}, err
 	}
 
-	object, err := cluster.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
+	// Get All OpenShift Daemon Sets By Namespace
+	daemonSets, err := cluster.AppsV1().DaemonSets(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting DaemonSets from Namespace: "+namespace, err)
 		return &v1.DaemonSetList{}, err
 	}
-
-	return object, nil
-
+	lib.CLog("debug", "Getting DaemonSets from Namespace: "+namespace)
+	return daemonSets, err
 }
 
 func (c Openshift) GetDaemonSet(name string, namespace string) (*v1.DaemonSet, error) {
 	cluster, err := kubernetes.NewForConfig(c.clusterClient())
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Unable to connect to cluster", err)
 		return &v1.DaemonSet{}, err
 	}
 
-	object, err := cluster.AppsV1().DaemonSets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	daemonSet, err := cluster.AppsV1().DaemonSets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 	if err != nil {
-		log.Println(err)
+		lib.CLog("error", "Getting DaemonSet with Name: "+name+" from Namespace: "+namespace, err)
 		return &v1.DaemonSet{}, err
 	}
 
-	return object, nil
+	lib.CLog("info", "Getting DaemonSet with Name: "+name+" from Namespace: "+namespace)
+	return daemonSet, err
 }
