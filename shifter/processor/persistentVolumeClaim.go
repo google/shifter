@@ -15,24 +15,35 @@
 package processor
 
 import (
-	apiv1 "k8s.io/api/core/v1"
+	"encoding/json"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"shifter/lib"
 )
 
-func convertPvcToPvc(OSPersistentVolumeClaim apiv1.PersistentVolumeClaim, flags map[string]string) apiv1.PersistentVolumeClaim {
+func (p Proc) PersistentVolumeClaim(input []byte, flags map[string]string) lib.K8sobject {
+	var object v1.PersistentVolumeClaim
+	err := json.Unmarshal(input, &object)
+	if err != nil {
+		lib.CLog("error", "Unable to parse input data for kind: PersistentVolumeClaim", err)
+	}
 
-	pvc := &apiv1.PersistentVolumeClaim{
+	pvc := &v1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "PersistentVolumeClaim",
 			APIVersion: "v1",
 		},
-		ObjectMeta: OSPersistentVolumeClaim.ObjectMeta,
-		Spec:       apiv1.PersistentVolumeClaimSpec{},
+		ObjectMeta: object.ObjectMeta,
+		Spec:       v1.PersistentVolumeClaimSpec{},
 	}
 
-	var spec apiv1.PersistentVolumeClaimSpec
-	spec = OSPersistentVolumeClaim.Spec
+	var spec v1.PersistentVolumeClaimSpec
+	spec = object.Spec
 	pvc.Spec = spec
 
-	return *pvc
+	var k lib.K8sobject
+	k.Kind = pvc.TypeMeta.Kind
+	k.Object = pvc
+
+	return k
 }
