@@ -124,8 +124,8 @@ fi
 #chmod +x oc
 #mv oc /usr/bin/local/
 
-
-
+mkdir -p ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
+gcloud secrets versions access 1 --secret="okd-service-account" --out-file=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 
 #create service account key
 if [ -f ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME} ];
@@ -180,7 +180,7 @@ echo "#################################################################"
 
 ## Deploying bank of anthos modified yaml
 # Github URL : https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/environments.md#non-gke-kubernetes-clusters
-/*
+
 #!oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
 #!oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
 echo "############################################################"
@@ -208,20 +208,20 @@ echo "##################################################################"
 
 ## Deploying ruby-ex application
 
-cd ../..
-mkdir -p examples
-cd examples
-git clone https://github.com/OpenShiftDemos/rails-ex.git
-cd rails-ex
+#cd ../..
+#mkdir -p examples
+#cd examples
+#git clone https://github.com/OpenShiftDemos/rails-ex.git
+#cd rails-ex
 #!oc new-app openshift/templates/rails-postgresql.json -p SOURCE_REPOSITORY_URL=https://github.com/parasmamgain/rails-ex.git
-sleep 5s
+#sleep 5s
 #!oc start-build rails-postgresql-example
-sleep 5s
+#sleep 5s
 #!oc logs build/rails-postgresql-example-1
 #!oc get pods -w
 #!oc get svc
 
-echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles
+echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles"
 
 
 # Deleting workloads and removing secrets

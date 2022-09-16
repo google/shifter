@@ -95,6 +95,7 @@ module "okd-sa" {
       "roles/iam.serviceAccountKeyAdmin",
       "roles/servicemanagement.quotaViewer",
       "roles/resourcemanager.projectIamAdmin",
+      "roles/secretmanager.secretAccessor",
     ]
   }
   depends_on = [
