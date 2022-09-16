@@ -191,7 +191,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     artifacts {
       objects {
         location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-        paths = ["/workspace/okd-cluster/4.x/install-config/pm-singleproject-20/okd41",
+        paths = ["/workspace/okd-cluster/4.x/install-config/pm-singleproject-20/okd41/.*",
         ]
       }
     }

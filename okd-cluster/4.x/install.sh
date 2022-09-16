@@ -185,13 +185,13 @@ echo "#################################################################"
 ## Deploying bank of anthos modified yaml
 # Github URL : https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/environments.md#non-gke-kubernetes-clusters
 
-oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
-oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
+#oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
+#oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
 echo "############################################################"
 echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
 sleep 60s
-oc get pods
+#oc get pods
 
 echo "############################################################"
 echo "Endpoint"
