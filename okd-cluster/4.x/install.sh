@@ -150,21 +150,25 @@ gcloud auth activate-service-account okd-sa@${PROJECT_ID}.iam.gserviceaccount.co
 #Exports the APPLICATION Credentials to be used bu the openshift installer
 export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 
+
+gcloud storage cp gs://shifter-tfstate//builds/plan-file/v0.3.1/ ${CWD_PATH}/install-config/pm-singleproject-20/okd41
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
 
 #Performs installation of the okd cluster
-#!${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
 
 mkdir -p ${CWD_PATH}/install-config/folder1
+touch ${CWD_PATH}/install-config/text.t1
+touch ${CWD_PATH}/install-config/folder1/text.t2
 
-#!export USERNAME="kubeadmin"
-#!export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
-#!export KUBECONFIG=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeconfig
+export USERNAME="kubeadmin"
+export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
+export KUBECONFIG=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeconfig
 #Disable the service account
 #gcloud iam service-accounts disable okd-sa@${PROJECT_ID}.iam.gserviceaccount.com
-
+rm -f ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 echo "#################################################################"
 echo "Deploying Application workload in the cluster:${CLUSTER_NAME} ..."
 echo "#################################################################"
@@ -181,25 +185,25 @@ echo "#################################################################"
 ## Deploying bank of anthos modified yaml
 # Github URL : https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/environments.md#non-gke-kubernetes-clusters
 
-#!oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
-#!oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
+oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
+oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
 echo "############################################################"
 echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
-#!sleep 60s
-#!oc get pods
+sleep 60s
+oc get pods
 
 echo "############################################################"
 echo "Endpoint"
 echo "############################################################"
-#!oc get service frontend | awk '{print $4}'
+oc get service frontend | awk '{print $4}'
 
 echo "##################################################################"
 echo "Get Token and the Cluster API Endpoint to be used for the shifter"
 echo "##################################################################"
-#!oc login --username=$USERNAME --password=$PASSWORD
-#!export TOKEN=$(grep 'token:' $KUBECONFIG | tail -n1); TOKEN=${TOKEN//*token: /};
-#!export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
+oc login --username=$USERNAME --password=$PASSWORD
+export TOKEN=$(grep 'token:' $KUBECONFIG | tail -n1); TOKEN=${TOKEN//*token: /};
+export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
 
 #echo $TOKEN
 #echo $CLUSTER_API_ENDPOINT
@@ -213,13 +217,13 @@ echo "##################################################################"
 #cd examples
 #git clone https://github.com/OpenShiftDemos/rails-ex.git
 #cd rails-ex
-#!oc new-app openshift/templates/rails-postgresql.json -p SOURCE_REPOSITORY_URL=https://github.com/parasmamgain/rails-ex.git
+#oc new-app openshift/templates/rails-postgresql.json -p SOURCE_REPOSITORY_URL=https://github.com/parasmamgain/rails-ex.git
 #sleep 5s
-#!oc start-build rails-postgresql-example
+#oc start-build rails-postgresql-example
 #sleep 5s
-#!oc logs build/rails-postgresql-example-1
-#!oc get pods -w
-#!oc get svc
+#oc logs build/rails-postgresql-example-1
+#oc get pods -w
+#oc get svc
 
 echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles"
 
