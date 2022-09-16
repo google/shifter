@@ -151,7 +151,7 @@ gcloud auth activate-service-account okd-sa@${PROJECT_ID}.iam.gserviceaccount.co
 export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 
 
-gcloud storage cp gs://shifter-tfstate//builds/plan-file/v0.3.1/ ${CWD_PATH}/install-config/pm-singleproject-20/okd41
+gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/ ${CWD_PATH}/install-config/pm-singleproject-20/okd41
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
