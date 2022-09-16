@@ -146,7 +146,7 @@ module "repository-shifter" {
 }
 
 /******************************************************************
-        Cloud Build Trigger to run the terraform code
+      Create OKD Cluster - Cloud Build Trigger to run the terraform code
 *******************************************************************/
 resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   for_each      = toset(var.projectid_list)
@@ -185,6 +185,62 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           gcloud version &&
           cd okd-cluster/4.x &&
           ./install.sh
+        EOT
+      ]
+    }
+    artifacts {
+      objects {
+        location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
+        paths = ["/workspace/okd-cluster/4.x/install-config/pm-singleproject-20/okd41/.*",
+        ]
+      }
+    }
+  }
+  depends_on = [
+    module.repository-shifter
+  ]
+}
+
+/******************************************************************
+      Delete OKD Cluster - Cloud Build Trigger to run the terraform code
+*******************************************************************/
+resource "google_cloudbuild_trigger" "deletecluster-trigger" {
+  for_each      = toset(var.projectid_list)
+  project       = each.key
+  name          = "DeleteOkdCluster"
+  description   = "This trigger initiates the GCP resource deployment."
+  ignored_files = [".*"]
+  trigger_template {
+    project_id  = each.key
+    branch_name = "v0.3.1"
+    repo_name   = "csr-shifter"
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = "1.1.5"
+  }
+  build {
+    timeout       = "3600s"
+    step {
+      name       = local.ubuntu_builder
+      entrypoint = "bash"
+      args = [
+        "-c",
+        <<-EOT
+          echo "******************************************"
+          echo "* Installing Terraform,gcloud"
+          echo "******************************************"
+          apt-get install -y unzip wget git curl &&
+          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          mv terraform /usr/local/bin/ &&
+          terraform version &&
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+          apt-get install -y apt-transport-https ca-certificates gnupg &&
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          apt-get update && apt-get install -y google-cloud-sdk &&
+          gcloud version &&
+          cd okd-cluster/4.x &&
+          ./destroy.sh
         EOT
       ]
     }
