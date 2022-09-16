@@ -2,12 +2,12 @@
 
 
 ###################### Mandatory Vairables ##########################
-PROJECT_ID=""                    #e.g. : "pm-okd-11"
-CLUSTER_NAME=""                  #e.g. : "okd-41"
-OKD_VERSION=""                   #e.g. : "4.10" or "4.9"
-BILLING_ACCOUNT_ID=""            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
-PARENT=""                        #e.g. : "organizations/111222333444"
-DOMAIN=""                        #e.g. : "google.com."
+PROJECT_ID="pm-singleproject-20"                    #e.g. : "pm-okd-11"
+CLUSTER_NAME="okd41"                  #e.g. : "okd-41"
+OKD_VERSION="4.10"                   #e.g. : "4.10" or "4.9"
+BILLING_ACCOUNT_ID="01541A-27C980-D4B4C9"            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
+PARENT="folders/808116942407"                        #e.g. : "organizations/111222333444"
+DOMAIN="pm-gcp.com."                        #e.g. : "google.com."
 SSH_KEY_PATH=""                  #e.g. : usr/local/google/home/username/.ssh/id_ed25519.pub
 # More details on redhat pull secret can be found here https://console.redhat.com/openshift/install/pull-secret
 REDHAT_PULL_SECRET='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
@@ -44,7 +44,6 @@ if [ -z "$BILLING_ACCOUNT_ID" ]
 then
       ERROR="$ERROR""\nBILLING_ACCOUNT_ID should not be empty"
 fi
-
 if [ -z "$PARENT" ]
 then
       ERROR="$ERROR""\nPARENT should not be empty"
@@ -115,6 +114,7 @@ else
    wget -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
    tar -xvf openshift-install-linux.tar.gz
    chmod +x openshift-install
+   mkdir -p ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/
    mv openshift-install ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/
 fi
 
@@ -139,7 +139,7 @@ else
    echo "############################################################"
    gcloud iam service-accounts keys create ${SA_JSON_FILENAME} --iam-account=okd-sa@${PROJECT_ID}.iam.gserviceaccount.com
    #gcloud iam service-accounts keys create test.json --iam-account=okd-sa@pm-okd-11.iam.gserviceaccount.com
-   mkdir ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
+   mkdir -p ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
    mv ${CWD_PATH}/${SA_JSON_FILENAME} ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
 fi
 
@@ -204,3 +204,25 @@ export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_AP
 #echo $CLUSTER_API_ENDPOINT
 
 echo "##################################################################"
+
+## Deploying ruby-ex application
+
+cd ../..
+mkdir -p examples
+cd examples
+git clone https://github.com/OpenShiftDemos/rails-ex.git
+cd rails-ex
+oc new-app openshift/templates/rails-postgresql.json -p SOURCE_REPOSITORY_URL=https://github.com/parasmamgain/rails-ex.git
+sleep 5s
+oc start-build rails-postgresql-example
+sleep 5s
+oc logs build/rails-postgresql-example-1
+oc get pods -w
+oc get svc
+
+echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles
+
+
+# Deleting workloads and removing secrets
+# oc delete secret rails-postgresql-example && oc delete all --selector app=rails-postgresql-example
+

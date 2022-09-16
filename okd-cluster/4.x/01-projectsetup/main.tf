@@ -73,21 +73,28 @@ module "okd-sa" {
   name         = "okd-sa"
   generate_key = false
   # non-authoritative roles granted *to* the service accounts on other resources
+  iam = {
+    "roles/iam.serviceAccountTokenCreator" = compact([
+      "user:parasmamgain@google.com",
+      "serviceAccount:1002225287836@cloudbuild.gserviceaccount.com"
+    ])
+  }
+
   iam_project_roles = {
     "${each.key}" = [
       "roles/owner",
-      # "roles/dns.admin",
-      # "roles/storage.admin",
-      # "roles/container.admin",
-      # "roles/compute.instanceAdmin",
-      # "roles/compute.instanceAdmin.v1",
-      # "roles/compute.networkAdmin",
-      # "roles/compute.securityAdmin",
-      # "roles/iam.serviceAccountUser",
-      # "roles/iam.serviceAccountAdmin",
-      # "roles/iam.serviceAccountKeyAdmin",
-      # "roles/servicemanagement.quotaViewer",
-      # "roles/resourcemanager.projectIamAdmin",
+      "roles/dns.admin",
+      "roles/storage.admin",
+      "roles/container.admin",
+      "roles/compute.instanceAdmin",
+      "roles/compute.instanceAdmin.v1",
+      "roles/compute.networkAdmin",
+      "roles/compute.securityAdmin",
+      "roles/iam.serviceAccountUser",
+      "roles/iam.serviceAccountAdmin",
+      "roles/iam.serviceAccountKeyAdmin",
+      "roles/servicemanagement.quotaViewer",
+      "roles/resourcemanager.projectIamAdmin",
     ]
   }
   depends_on = [
@@ -118,4 +125,84 @@ resource "local_file" "init_script" {
 data "local_file" "ssh_pub" {
   count    = var.ssh_key_path == "" ? 0 : 1
   filename = var.ssh_key_path
+}
+
+
+#Creating Code repository and CLoudbuild pipeline
+locals {
+  ubuntu_builder    = "gcr.io/cloud-marketplace-containers/google/debian11"
+  terraform_builder = "hashicorp/terraform:1.0.10"
+}
+module "repository-shifter" {
+  for_each   = toset(var.projectid_list)
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/source-repository?ref=v16.0.0"
+  project_id = each.key
+  name       = "csr-shifter"
+  iam = {
+    //"roles/source.writer" = [module.sa-csr-writer.iam_email]
+  }
+}
+
+/******************************************************************
+        Cloud Build Trigger to run the terraform code
+*******************************************************************/
+resource "google_cloudbuild_trigger" "sharedresource-trigger" {
+  for_each      = toset(var.projectid_list)
+  project       = each.key
+  name          = "ShifterTrigger"
+  description   = "This trigger initiates the GCP resource deployment."
+  ignored_files = []
+  trigger_template {
+    project_id  = each.key
+    branch_name = "v0.3.1"
+    repo_name   = "csr-shifter"
+  }
+  substitutions = {
+    _TERRAFORM_VERSION = "1.1.5"
+  }
+  build {
+    timeout       = "3600s"
+    step {
+      name       = local.ubuntu_builder
+      entrypoint = "bash"
+      args = [
+        "-c",
+        <<-EOT
+          echo "******************************************"
+          echo "* Installing Terraform,gcloud"
+          echo "******************************************"
+          apt-get install -y unzip wget git curl &&
+          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          mv terraform /usr/local/bin/ &&
+          terraform version &&
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+          apt-get install -y apt-transport-https ca-certificates gnupg &&
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          apt-get update && apt-get install -y google-cloud-sdk &&
+          gcloud version &&
+          cd okd-cluster/4.x &&
+          ./install.sh
+        EOT
+      ]
+    }
+    artifacts {
+      objects {
+        location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
+        paths = ["install-config/pm-singleproject-20/okd41",
+        ]
+      }
+    }
+  }
+  depends_on = [
+    module.repository-shifter
+  ]
+}
+
+module "gcs-automation" {
+  for_each   = toset(var.projectid_list)
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric//modules/gcs?ref=v16.0.0"
+  project_id = each.key
+  name       = "shifter-tfstate"
+  versioning = true
 }
