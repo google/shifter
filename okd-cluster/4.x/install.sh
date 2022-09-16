@@ -119,10 +119,10 @@ else
 fi
 
 # Download OC CLI
-#wget -O openshift-clientinstall-linux.tar.gz https://github.com/openshift/okd/releases/download/4.10.0-0.okd-2022-06-10-131327/openshift-client-linux-4.10.0-0.okd-2022-06-10-131327.tar.gz
-#tar -xvf openshift-clientinstall-linux.tar.gz
-#chmod +x oc
-#mv oc /usr/bin/local/
+wget -O openshift-clientinstall-linux.tar.gz https://github.com/openshift/okd/releases/download/4.10.0-0.okd-2022-06-10-131327/openshift-client-linux-4.10.0-0.okd-2022-06-10-131327.tar.gz
+tar -xvf openshift-clientinstall-linux.tar.gz
+chmod +x oc
+mv oc /usr/bin/local/
 
 mkdir -p ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
 gcloud secrets versions access 1 --secret="okd-service-account" --out-file=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
@@ -151,7 +151,7 @@ gcloud auth activate-service-account okd-sa@${PROJECT_ID}.iam.gserviceaccount.co
 export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 
 
-gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/ ${CWD_PATH}/install-config/pm-singleproject-20/okd41
+gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/pm-singleproject-20/okd41
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
@@ -185,8 +185,8 @@ echo "#################################################################"
 ## Deploying bank of anthos modified yaml
 # Github URL : https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/environments.md#non-gke-kubernetes-clusters
 
-#oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
-#oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
+oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
+oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
 echo "############################################################"
 echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
