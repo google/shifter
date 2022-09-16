@@ -121,8 +121,12 @@ fi
 # Download OC CLI
 wget -O openshift-clientinstall-linux.tar.gz https://github.com/openshift/okd/releases/download/4.10.0-0.okd-2022-06-10-131327/openshift-client-linux-4.10.0-0.okd-2022-06-10-131327.tar.gz
 tar -xvf openshift-clientinstall-linux.tar.gz
+mkdir -p ${CWD_PATH}/01-projectsetup/oc-installer/
 chmod +x oc
-mv oc /usr/bin/local/
+mv oc ${CWD_PATH}/01-projectsetup/oc-installer/
+
+
+echo "Getting Secret"
 
 mkdir -p ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
 gcloud secrets versions access 1 --secret="okd-service-account" --out-file=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
@@ -150,18 +154,15 @@ gcloud auth activate-service-account okd-sa@${PROJECT_ID}.iam.gserviceaccount.co
 #Exports the APPLICATION Credentials to be used bu the openshift installer
 export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/${SA_JSON_FILENAME}
 
+echo "Cloning artifacts from previous builds from GCS bucket ..."
 
-gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/pm-singleproject-20/okd41
+gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* install-config/pm-singleproject-20/okd41
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
 
 #Performs installation of the okd cluster
 ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
-
-mkdir -p ${CWD_PATH}/install-config/folder1
-touch ${CWD_PATH}/install-config/text.t1
-touch ${CWD_PATH}/install-config/folder1/text.t2
 
 export USERNAME="kubeadmin"
 export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
@@ -185,8 +186,8 @@ echo "#################################################################"
 ## Deploying bank of anthos modified yaml
 # Github URL : https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/main/docs/environments.md#non-gke-kubernetes-clusters
 
-oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
-oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
+${CWD_PATH}/01-projectsetup/oc-installer/oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests/jwt/jwt-secret.yaml
+${CWD_PATH}/01-projectsetup/oc-installer/oc apply -f ${CWD_PATH}/02-appdeployment/bank-of-anthos/kubernetes-manifests
 echo "############################################################"
 echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
@@ -196,12 +197,12 @@ sleep 60s
 echo "############################################################"
 echo "Endpoint"
 echo "############################################################"
-oc get service frontend | awk '{print $4}'
+${CWD_PATH}/01-projectsetup/oc-installer/oc get service frontend | awk '{print $4}'
 
 echo "##################################################################"
 echo "Get Token and the Cluster API Endpoint to be used for the shifter"
 echo "##################################################################"
-oc login --username=$USERNAME --password=$PASSWORD
+${CWD_PATH}/01-projectsetup/oc-installer/oc login --username=$USERNAME --password=$PASSWORD
 export TOKEN=$(grep 'token:' $KUBECONFIG | tail -n1); TOKEN=${TOKEN//*token: /};
 export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
 
