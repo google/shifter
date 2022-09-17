@@ -27,6 +27,7 @@ echo "############################################################"
 gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
 pwd
 ls
+ls ${CWD_PATH}/install-config/
 # Download okd installer and oc cli based on the OKD_VERSION
 if [ -f ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install ];
 then

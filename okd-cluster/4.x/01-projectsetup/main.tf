@@ -153,7 +153,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   project       = each.key
   name          = "ShifterTrigger"
   description   = "This trigger initiates the GCP resource deployment."
-  ignored_files = []
+  ignored_files = [".*"]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
@@ -209,7 +209,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   project       = each.key
   name          = "DeleteOkdCluster"
   description   = "This trigger initiates the GCP resource deployment."
-  ignored_files = ["*"]
+  ignored_files = [".*"]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
