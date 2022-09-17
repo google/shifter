@@ -24,6 +24,7 @@ echo "############################################################"
 echo "Cloning artifacts from GCS bucket"
 echo "############################################################"
 
+mkdir -p ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
 gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
 pwd
 ls
