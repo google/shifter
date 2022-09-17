@@ -24,8 +24,9 @@ echo "############################################################"
 echo "Cloning artifacts from GCS bucket"
 echo "############################################################"
 
-gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/pm-singleproject-20/okd41
-
+gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+pwd
+ls
 # Download okd installer and oc cli based on the OKD_VERSION
 if [ -f ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install ];
 then
