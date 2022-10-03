@@ -12,7 +12,7 @@ SSH_KEY_PATH=""                  #e.g. : usr/local/google/home/username/.ssh/id_
 # More details on redhat pull secret can be found here https://console.redhat.com/openshift/install/pull-secret
 REDHAT_PULL_SECRET='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
 PROJECT_CREATE="false"           #make this as true if you want to create a new project under the PARENT
-
+BRANCH_NAME="v0.3.1"
 ######################## Optional Vairables(modification not required) ############################
 CWD_PATH="$(pwd)"
 echo $CWD_PATH
@@ -156,7 +156,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJ
 
 echo "Cloning artifacts from previous builds from GCS bucket ..."
 
-gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* install-config/pm-singleproject-20/okd41
+gcloud storage cp -r gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/ install-config/${PROJECT_ID}/${CLUSTER_NAME}
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
@@ -193,6 +193,8 @@ echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
 sleep 60s
 #oc get pods
+
+gcloud storage cp -r install-config/${PROJECT_ID}/${CLUSTER_NAME} gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/
 
 echo "############################################################"
 echo "Endpoint"

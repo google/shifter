@@ -25,7 +25,8 @@ echo "Cloning artifacts from GCS bucket"
 echo "############################################################"
 
 mkdir -p ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
-gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+#gcloud storage cp gs://shifter-tfstate/builds/plan-file/v0.3.1/* ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+gcloud storage cp -r gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/ install-config/${PROJECT_ID}/${CLUSTER_NAME}
 pwd
 ls
 ls ${CWD_PATH}/install-config/
@@ -59,3 +60,5 @@ echo "############################################################"
 echo "Deleting the okd cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "############################################################"
 ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install destroy cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+
+gcloud storage cp -r install-config/${PROJECT_ID}/${CLUSTER_NAME} gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/
