@@ -163,48 +163,51 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   }
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
+    _SHIFTER_VERSION   = "v0.3.0"
+    _PROJECT_NAME      = "pm-singleproject-20"
+    _CLUSTER_NAME      = "okd41"
   }
   build {
-    timeout       = "3600s"
-    # step {
-    #   name       = local.ubuntu_builder
-    #   entrypoint = "bash"
-    #   args = [
-    #     "-c",
-    #     <<-EOT
-    #       echo "******************************************"
-    #       echo "* Installing Terraform,gcloud"
-    #       echo "******************************************"
-    #       apt-get install -y unzip wget git curl &&
-    #       wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
-    #       unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
-    #       mv terraform /usr/local/bin/ &&
-    #       terraform version &&
-    #       echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
-    #       apt-get install -y apt-transport-https ca-certificates gnupg &&
-    #       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    #       apt-get update && apt-get install -y google-cloud-sdk &&
-    #       gcloud version &&
-    #       cd okd-cluster/4.x &&
-    #       ./install.sh
-    #     EOT
-    #   ]
-    # }
+    timeout       = "4200s"
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
       args = [
         "-c",
         <<-EOT
-        echo "******************************************"
-        echo "* Installing Shifter"
-        echo "******************************************"
-        apt-get install -y unzip wget git curl &&
-        wget https://github.com/google/shifter/releases/download/v0.3.0/shifter_linux_amd64 &&
-        mv shifter_linux_amd64 /usr/local/bin/shifter &&
-        shifter version
+          echo "******************************************"
+          echo "* Installing Terraform,gcloud"
+          echo "******************************************"
+          apt-get install -y unzip wget git curl &&
+          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          mv terraform /usr/local/bin/ &&
+          terraform version &&
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+          apt-get install -y apt-transport-https ca-certificates gnupg &&
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          apt-get update && apt-get install -y google-cloud-sdk &&
+          gcloud version &&
+          cd okd-cluster/4.x &&
+          ./install.sh
+        EOT
+      ]
+    }
+    step {
+      name       = local.ubuntu_builder
+      entrypoint = "bash"
+      args = [
+        "-c",
         <<-EOT
-        ""
+            echo "******************************************"
+            echo "* Installing Shifter"
+            echo "******************************************"
+            apt-get install -y unzip wget git curl &&
+            wget https://github.com/google/shifter/releases/download/$_SHIFTER_VERSION/shifter_linux_amd64 &&
+            chmod +x shifter_linux_amd64 &&
+            mv shifter_linux_amd64 /usr/local/bin/ &&
+            mv /usr/local/bin/shifter_linux_amd64 /usr/local/bin/shifter
+            shifter version
         EOT
       ]
     }
@@ -213,7 +216,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     artifacts {
       objects {
         location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-        paths = ["/workspace/okd-cluster/4.x/install-config/pm-singleproject-20/okd41/*",
+        paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/*",
         ]
       }
     }
@@ -240,6 +243,8 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   }
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
+    _PROJECT_NAME      = "pm-singleproject-20"
+    _CLUSTER_NAME      = "okd41"
   }
   build {
     timeout       = "3600s"
@@ -270,7 +275,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
     artifacts {
       objects {
         location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-        paths = ["/workspace/okd-cluster/4.x/install-config/pm-singleproject-20/okd41/.*",
+        paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/.*",
         ]
       }
     }
