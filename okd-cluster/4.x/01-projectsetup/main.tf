@@ -155,6 +155,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   name          = "ShifterTrigger"
   description   = "This trigger initiates the GCP resource deployment."
   ignored_files = ["*"]
+  included_files = [""]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
@@ -191,16 +192,9 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     # }
     step {
       name       = local.shifter_builder
-      entrypoint = "bash"
+      entrypoint = "shifter"
       args = [
-        "-c",
-        <<-EOT
-          echo "******************************************"
-          echo "* Running Shifter"
-          echo "******************************************"
-          ./shifter
-          echo "******************************************"
-        EOT
+        "cluster", "-e", "OKD_ENDPOINT" ,"-t", "OKD_TOKEN"," list --all-namespaces"
       ]
     }
     // add step to run the shifter public image
@@ -227,6 +221,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   name          = "DeleteOkdCluster"
   description   = "This trigger initiates the GCP resource deployment."
   ignored_files = ["*"]
+  included_files = [""]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
