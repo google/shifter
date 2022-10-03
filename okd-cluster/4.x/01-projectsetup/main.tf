@@ -192,7 +192,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     # }
     step {
       name       = local.shifter_builder
-      entrypoint = "shifter"
+      entrypoint = "/shifter"
       args = [
         "cluster", "-e", "OKD_ENDPOINT" ,"-t", "OKD_TOKEN"," list --all-namespaces"
       ]
