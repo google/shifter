@@ -172,6 +172,10 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
+      volumes {
+        name = "myvolume"
+        path = "/persistent_volume"
+      }
       args = [
         "-c",
         <<-EOT
@@ -189,13 +193,18 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
           cd okd-cluster/4.x &&
-          ./install.sh
+          ./install.sh &&
+          cp /workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
         EOT
       ]
     }
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
+      volumes {
+        name = "myvolume"
+        path = "/persistent_volume"
+      }
       args = [
         "-c",
         <<-EOT
@@ -207,7 +216,8 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
             chmod +x shifter_linux_amd64 &&
             mv shifter_linux_amd64 /usr/local/bin/ &&
             mv /usr/local/bin/shifter_linux_amd64 /usr/local/bin/shifter
-            shifter version
+            shifter version &&
+            ls -R /persistent_volume
         EOT
       ]
     }
