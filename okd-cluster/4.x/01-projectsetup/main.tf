@@ -191,10 +191,21 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     #   ]
     # }
     step {
-      name       = local.shifter_builder
-      entrypoint = "/shifter"
+      name       = local.ubuntu_builder
+      entrypoint = "bash"
       args = [
-        "cluster", "-e", "OKD_ENDPOINT" ,"-t", "OKD_TOKEN"," list --all-namespaces"
+        "-c",
+        <<-EOT
+        echo "******************************************"
+        echo "* Installing Shifter"
+        echo "******************************************"
+        apt-get install -y unzip wget git curl &&
+        wget https://github.com/google/shifter/releases/download/v0.3.0/shifter_linux_amd64 &&
+        mv shifter_linux_amd64 /usr/local/bin/shifter &&
+        shifter version
+        <<-EOT
+        ""
+        EOT
       ]
     }
     // add step to run the shifter public image
