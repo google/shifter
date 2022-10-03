@@ -134,6 +134,7 @@ data "local_file" "ssh_pub" {
 locals {
   ubuntu_builder    = "gcr.io/cloud-marketplace-containers/google/debian11"
   terraform_builder = "hashicorp/terraform:1.0.10"
+  shifter_builder   = "images.shifter.cloud/shifter:latest"
 }
 module "repository-shifter" {
   for_each   = toset(var.projectid_list)
@@ -153,7 +154,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   project       = each.key
   name          = "ShifterTrigger"
   description   = "This trigger initiates the GCP resource deployment."
-  ignored_files = [".*"]
+  ignored_files = ["*"]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
@@ -164,30 +165,46 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   }
   build {
     timeout       = "3600s"
+    # step {
+    #   name       = local.ubuntu_builder
+    #   entrypoint = "bash"
+    #   args = [
+    #     "-c",
+    #     <<-EOT
+    #       echo "******************************************"
+    #       echo "* Installing Terraform,gcloud"
+    #       echo "******************************************"
+    #       apt-get install -y unzip wget git curl &&
+    #       wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+    #       unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+    #       mv terraform /usr/local/bin/ &&
+    #       terraform version &&
+    #       echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+    #       apt-get install -y apt-transport-https ca-certificates gnupg &&
+    #       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+    #       apt-get update && apt-get install -y google-cloud-sdk &&
+    #       gcloud version &&
+    #       cd okd-cluster/4.x &&
+    #       ./install.sh
+    #     EOT
+    #   ]
+    # }
     step {
-      name       = local.ubuntu_builder
+      name       = local.shifter_builder
       entrypoint = "bash"
       args = [
         "-c",
         <<-EOT
           echo "******************************************"
-          echo "* Installing Terraform,gcloud"
+          echo "* Running Shifter"
           echo "******************************************"
-          apt-get install -y unzip wget git curl &&
-          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
-          unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
-          mv terraform /usr/local/bin/ &&
-          terraform version &&
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
-          apt-get install -y apt-transport-https ca-certificates gnupg &&
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-          apt-get update && apt-get install -y google-cloud-sdk &&
-          gcloud version &&
-          cd okd-cluster/4.x &&
-          ./install.sh
+          ./shifter
+          echo "******************************************"
         EOT
       ]
     }
+    // add step to run the shifter public image
+    // run the shifter against the cluster created above
     artifacts {
       objects {
         location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
@@ -209,7 +226,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   project       = each.key
   name          = "DeleteOkdCluster"
   description   = "This trigger initiates the GCP resource deployment."
-  ignored_files = [".*"]
+  ignored_files = ["*"]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
