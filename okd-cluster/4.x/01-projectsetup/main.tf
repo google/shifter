@@ -165,7 +165,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     _TERRAFORM_VERSION = "1.1.5"
     _SHIFTER_VERSION   = "v0.3.0"
     _PROJECT_NAME      = "pm-singleproject-20"
-    _CLUSTER_NAME      = "okd41"
+    _CLUSTER_NAME      = "okd42"
   }
   build {
     timeout       = "4200s"
