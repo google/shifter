@@ -1,10 +1,9 @@
 #! /bin/bash
 
 ###################### Mandatory Vairables ##########################
-PROJECT_ID="pm-singleproject-20"     # e.g. "pm-okd-11"
-CLUSTER_NAME="okd42"                 # e.g."okd-41"
-OKD_VERSION="4.10"                   # e.g."4.10"
-BRANCH_NAME="v0.3.1"
+PROJECT_ID=$1   #"pm-singleproject-20"     # e.g. "pm-okd-11"
+CLUSTER_NAME=$2 #"okd42"                   # e.g."okd-41"
+OKD_VERSION=$3  #"4.10"                    # e.g."4.10"
 ######################## Other Vairables ############################
 CWD_PATH="$(pwd)"
 echo $CWD_PATH

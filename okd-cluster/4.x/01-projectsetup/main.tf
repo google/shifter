@@ -133,8 +133,6 @@ data "local_file" "ssh_pub" {
 #Creating Code repository and CLoudbuild pipeline
 locals {
   ubuntu_builder    = "gcr.io/cloud-marketplace-containers/google/debian11"
-  terraform_builder = "hashicorp/terraform:1.0.10"
-  shifter_builder   = "images.shifter.cloud/shifter:latest"
 }
 module "repository-shifter" {
   for_each   = toset(var.projectid_list)
@@ -166,6 +164,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     _SHIFTER_VERSION   = "v0.3.0"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
+    _OKD_VERSION       = "4.10"
   }
   build {
     timeout       = "4200s"
@@ -193,7 +192,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
           cd okd-cluster/4.x &&
-          ./install.sh &&
+          ./install.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION &&
           cp -r /workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
         EOT
       ]
@@ -218,12 +217,10 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
             mv shifter_linux_amd64 /usr/local/bin/ &&
             mv /usr/local/bin/shifter_linux_amd64 /usr/local/bin/shifter
             shifter version &&
-            ls -R /persistent_volume
             echo "******************************************"
-            echo "* Setting up Cluster"
+            echo "* Setting up shifter"
             echo "******************************************"
             source /persistent_volume/cluster_credentials.env
-            cat /persistent_volume/cluster_credentials.env
             shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default
         EOT
       ]
@@ -262,6 +259,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
     _TERRAFORM_VERSION = "1.1.5"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
+    _OKD_VERSION       = "4.10"
   }
   build {
     timeout       = "3600s"
@@ -285,7 +283,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
           cd okd-cluster/4.x &&
-          ./destroy.sh
+          ./destroy.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION
         EOT
       ]
     }
