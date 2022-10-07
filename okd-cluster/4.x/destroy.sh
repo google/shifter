@@ -2,8 +2,8 @@
 
 ###################### Mandatory Vairables ##########################
 PROJECT_ID="pm-singleproject-20"     # e.g. "pm-okd-11"
-CLUSTER_NAME="okd42"   # e.g."okd-41"
-OKD_VERSION="4.10"    # e.g."4.10"
+CLUSTER_NAME="okd42"                 # e.g."okd-41"
+OKD_VERSION="4.10"                   # e.g."4.10"
 BRANCH_NAME="v0.3.1"
 ######################## Other Vairables ############################
 CWD_PATH="$(pwd)"
@@ -25,7 +25,7 @@ echo "Cloning artifacts from GCS bucket"
 echo "############################################################"
 
 mkdir -p ${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME/
-gcloud storage cp -r gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/ ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/
+gcloud storage cp -r gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/ ${CWD_PATH}/install-config/${PROJECT_ID}/
 pwd
 ls
 ls ${CWD_PATH}/install-config/
@@ -60,4 +60,4 @@ echo "Deleting the okd cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "############################################################"
 ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install destroy cluster --log-level=info --dir=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/
 
-gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/
+gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/
