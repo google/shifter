@@ -206,8 +206,8 @@ echo "##################################################################"
 echo "Get Token and the Cluster API Endpoint to be used for the shifter"
 echo "##################################################################"
 ${CWD_PATH}/01-projectsetup/oc-installer/oc login --username=$USERNAME --password=$PASSWORD
-export TOKEN=$(grep 'token:' $KUBECONFIG | tail -n1); TOKEN=${TOKEN//*token: /};
-export CLUSTER_API_ENDPOINT=$(grep 'server:' $KUBECONFIG | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
+export TOKEN=$(grep 'token:' ${KUBECONFIG} | tail -n1); TOKEN=${TOKEN//*token: /};
+export CLUSTER_API_ENDPOINT=$(grep 'server:' ${KUBECONFIG} | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
 
 #echo $TOKEN
 #echo $CLUSTER_API_ENDPOINT
