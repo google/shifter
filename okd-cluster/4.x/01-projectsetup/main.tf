@@ -218,6 +218,11 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
             mv /usr/local/bin/shifter_linux_amd64 /usr/local/bin/shifter
             shifter version &&
             ls -R /persistent_volume
+            echo "******************************************"
+            echo "* Setting up Cluster"
+            echo "******************************************"
+            source /persistent_volume/cluster_credentials.env
+            shifter cluster -e $CLUSTER_API_ENDPOINT -t $TOKEN list
         EOT
       ]
     }
