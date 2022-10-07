@@ -166,6 +166,8 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     _SHIFTER_VERSION   = "v0.3.0"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
+    CLUSTER_API_ENDPOINT = ""
+    TOKEN                = ""
   }
   build {
     timeout       = "4200s"
