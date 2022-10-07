@@ -24,4 +24,6 @@ caramilk
 **/service-account-key.json
 **/openshift-install
 **/openshift-install-linux.tar.gz
+**/openshift-clientinstall-linux.tar.gz
+**/oc
 **/install-config/

@@ -223,13 +223,13 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     }
     // add step to run the shifter public image
     // run the shifter against the cluster created above
-    artifacts {
-      objects {
-        location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-        paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/*",
-        ]
-      }
-    }
+    # artifacts {
+    #   objects {
+    #     location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
+    #     paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/*",
+    #     ]
+    #   }
+    # }
   }
   depends_on = [
     module.repository-shifter
@@ -254,7 +254,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
     _PROJECT_NAME      = "pm-singleproject-20"
-    _CLUSTER_NAME      = "okd41"
+    _CLUSTER_NAME      = "okd42"
   }
   build {
     timeout       = "3600s"
@@ -282,13 +282,13 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
         EOT
       ]
     }
-    artifacts {
-      objects {
-        location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-        paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/.*",
-        ]
-      }
-    }
+    # artifacts {
+    #   objects {
+    #     location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
+    #     paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/.*",
+    #     ]
+    #   }
+    # }
   }
   depends_on = [
     module.repository-shifter

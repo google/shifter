@@ -3,7 +3,7 @@
 
 ###################### Mandatory Vairables ##########################
 PROJECT_ID="pm-singleproject-20"                    #e.g. : "pm-okd-11"
-CLUSTER_NAME="okd41"                  #e.g. : "okd-41"
+CLUSTER_NAME="okd42"                  #e.g. : "okd-41"
 OKD_VERSION="4.10"                   #e.g. : "4.10" or "4.9"
 BILLING_ACCOUNT_ID="01541A-27C980-D4B4C9"            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
 PARENT="folders/808116942407"                        #e.g. : "organizations/111222333444"
@@ -156,14 +156,14 @@ export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJ
 
 echo "Cloning artifacts from previous builds from GCS bucket ..."
 
-gcloud storage cp -r gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/ install-config/${PROJECT_ID}/${CLUSTER_NAME}
+#gcloud storage cp -r gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/ ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
 
 #Performs installation of the okd cluster
-${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
-
+${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install create cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME/
+#
 export USERNAME="kubeadmin"
 export PASSWORD=`cat ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeadmin-password`
 export KUBECONFIG=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/auth/kubeconfig
@@ -194,7 +194,7 @@ echo "############################################################"
 sleep 60s
 #oc get pods
 
-gcloud storage cp -r install-config/${PROJECT_ID}/${CLUSTER_NAME} gs://shifter-tfstate/builds/plan-file/${BRANCH_NAME}/
+#gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/
 
 echo "############################################################"
 echo "Endpoint"
@@ -228,7 +228,7 @@ echo "##################################################################"
 #oc get pods -w
 #oc get svc
 
-echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles"
+#echo "Endpoint URL for the application deployed : http://rails-postgresql-example-default.apps.okd41.pm-singleproject-20.pm-gcp.com/articles"
 
 
 # Deleting workloads and removing secrets
