@@ -209,8 +209,8 @@ ${CWD_PATH}/01-projectsetup/oc-installer/oc login --username=$USERNAME --passwor
 export TOKEN=$(grep 'token:' ${KUBECONFIG} | tail -n1); TOKEN=${TOKEN//*token: /};
 export CLUSTER_API_ENDPOINT=$(grep 'server:' ${KUBECONFIG} | tail -n1); CLUSTER_API_ENDPOINT=${CLUSTER_API_ENDPOINT//*server: /};
 
-echo TOKEN=$TOKEN > ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/cluster_credentials.env
-echo CLUSTER_API_ENDPOINT=$CLUSTER_API_ENDPOINT >> ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/cluster_credentials.env
+echo _TOKEN_=$TOKEN > ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/cluster_credentials.env
+echo _CLUSTER_API_ENDPOINT_=$CLUSTER_API_ENDPOINT >> ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/cluster_credentials.env
 
 echo "##################################################################"
 

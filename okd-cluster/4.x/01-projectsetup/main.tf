@@ -166,6 +166,8 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     _SHIFTER_VERSION   = "v0.3.0"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
+    _TOKEN_            = ""
+    _CLUSTER_API_ENDPOINT_ = ""
   }
   build {
     timeout       = "4200s"
@@ -200,7 +202,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     }
     step {
       name       = local.ubuntu_builder
-      env        = ["TOKEN = ","CLUSTER_API_ENDPOINT= "]
+
       entrypoint = "bash"
       volumes {
         name = "myvolume"
@@ -223,7 +225,8 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
             echo "* Setting up Cluster"
             echo "******************************************"
             source /persistent_volume/cluster_credentials.env
-            shifter cluster -e $CLUSTER_API_ENDPOINT -t $TOKEN list
+            cat /persistent_volume/cluster_credentials.env
+            shifter cluster -e $_CLUSTER_API_ENDPOINT_ -t $_TOKEN_ list
         EOT
       ]
     }
