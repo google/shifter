@@ -31,6 +31,9 @@ shifter_win_amd64.exe: fmt
 fmt:
 	go fmt ./...
 
+lint:
+	golangci-lint run -vc ./.golangci.yaml ./...
+
 secScan:
 	gosec -no-fail -fmt=json -out=results.json -stdout -verbose=text ./...
 
