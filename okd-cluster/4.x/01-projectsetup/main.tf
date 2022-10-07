@@ -194,7 +194,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           gcloud version &&
           cd okd-cluster/4.x &&
           ./install.sh &&
-          cp /workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
+          cp -r /workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
         EOT
       ]
     }
