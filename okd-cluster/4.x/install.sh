@@ -156,8 +156,8 @@ export GOOGLE_APPLICATION_CREDENTIALS=${CWD_PATH}/01-projectsetup/sa-keys/${PROJ
 
 echo "Cloning artifacts from previous builds from GCS bucket ..."
 
-#mkdir -p ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}
-#gcloud storage cp -r gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/ ${CWD_PATH}/install-config/${PROJECT_ID}/
+mkdir -p ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}
+gcloud storage cp -r gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/ ${CWD_PATH}/install-config/${PROJECT_ID}/
 echo "#################################################################"
 echo "Creating OKD Cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "#################################################################"
@@ -194,8 +194,8 @@ echo "Waiting for  60 seconds for workloads to be ready..."
 echo "############################################################"
 sleep 60s
 #oc get pods
-
-#gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/
+gcloud storage rm --recursive gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/
+gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/
 
 echo "############################################################"
 echo "Endpoint"
