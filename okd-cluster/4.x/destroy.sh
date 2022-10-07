@@ -58,6 +58,6 @@ fi
 echo "############################################################"
 echo "Deleting the okd cluster:${CLUSTER_NAME} in project ${PROJECT_ID} ..."
 echo "############################################################"
-${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install destroy cluster --log-level=info --dir=${CWD_PATH}/install-config/$PROJECT_ID/$CLUSTER_NAME
+${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/openshift-install destroy cluster --log-level=info --dir=${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/
 
 gcloud storage cp -r ${CWD_PATH}/install-config/${PROJECT_ID}/${CLUSTER_NAME}/ gs://shifter-tfstate/okd-logs/${PROJECT_ID}/${CLUSTER_NAME}/
