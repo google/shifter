@@ -18,4 +18,5 @@ import "shifter/cmd"
 
 func main() {
 	cmd.Execute()
+	
 }
