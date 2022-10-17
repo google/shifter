@@ -38,7 +38,7 @@ jobs:
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'gcr.io/shifter-lz-002/shifter:${{ github.sha }}'
+        image-ref: 'us-docker.pkg.dev/shifter-lz-002/dev-shifter/${{ github.head_ref || github.ref_name }}/shifter'
         format: 'sarif'
         output: 'trivy-results.sarif'
 
