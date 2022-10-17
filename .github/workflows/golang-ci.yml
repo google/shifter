@@ -1,4 +1,4 @@
-name: Github Actions - Golang
+name: Github Actions - Shifter
 on:
   pull_request:
     paths:
@@ -12,7 +12,7 @@ defaults:
     working-directory: ./shifter
 
 jobs:
-  golang-ci-workflow:
+  shifter-ci-workflow:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-go@v3
@@ -33,7 +33,20 @@ jobs:
       with:
         sarif_file: results.sarif    
     - name: Run Build
-      run:  make build       
+      run:  make build   
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'gcr.io/shifter-lz-002/shifter:${{ github.sha }}'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
 
 
 #     ## we can update once we have unit testcases inplace
