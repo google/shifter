@@ -1,0 +1,19 @@
+billing_account_id="xxxxxxx"
+parent="organizations/111111111"
+project_id="okd-development-123"
+project_create="true"
+
+region="us-central1"
+vpc_network_name="test"
+vpc_subnetwork_name = "test-sn"
+vpc_subnetwork_cidr="10.0.0.0/24"
+vpc_create="true"
+
+gke_cluster_name="pipeline"
+gke_location="us-central1-b"
+gke_pods_secondary_cidr="172.16.0.0/20"
+gke_services_secondary_cidr="192.168.0.0/24"
+
+gke_nodepool_name="nodepool"
+gke_nodepool_count=2
+

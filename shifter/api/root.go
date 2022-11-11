@@ -1,20 +1,21 @@
-/*
-copyright 2019 google llc
-licensed under the apache license, version 2.0 (the "license");
-you may not use this file except in compliance with the license.
-you may obtain a copy of the license at
-    http://www.apache.org/licenses/license-2.0
-unless required by applicable law or agreed to in writing, software
-distributed under the license is distributed on an "as is" basis,
-without warranties or conditions of any kind, either express or implied.
-see the license for the specific language governing permissions and
-limitations under the license.
-*/
+// Copyright 2022 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package api
 
 import (
-	"errors"
+	//"errors"
 	"log"
 	"strings"
 
@@ -52,31 +53,28 @@ func InitServer(serverAddress string, serverPort string, sourcePath string, outp
 	server.config.serverAddress = serverAddress // Set HTTP Server Address
 	server.config.serverPort = serverPort       // Set HTTP Server Port
 
-	// Configure Server Routes
 	err := server.setupServer()
 	if err != nil {
-		log.Printf("❌  Error: Failed to Setup Shifter Server (gin-gonic) Routes, Unable to continue.")
+		lib.CLog("error", "Backend server error", err)
 		return server, err
 	}
 
 	err = server.setupStorage(sourcePath, outputPath)
 	if err != nil {
-		// Error Setting Shifter Server (gin-gonic) Routes
-		log.Printf("❌  Error: Failed to Setup Shifter Server Storage, Unable to continue.")
+		lib.CLog("error", "Unable to configure server side storage", err)
 		return server, err
 	}
 
 	return server, nil
 }
 
-// Setup gin-gonic HTTP Server Routes
 func (server *Server) setupServer() error {
 	// TODO - Set Wrapper and CLI Flag for "DebugMode" and inlcude optional this in that flag
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.Default() // TODO - Explore Non-Default options for Logging.
 
-	// Setup & Configure Gin-Gonic CORS
+	// CORS Configuration
 	config := cors.DefaultConfig()
 	config.AllowWildcard = true
 	config.AllowOrigins = []string{"*"} // TODO Enable the ability to limit this with CLI for Security
@@ -88,40 +86,37 @@ func (server *Server) setupServer() error {
 	router.Use(cors.New(config))
 
 	// Declare API V1 Route Group and Routes
-	log.Printf("💡 INFO: API Declare Route Group and Routes: /api/v1")
+	lib.CLog("info", "API Endpoint created: /api/v1")
 	v1 := router.Group("/api/v1")
 	{
-		log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift")
 		o := v1.Group("/openshift")
 		{
-			log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift/projects")
+			lib.CLog("info", "API Endpoint created: /api/v1/openshift/projects")
 			op := o.Group("/projects")
 			{
-				op.POST("/", server.SOSGetProjects)
-				op.POST("/:projectName", server.SOSGetProject)
+				op.POST("/", server.GetProjects)
+				op.POST("/:projectName", server.GetProject)
+				lib.CLog("info", "API Endpoint created: /api/v1/openshift/projects/{project}/resources")
+				rl := op.Group("/:projectName/resources")
+				{
+					rl.POST("/", server.GetResources)
+					rl.POST("/:resourceKind", server.GetResources)
+					rl.POST("/:resourceKind/:resourceName", server.GetResources)
+				}
 			}
-
-			log.Printf("💡 INFO: API Declare Route Group and Routes: /openshift/deploymentconfigs")
-			dc := o.Group("/deploymentconfigs")
-			{
-				dc.POST("/", server.SOSGetDeploymentConfigs)
-				dc.POST("/:projectName", server.SOSGetDeploymentConfigsByProject)
-				dc.POST("/:projectName/:deploymentConfigName", server.SOSGetDeploymentConfig)
-			}
-
 		}
 
 		// Convert Shifter API Endpoints
-		log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter")
+		lib.CLog("info", "API Endpoint created: /api/v1/shifter")
 		s := v1.Group("/shifter")
 		{
-			log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter/convert")
+			lib.CLog("info", "API Endpoint created: /api/v1/shifter/convert")
 			sc := s.Group("/convert")
 			{
 				sc.POST("/", server.Convert)
 			}
 
-			log.Printf("💡 INFO: API Declare Route Group and Routes: /shifter/downloads")
+			lib.CLog("info", "API Endpoint created: /api/v1/shifter/downloads")
 			sd := s.Group("/downloads")
 			{
 				sd.GET("/", server.Downloads)
@@ -131,7 +126,8 @@ func (server *Server) setupServer() error {
 		}
 
 		// Convert Shifter Server Status API Endpoints
-		log.Printf("💡 INFO: API Declare Route Group and Routes: /status")
+		lib.CLog("info", "API Endpoint created: /api/v1/status/healthz")
+		lib.CLog("info", "API Endpoint created: /api/v1/status/settingz")
 		st := v1.Group("/status")
 		{
 			st.GET("/healthz", server.Healthz)
@@ -141,8 +137,6 @@ func (server *Server) setupServer() error {
 
 	server.router = router
 
-	// Setup Successful
-	log.Printf("✅ SUCCESS: Shifter Storage Settings Configured")
 	return nil
 }
 
@@ -185,14 +179,15 @@ func (server *Server) setupStorage(sourcePath string, outputPath string) error {
 
 func (server *Server) Start() error {
 	lib.CLog("debug", "Shifter server starting")
+	lib.CLog("info", "Shifter server listening on "+server.config.serverAddress+":"+server.config.serverPort)
 
 	err := server.router.Run(server.config.serverAddress + ":" + server.config.serverPort)
 	if err != nil {
-		log.Printf("🌐 ❌ ERROR: Failed to Run Shifter Server, Unable to continue.")
+		lib.CLog("error", "Failed to start Shifter server", err)
 		return err
 	}
-	lib.CLog("info", "Shifter server listening at "+server.config.serverAddress+":"+server.config.serverPort)
 
+	lib.CLog("info", "Shifter server shutting down.")
 	return nil
 }
 

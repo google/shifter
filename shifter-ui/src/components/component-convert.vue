@@ -1,18 +1,34 @@
+<!--
+ Copyright 2022 Google LLC
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
 <script setup>
 // Vue Component Imports
 //import ListConvertNamespaceObjects from "./list-convert-namespace-objects.vue";
 import OpenshiftNamespaceList from "./openshift-namespace-list.vue";
 //import FormTableConvertObjects from "../components/form-table-convert-objects.vue";
 import FormTableConvertObjectsReview from "../components/form-table-convert-objects-review.vue";
-import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-deployment-config-json.vue";
+import ModalOpenshiftResourceJSON from "../components/modal-openshift-resource-json.vue";
 </script>
 <template>
-  <div class="container flex mx-auto m-6 items-center">
+	<div class="container flex mx-auto m-6 items-center">
     <div
       class="container flex-row mx-auto bg-shifter-black-mute justify-center rounded-2xl py-6"
     >
       <div
-        class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12"
+        class="container flex mx-auto justify-center py-6 gap-8 uppercase pb-12 text-shifter-white-soft"
       >
         <div
           v-for="step in activeSteps"
@@ -46,17 +62,16 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">
             Cluster Selection
           </div>
-          <div class="flex justify-center text-baseline m-2">
-            Select OpenShift cluster from which you would like to convert
-            workloads
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
+            Select the source cluster
           </div>
         </div>
         <div class="container flex mx-auto justify-center my-4">
           <select
-            class="flex justify-center w-1/4 p-2 m-2 bg-shifter-black rounded"
+            class="flex justify-center w-1/4 p-2 m-2 bg-shifter-white-soft text-shifter-black rounded"
             id="cluster"
             @change="changeCluster($event)"
             v-model="clusterId"
@@ -92,14 +107,14 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">
-            Object Selection
+          <div class="flex justify-center bold text-4xl m-2  text-shifter-white-soft">
+            Resource Selection
           </div>
-          <div class="flex justify-center text-baseline m-2">
-            Select deployment configurations to convert for migration.
+          <div class="flex justify-center text-baseline m-2  text-shifter-white-soft">
+            Select the resources for migration.
           </div>
         </div>
-        <div class="container flex mx-auto justify-center my-4">
+        <div class="container flex mx-auto justify-center my-4  text-shifter-white-soft">
           <OpenshiftNamespaceList class="mx-4 w-full lg:w-1/2" />
           <!--<ListConvertNamespaceObjects />-->
           <!--<FormTableConvertObjects />-->
@@ -113,8 +128,8 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">Object Review</div>
-          <div class="flex justify-center text-baseline m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">Object Review</div>
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
             Review configurations selected for conversion.
           </div>
         </div>
@@ -130,8 +145,8 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
         class="container flex-row mx-auto justify-center py-12"
       >
         <div class="container flex-row justify-center items-center">
-          <div class="flex justify-center bold text-4xl m-2">Convert</div>
-          <div class="flex justify-center text-baseline m-2">
+          <div class="flex justify-center bold text-4xl m-2 text-shifter-white-soft">Convert</div>
+          <div class="flex justify-center text-baseline m-2 text-shifter-white-soft">
             Convert your selected workloads for GKE & Anthos.
           </div>
         </div>
@@ -148,20 +163,20 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
       <div class="container flex mx-auto justify-end px-10 gap-4">
         <a
           v-show="currentStep > 1"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="uppercase rounded px-6 py-2 bg-shifter-black text-shifter-white-soft hover:bg-shifter-red hover:animate-pulse"
           :onclick="previousStep"
           >Previous</a
         >
         <a
           v-show="stepValid"
-          class="uppercase rounded px-6 py-2 bg-shifter-black hover:bg-shifter-red hover:animate-pulse"
+          class="uppercase rounded px-6 py-2 bg-shifter-black text-shifter-white-soft hover:bg-shifter-red hover:animate-pulse"
           :onclick="nextStep"
           >Next</a
         >
       </div>
     </div>
-    <!-- Deployment Config JSON Modal -->
-    <ModalOpenshiftDeploymentConfigJSON />
+    <!-- Resource JSON Modal -->
+    <ModalOpenshiftResourceJSON />
   </div>
 </template>
 
@@ -169,7 +184,7 @@ import ModalOpenshiftDeploymentConfigJSON from "../components/modal-openshift-de
 // Pinia Store Imports
 import { useConfigurationsClusters } from "../stores/configurations/clusters";
 import { useOSProjects } from "../stores/openshift/projects";
-import { useConvertObjects } from "../stores/convert/convert";
+import { useConvertObjects } from "../stores/convert/convertv2";
 import { useJSONModal } from "../stores/convert/modalJSON";
 // Plugin & Package Imports
 import { mapState, mapActions } from "pinia";
@@ -182,12 +197,12 @@ export default {
       convertSteps: [
         {
           id: 1,
-          title: "OpenShift Cluster",
+          title: "Cluster",
           enabled: true,
         },
         {
           id: 2,
-          title: "Selections",
+          title: "Selection",
           enabled: true,
         },
         {
@@ -203,7 +218,7 @@ export default {
         {
           id: 5,
           title: "Results",
-          enabled: false,
+          enabled: true,
         },
       ],
     };
