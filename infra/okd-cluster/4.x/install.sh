@@ -18,9 +18,9 @@
 PROJECT_ID=$1   #"pm-singleproject-20"                    #e.g. : "pm-okd-11"
 CLUSTER_NAME=$2 #"okd42"                  #e.g. : "okd-41"
 OKD_VERSION=$3  #"4.10"                   #e.g. : "4.10" or "4.9"
-BILLING_ACCOUNT_ID="01541A-27C980-D4B4C9"            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
-PARENT="folders/808116942407"                        #e.g. : "organizations/111222333444"
-DOMAIN="pm-gcp.com."                        #e.g. : "google.com."
+BILLING_ACCOUNT_ID=""            #e.g. : "xxxxxx-yyyyyy-zzzzzz"
+PARENT=""                        #e.g. : "organizations/111222333444"
+DOMAIN=""                        #e.g. : "google.com."
 SSH_KEY_PATH=""                  #e.g. : usr/local/google/home/username/.ssh/id_ed25519.pub
 # More details on redhat pull secret can be found here https://console.redhat.com/openshift/install/pull-secret
 REDHAT_PULL_SECRET='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'

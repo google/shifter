@@ -91,8 +91,8 @@ module "okd-sa" {
   # non-authoritative roles granted *to* the service accounts on other resources
   iam = {
     "roles/iam.serviceAccountTokenCreator" = compact([
-      "user:parasmamgain@google.com",
-      "serviceAccount:1002225287836@cloudbuild.gserviceaccount.com"
+      #"user:xyz@domain.com", ## Replace with useraccount who can impoersonate the SA
+      #"serviceAccount:0001111000011@cloudbuild.gserviceaccount.com" ## Replce the cloudbuild SA which can impersonate the SA
     ])
   }
 
