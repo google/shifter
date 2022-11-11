@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 /**
  * Copyright 2022 Google LLC
  *
@@ -16,7 +14,6 @@
  * limitations under the License.
  */
 
->>>>>>> 1da53024b4fc82b48b5a883eeddbe62abf296ed0
 module "network" {
   source         = "./modules/gcp_tf_network"
   project_id     = module.project.project_id
