@@ -5,7 +5,7 @@ Following would allow us create a OKD Cluster in the GCP Project
 
 ## Requirements
 <ol>
-<li>You have owner permission and you have permission to create service account keys for your GCP project.</li>
+<li>You have owner permission and you have permission to create service account keys for your GCP projec.t.</li>
 <li>OC cli, gcloud cli, terraform is installed.</li>
 <li>scripts were tested in a linux machine.</li>
 <li></li>
