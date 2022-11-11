@@ -191,9 +191,9 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
-          cd okd-cluster/4.x &&
+          cd infra/okd-cluster/4.x &&
           ./install.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION &&
-          cp -r /workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
+          cp -r /workspace/infra/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
         EOT
       ]
     }
@@ -230,7 +230,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     # artifacts {
     #   objects {
     #     location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-    #     paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/*",
+    #     paths = ["/workspace/infra/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/*",
     #     ]
     #   }
     # }
@@ -282,7 +282,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
           curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
-          cd okd-cluster/4.x &&
+          cd infra/okd-cluster/4.x &&
           ./destroy.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION
         EOT
       ]
@@ -290,7 +290,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
     # artifacts {
     #   objects {
     #     location = "${module.gcs-automation[each.key].url}/builds/plan-file/$BRANCH_NAME/"
-    #     paths = ["/workspace/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/.*",
+    #     paths = ["/workspace/infra/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/.*",
     #     ]
     #   }
     # }
