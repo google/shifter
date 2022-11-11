@@ -47,7 +47,7 @@ else
    echo "############################################################"
    echo "File openshift-install does not exist. Downloading openshift-install file for OKD+VERSION: ${OKD_INSTALLABALE_VERSION}"
    echo "############################################################"
-   wget -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
+   wget -q -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
    tar -xvf openshift-install-linux.tar.gz
    chmod +x openshift-install
    mkdir -p ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/

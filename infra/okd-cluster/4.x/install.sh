@@ -109,7 +109,7 @@ else
    echo "############################################################"
    echo "File openshift-install does not exist. Downloading openshift-install file for OKD+VERSION: ${OKD_INSTALLABALE_VERSION}"
    echo "############################################################"
-   wget -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
+   wget -q -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
    tar -xvf openshift-install-linux.tar.gz
    chmod +x openshift-install
    mkdir -p ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/
@@ -117,7 +117,7 @@ else
 fi
 
 # Download OC CLI
-wget -O openshift-clientinstall-linux.tar.gz https://github.com/openshift/okd/releases/download/4.10.0-0.okd-2022-06-10-131327/openshift-client-linux-4.10.0-0.okd-2022-06-10-131327.tar.gz
+wget -q  -O openshift-clientinstall-linux.tar.gz https://github.com/openshift/okd/releases/download/4.10.0-0.okd-2022-06-10-131327/openshift-client-linux-4.10.0-0.okd-2022-06-10-131327.tar.gz
 tar -xvf openshift-clientinstall-linux.tar.gz
 mkdir -p ${CWD_PATH}/01-projectsetup/oc-installer/
 chmod +x oc
