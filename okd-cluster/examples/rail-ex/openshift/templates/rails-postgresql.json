@@ -81,8 +81,7 @@
           "type": "Source",
           "sourceStrategy": {
             "from": {
-              "kind": "ImageStreamTag",
-              "namespace": "${NAMESPACE}",
+              "kind": "DockerImage",
               "name": "ruby:2.2"
             }
           }
