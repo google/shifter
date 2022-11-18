@@ -34,7 +34,14 @@ jobs:
         sarif_file: results.sarif    
     - name: Run Build
       run:  make build   
-    
+    - name: Wait for tests to succeed
+      uses: lewagon/wait-on-check-action@v1.2.0
+      with:
+        ref: ${{ github.ref }}
+        check-regexp: .?-push.?
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 10
+        allowed-conclusions: success
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
