@@ -91,8 +91,8 @@ module "okd-sa" {
   # non-authoritative roles granted *to* the service accounts on other resources
   iam = {
     "roles/iam.serviceAccountTokenCreator" = compact([
-      #"user:xyz@domain.com", ## Replace with useraccount who can impoersonate the SA
-      #"serviceAccount:0001111000011@cloudbuild.gserviceaccount.com" ## Replce the cloudbuild SA which can impersonate the SA
+      "user:parasmamgain@google.com",                               ## Replace with useraccount who can impoersonate the SA
+      "serviceAccount:1002225287836@cloudbuild.gserviceaccount.com" ## Replce the cloudbuild SA which can impersonate the SA
     ])
   }
 
@@ -163,11 +163,11 @@ module "repository-shifter" {
 /******************************************************************
       Create OKD Cluster - Cloud Build Trigger to run the terraform code
 *******************************************************************/
-resource "google_cloudbuild_trigger" "sharedresource-trigger" {
+resource "google_cloudbuild_trigger" "createresource-trigger" {
   for_each      = toset(var.projectid_list)
   project       = each.key
-  name          = "ShifterTrigger"
-  description   = "This trigger initiates the GCP resource deployment."
+  name          = "CreateOCPClusterShifterTrigger"
+  description   = "This trigger initiates the OCP cluster resource deployment in GCP."
   ignored_files = ["*"]
   included_files = [""]
   trigger_template {
@@ -181,9 +181,12 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
     _OKD_VERSION       = "4.10"
+    _BILLING_ACCOUNT_ID = "01541A-27C980-D4B4C9"
+    _PARENT             = "folders/808116942407"
+    _DOMAIN             = "pm-gcp.com"
   }
   build {
-    timeout       = "4200s"
+    timeout       = "12000s"
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
@@ -198,7 +201,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           echo "* Installing Terraform,gcloud"
           echo "******************************************"
           apt-get install -y unzip wget git curl &&
-          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          wget -q https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
           unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
           mv terraform /usr/local/bin/ &&
           terraform version &&
@@ -208,7 +211,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
           cd infra/okd-cluster/4.x &&
-          ./install.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION &&
+          ./install.sh $_PROJECT_NAME $_CLUSTER_NAME $_OKD_VERSION  $_BILLING_ACCOUNT_ID $_PARENT $_DOMAIN &&
           cp -r /workspace/infra/okd-cluster/4.x/install-config/$_PROJECT_NAME/$_CLUSTER_NAME/* /persistent_volume/
         EOT
       ]
@@ -228,7 +231,7 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
             echo "* Installing Shifter"
             echo "******************************************"
             apt-get install -y unzip wget git curl &&
-            wget https://github.com/google/shifter/releases/download/$_SHIFTER_VERSION/shifter_linux_amd64 &&
+            wget -q https://github.com/google/shifter/releases/download/$_SHIFTER_VERSION/shifter_linux_amd64 &&
             chmod +x shifter_linux_amd64 &&
             mv shifter_linux_amd64 /usr/local/bin/ &&
             mv /usr/local/bin/shifter_linux_amd64 /usr/local/bin/shifter
@@ -254,6 +257,9 @@ resource "google_cloudbuild_trigger" "sharedresource-trigger" {
   depends_on = [
     module.repository-shifter
   ]
+  approval_config {
+    approval_required = true
+  }
 }
 
 /******************************************************************
@@ -263,7 +269,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   for_each      = toset(var.projectid_list)
   project       = each.key
   name          = "DeleteOkdCluster"
-  description   = "This trigger initiates the GCP resource deployment."
+  description   = "This trigger initiates the deletion process of OCP cluster deployed in GCP."
   ignored_files = ["*"]
   included_files = [""]
   trigger_template {
@@ -273,12 +279,15 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   }
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
-    _PROJECT_NAME      = "pm-singleproject-20"
-    _CLUSTER_NAME      = "okd42"
-    _OKD_VERSION       = "4.10"
+    _PROJECT_NAME       = "pm-singleproject-20"
+    _CLUSTER_NAME       = "okd42"
+    _OKD_VERSION        = "4.10"
+    _BILLING_ACCOUNT_ID = "01541A-27C980-D4B4C9"
+    _PARENT             = "folders/808116942407"
+    _DOMAIN             = "pm-gcp.com"
   }
   build {
-    timeout       = "3600s"
+    timeout       = "12000s"
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
@@ -289,7 +298,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
           echo "* Installing Terraform,gcloud"
           echo "******************************************"
           apt-get install -y unzip wget git curl &&
-          wget https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
+          wget -q https://releases.hashicorp.com/terraform/$_TERRAFORM_VERSION/terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
           unzip terraform_$_TERRAFORM_VERSION\_linux_amd64.zip &&
           mv terraform /usr/local/bin/ &&
           terraform version &&
@@ -314,6 +323,9 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   depends_on = [
     module.repository-shifter
   ]
+  approval_config {
+    approval_required = true
+  }
 }
 
 module "gcs-automation" {
