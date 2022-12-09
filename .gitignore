@@ -27,3 +27,4 @@ caramilk
 **/openshift-clientinstall-linux.tar.gz
 **/oc
 **/install-config/
+**/providers.tf
