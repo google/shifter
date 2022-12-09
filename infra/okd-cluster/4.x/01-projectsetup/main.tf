@@ -181,8 +181,8 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
     _OKD_VERSION       = "4.10"
-    _BILLING_ACCOUNT_ID = "01541A-27C980-D4B4C9"
-    _PARENT             = "folders/808116942407"
+    _BILLING_ACCOUNT_ID = "a-b-c"
+    _PARENT             = "folders/xyz"
     _DOMAIN             = "pm-gcp.com"
   }
   build {
@@ -282,8 +282,8 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
     _PROJECT_NAME       = "pm-singleproject-20"
     _CLUSTER_NAME       = "okd42"
     _OKD_VERSION        = "4.10"
-    _BILLING_ACCOUNT_ID = "01541A-27C980-D4B4C9"
-    _PARENT             = "folders/808116942407"
+    _BILLING_ACCOUNT_ID = "a-b-c"
+    _PARENT             = "folders/xyz"
     _DOMAIN             = "pm-gcp.com"
   }
   build {
