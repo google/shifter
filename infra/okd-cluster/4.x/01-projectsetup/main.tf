@@ -191,7 +191,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
-      id         = "create-gcp-resources"
+      id         = "create-okd-cluster"
       volumes {
         name = "myvolume"
         path = "/persistent_volume"
@@ -255,8 +255,8 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
         <<-EOT
             echo "******************************************"
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
-            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME --auto-approve &&
-            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke apply -var=$_PROJECT_NAME --auto-approve
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME -auto-approve &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke apply -var=$_PROJECT_NAME -auto-approve
         EOT
       ]
     }
@@ -304,6 +304,20 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   }
   build {
     timeout       = "12000s"
+    step {
+      name       = "hashicorp/terraform:1.3.6"
+      id         = "delete-gke-cluster"
+      entrypoint = "sh"
+      args = [
+        "-c",
+        <<-EOT
+            echo "******************************************"
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME -auto-approve &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke destroy -var=$_PROJECT_NAME -auto-approve
+        EOT
+      ]
+    }
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
