@@ -255,7 +255,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
         <<-EOT
             echo "******************************************"
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
-            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME -auto-approve &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME &&
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke apply -var=$_PROJECT_NAME -auto-approve
         EOT
       ]
@@ -313,7 +313,7 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
         <<-EOT
             echo "******************************************"
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
-            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME -auto-approve &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME &&
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke destroy -var=$_PROJECT_NAME -auto-approve
         EOT
       ]
