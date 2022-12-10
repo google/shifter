@@ -34,6 +34,7 @@ module "project" {
     "serviceusage.googleapis.com",
     "storage-api.googleapis.com",
     "storage-component.googleapis.com",
+    "container.googleapis.com",
   ]
   policy_boolean = {
     "constraints/iam.disableServiceAccountKeyCreation" = false
@@ -190,6 +191,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
     step {
       name       = local.ubuntu_builder
       entrypoint = "bash"
+      id         = "create-gcp-resources"
       volumes {
         name = "myvolume"
         path = "/persistent_volume"
@@ -218,7 +220,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
     }
     step {
       name       = local.ubuntu_builder
-
+      id         = "deploy-shifter-binary"
       entrypoint = "bash"
       volumes {
         name = "myvolume"
@@ -241,6 +243,20 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
             echo "******************************************"
             source /persistent_volume/cluster_credentials.env
             shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default
+        EOT
+      ]
+    }
+    step {
+      name       = "hashicorp/terraform:1.3.6"
+      id         = "create-gke-cluster"
+      entrypoint = "sh"
+      args = [
+        "-c",
+        <<-EOT
+            echo "******************************************"
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var=$_PROJECT_NAME --auto-approve &&
+            terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke apply -var=$_PROJECT_NAME --auto-approve
         EOT
       ]
     }
