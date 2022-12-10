@@ -56,12 +56,6 @@ module "gke" {
     },
   ]
 
-  auto_scaling = {
-    all ={
-      location_policy = "BALANCED"
-    }
-  }
-
   node_pools_oauth_scopes = {
     all = [
       "https://www.googleapis.com/auth/logging.write",
