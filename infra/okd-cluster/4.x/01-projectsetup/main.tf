@@ -178,7 +178,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
   }
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
-    _SHIFTER_VERSION   = "v0.3.0"
+    _SHIFTER_VERSION   = "v0.3.1"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
     _OKD_VERSION       = "4.10"
