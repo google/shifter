@@ -178,7 +178,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
   }
   substitutions = {
     _TERRAFORM_VERSION = "1.1.5"
-    _SHIFTER_VERSION   = "v0.3.1"
+    _SHIFTER_VERSION   = "v0.3.0"
     _PROJECT_NAME      = "pm-singleproject-20"
     _CLUSTER_NAME      = "okd42"
     _OKD_VERSION       = "4.10"
@@ -243,7 +243,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
             echo "******************************************"
             source /persistent_volume/cluster_credentials.env &&
             mkdir -p /persistent_volume/shifter/output &&
-            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default /persistent_volume/shifter/output --output-format yaml
+            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default --output-format yaml /persistent_volume/shifter/output
         EOT
       ]
     }
