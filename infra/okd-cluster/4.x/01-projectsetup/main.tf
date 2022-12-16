@@ -274,6 +274,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
           echo "******************************************"
           echo "* Installing gcloud"
           echo "******************************************"
+          export USE_GKE_GCLOUD_AUTH_PLUGIN=True &&
           apt-get install -y unzip wget git curl &&
           echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
           apt-get install -y apt-transport-https ca-certificates gnupg &&
