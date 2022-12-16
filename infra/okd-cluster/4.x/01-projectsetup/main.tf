@@ -281,6 +281,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
           apt-get update && apt-get install -y google-cloud-sdk &&
           gcloud version &&
           apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin &&
+          apt-get install -y kubectl &&
           gke-gcloud-auth-plugin --version &&
           gcloud container clusters get-credentials gke-for-okd-workloads &&
           kubectl get pods --all-namespaces &&
