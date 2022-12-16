@@ -241,8 +241,9 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
             echo "******************************************"
             echo "* Setting up shifter"
             echo "******************************************"
-            source /persistent_volume/cluster_credentials.env
-            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default
+            source /persistent_volume/cluster_credentials.env &&
+            mkdir -p /persistent_volume/shifter/output &&
+            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default --output-path /persistent_volume/shifter/output --output-format yaml
         EOT
       ]
     }
@@ -257,6 +258,35 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke init &&
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke plan -var="project_id=$_PROJECT_NAME" &&
             terraform -chdir=/workspace/infra/okd-cluster/4.x/03-gke apply -var="project_id=$_PROJECT_NAME" -auto-approve
+        EOT
+      ]
+    }
+    step {
+      name       = local.ubuntu_builder
+      id         = "deploy-gke-workload-from-shifter"
+      entrypoint = "bash"
+      volumes {
+        name = "myvolume"
+        path = "/persistent_volume"
+      }
+      args = [
+        "-c",
+        <<-EOT
+          echo "******************************************"
+          echo "* Installing gcloud"
+          echo "******************************************"
+          apt-get install -y unzip wget git curl &&
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list &&
+          apt-get install -y apt-transport-https ca-certificates gnupg &&
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+          apt-get update && apt-get install -y google-cloud-sdk &&
+          gcloud version &&
+          gcloud components install gke-gcloud-auth-plugin &&
+          gke-gcloud-auth-plugin --version &&
+          gcloud container clusters get-credentials gke-for-okd-workloads &&
+          kubectl get pods --all-namespaces &&
+          kubectl apply -f /persistent_volume/shifter/output --recursive &&
+          kubectl get pods
         EOT
       ]
     }
