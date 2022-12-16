@@ -283,7 +283,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
           apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin &&
           apt-get install -y kubectl &&
           gke-gcloud-auth-plugin --version &&
-          gcloud container clusters get-credentials gke-for-okd-workloads &&
+          gcloud container clusters get-credentials gke-for-okd-workloads --region us-central1 &&
           kubectl get pods --all-namespaces &&
           kubectl apply -f /persistent_volume/shifter/output --recursive &&
           kubectl get pods
