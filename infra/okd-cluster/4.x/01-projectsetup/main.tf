@@ -243,7 +243,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
             echo "******************************************"
             source /persistent_volume/cluster_credentials.env &&
             mkdir -p /persistent_volume/shifter/output &&
-            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ list --namespace default --output-format yaml /persistent_volume/shifter/output
+            shifter cluster -e $$_CLUSTER_API_ENDPOINT_ -t $$_TOKEN_ convert --namespace default -o yaml /persistent_volume/shifter/output
         EOT
       ]
     }
