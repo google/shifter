@@ -170,7 +170,6 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
   name          = "CreateOCPClusterShifterTrigger"
   description   = "This trigger initiates the OCP cluster resource deployment in GCP."
   ignored_files = ["*"]
-  included_files = [""]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
@@ -317,7 +316,6 @@ resource "google_cloudbuild_trigger" "deletecluster-trigger" {
   name          = "DeleteOkdCluster"
   description   = "This trigger initiates the deletion process of OCP cluster deployed in GCP."
   ignored_files = ["*"]
-  included_files = [""]
   trigger_template {
     project_id  = each.key
     branch_name = "v0.3.1"
