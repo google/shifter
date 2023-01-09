@@ -286,6 +286,7 @@ resource "google_cloudbuild_trigger" "createresource-trigger" {
           gke-gcloud-auth-plugin --version &&
           gcloud container clusters get-credentials gke-for-okd-workloads --region us-central1 &&
           kubectl get pods --all-namespaces &&
+          gcloud storage cp -r /persistent_volume/shifter/output gs://shifter-tfstate/okd-logs/pm-singleproject-20/ &&
           kubectl apply -f /persistent_volume/shifter/output --recursive &&
           kubectl get pods
         EOT
