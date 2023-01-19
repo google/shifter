@@ -131,7 +131,6 @@ func (converter *Converter) ConvertFiles() error {
 		)
 
 		switch strings.ToLower(converter.InputType) {
-		// Input Type == YAML
 		case "yaml":
 			sourceFile, err := input.Yaml(file.Content, converter.Flags)
 			if err != nil {
@@ -157,12 +156,27 @@ func (converter *Converter) ConvertFiles() error {
 		}
 
 		for k := range resources {
+			var fileName string
+			var filePath string
+
+			if filepath.Ext(converter.OutputPath) != "" {
+				fileName = filepath.Clean(filepath.Base(converter.OutputPath))
+				filePath = filepath.Clean(filepath.Dir(converter.OutputPath))
+			} else {
+				filePath = converter.OutputPath
+				if filepath.Ext(resources[k].Name) != "" {
+					fileName = resources[k].Name
+				} else {
+					fileName = filepath.Join(resources[k].Name + filepath.Ext(file.Path))
+				}
+			}
+
 			fileObj := &FileObject{
 				StorageType: file.StorageType,
 				//SourcePath:    (converter.OutputPath + "/" + r[k].Path + r[k].Name + filepath.Ext(file.SourcePath)),
-				Path:          (converter.OutputPath + "/" + resources[k].Path + resources[k].Name),
-				Filename:      file.Filename,
-				Ext:           filepath.Ext(file.Path),
+				Path:          filePath + resources[k].Path,
+				Filename:      fileName,
+				Ext:           filepath.Ext(fileName),
 				Content:       resources[k].Payload,
 				ContentLength: file.ContentLength,
 			}

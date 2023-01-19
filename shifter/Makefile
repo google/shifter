@@ -56,7 +56,7 @@ yamlMultiTest: fmt
 	go run . convert -o yaml -i yaml ./_test/yaml/multifile/ ./out/t2_yaml_multifile/
 
 yamlMultiOutputSingleTest: fmt
-	go run . convert -o yaml -i yaml ./_test/yaml/multifile/ ./out/t3_yaml_multiotput/files.yaml
+	go run . convert -o yaml -i yaml ./_test/yaml/multifile/ ./out/t3_yaml_multioutput/files.yaml
 
 yamlDCTest: fmt
 	go run . convert -o yaml -i yaml ./_test/yaml/deploymentconfig.yaml ./out/t4_deploymentconfig
