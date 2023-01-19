@@ -26,17 +26,27 @@ func (fileObj *FileObject) WriteLCLFile() error {
 	lib.CLog("debug", "Writing file object to local file system")
 
 	// Check if Output Directory Exits, IF Not, Make output Directory
-	lib.CLog("debug", "Path: "+filepath.Dir(fileObj.Path))
-	if _, err := os.Stat(filepath.Dir(fileObj.Path)); os.IsNotExist(err) {
+	lib.CLog("debug", "Path: "+fileObj.Path)
+
+	if _, err := os.Stat(fileObj.Path); os.IsNotExist(err) {
 		lib.CLog("info", "Output directory does not exist... creating")
-		err := os.MkdirAll(filepath.Dir(fileObj.Path), 0700)
+		err := os.MkdirAll(fileObj.Path, 0700)
 		if err != nil {
 			lib.CLog("error", "Unable to create output directory", err)
 			return err
 		}
 	}
 
-	fileName := fileObj.Path + "." + fileObj.Ext
+	var fileName string
+
+	if filepath.Ext(fileObj.Filename) == "" {
+		fileName = filepath.Join(fileObj.Filename, fileObj.Ext)
+	} else {
+		fileName = fileObj.Filename
+	}
+
+	fileName = filepath.Join(fileObj.Path, fileName)
+
 	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		lib.CLog("error", "creating new file"+fileName, err)
