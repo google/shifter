@@ -8,7 +8,7 @@ require (
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.3.0
-	github.com/jedib0t/go-pretty/v6 v6.3.3
+	github.com/jedib0t/go-pretty/v6 v6.4.4
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/openshift/api v0.0.0-20220511093956-b017c00b66b6
 	github.com/openshift/client-go v0.0.0-20220512130520-80c0822dfe76
