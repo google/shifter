@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+echo "[!] Processing...."
 ###################### Mandatory Vairables ##########################
 PROJECT_ID=""     # e.g. "pm-okd-11"
 CLUSTER_NAME=""   # e.g."okd-41"
