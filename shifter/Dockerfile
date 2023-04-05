@@ -17,7 +17,7 @@
 ##
 ## Build Shifter Server
 ##
-FROM golang:1.19.5 AS build
+FROM golang:1.20.3 AS build
 
 WORKDIR /app
 
