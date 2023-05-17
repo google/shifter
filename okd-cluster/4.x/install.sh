@@ -129,6 +129,7 @@ else
    wget -O openshift-install-linux.tar.gz https://github.com/openshift/okd/releases/download/${OKD_INSTALLABALE_VERSION}/openshift-install-linux-${OKD_INSTALLABALE_VERSION}.tar.gz
    tar -xvf openshift-install-linux.tar.gz
    chmod +x openshift-install
+   mkdir -p ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/
    mv openshift-install ${CWD_PATH}/01-projectsetup/okd-installer/${OKD_VERSION}/
 fi
 
@@ -153,7 +154,7 @@ else
    echo "############################################################"
    gcloud iam service-accounts keys create ${SA_JSON_FILENAME} --iam-account=okd-sa@${PROJECT_ID}.iam.gserviceaccount.com
    #gcloud iam service-accounts keys create test.json --iam-account=okd-sa@pm-okd-11.iam.gserviceaccount.com
-   mkdir ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
+   mkdir -p ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
    mv ${CWD_PATH}/${SA_JSON_FILENAME} ${CWD_PATH}/01-projectsetup/sa-keys/${PROJECT_ID}/
 fi
 

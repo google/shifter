@@ -1,15 +1,15 @@
 
 ## Introduction
 
-Following would allow us create a OKD Cluster in the GCP Project
+Following would allow us create a OKD Cluster in the GCP Project.
+
+Scripts were tested in a linux machine.
 
 ## Requirements
-<ol>
-<li>You have owner permission and you have permission to create service account keys for your GCP project.</li>
-<li>OC cli, gcloud cli, terraform is installed.</li>
-<li>scripts were tested in a linux machine.</li>
-<li></li>
-</ol>
+
+* You have owner permission and you have permission to create service account keys for your GCP project.
+* [OC cli](https://docs.openshift.com/container-platform/4.8/cli_reference/openshift_cli/getting-started-cli.html), [gcloud cli](https://cloud.google.com/sdk/docs/install), [terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) is installed.
+* You own a publicly registered DNS domain for which you can create a public Cloud DNS zone in your Google Cloud project. The setup will dynamically create a public DNS zone in your project.
 
 **Note:**
 
